@@ -1,0 +1,107 @@
+/* 
+    Document   : main
+    Created on : 2011/10/19, 17:15:54
+    Author     : raijin-aiba
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+body {
+	height: 100%;
+	background-color: #ffebcd;
+  font-size:11px;
+  font-family: "MS ゴシック", sans-serif;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+div,pre,th,td {
+  padding: 0;
+  margin: 0;
+}
+
+
+table {
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+th,td{
+  border-collapse: collapse;
+}
+
+
+ul{
+    list-style:none;
+}
+
+img{
+    border-style:none;
+}
+
+td.left{
+    text-align:left;
+}
+
+td.right{
+    
+}
+
+td.center {
+  text-align:center;
+}
+
+.print-link {
+  font-weight: bold;
+  font-size: 130%;
+}
+
+.content-title {
+  font-weight: bold;
+  font-size: 110%;
+}
+
+.item-table th {
+  border:1px #000000 solid;
+  background-color:#FFFF99;
+  text-align: center;
+  font-weight: normal;
+  font-size: 90%;
+}
+
+.item-table td {
+  border:1px #000000 solid;
+  background-color: white;
+  padding: 1px;
+}
+
+.time-head {
+  width: 130px;
+}
+
+.kbn-head {
+  width: 70px;
+}
+
+.aite-head {
+  width: 300px;
+}
+
+.item-list div {
+  height: 60px;
+  width: 200px;
+  overflow: auto;
+}
+
+.content-list pre {
+  height: 60px;
+  width: 300px; 
+  overflow: auto;
+  font-weight: normal;
+  white-space: -moz-pre-wrap;  /* Mozilla */
+  white-space: -pre-wrap;      /* Opera 4-6 */
+  white-space: -o-pre-wrap;    /* Opera 7 */
+  white-space: pre-wrap;       /* CSS3 */
+  word-wrap:   break-word;     /* IE 5.5+ */
+}

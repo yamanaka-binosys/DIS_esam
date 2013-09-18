@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<meta http-equiv="Content-Script-Type" content="text/javascript">
+<link href="http://localhost/sample/css/menu.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="http://localhost/sample/script/menu.js"></script>
+</head>
+
+<body>
+<form name="menu" method="post" action="http://localhost/sample/application/views/base.html">
+<input type="hidden" name="menu_src" value="">
+<input type="hidden" name="menu_name" value="">
+<div id="LMenu">
+<br>
+<b>メニュー</b>
+<br>
+<ul class="parent">
+<li><a href="javascript:top_admin()">トップ（上司）</a></li>
+<li><a href="javascript:top_general()">トップ（部下）</a></li>
+<li><a href="javascript:calendar()">カレンダー</a></li>
+<li><a href="javascript:scheduling()">定期設定</a></li>
+<li><a href="javascript:s_rireki()">商談履歴</a></li>
+<li><a href="javascript:todo('menu_todo')">TO DO</a>
+<div id="menu_todo" style="display:none">
+<ul class="sub">
+<li><a href="javascript:todo_add()">登録</a></li>
+<li><a href="javascript:todo_update()">更新</a></li>
+</ul>
+</div>
+</li>
+<li><a href="javascript:data_memo('menu_memo')">情報メモ</a>
+<div id="menu_memo" style="display:none">
+<ul class="sub">
+<li><a href="javascript:memo_add()">登録</a></li>
+<li><a href="javascript:memo_update()">検索</a></li>
+<li><a href="javascript:memo_delete()">削除</a></li>
+</ul>
+</div>
+</li>
+<li><a href="javascript:message()">メッセージ</a></li>
+<li><a href="javascript:project_possession('menu_project_possession')">企画獲得</a>
+<div id="menu_project_possession" style="display:none">
+<ul class="sub">
+<li><a href="javascript:project_possession_add()">登録</a></li>
+<li><a href="javascript:project_possession_view()">表示</a></li>
+</ul>
+</div>
+</li>
+<li><a href="javascript:data_output()">情報出力</a></li>
+<li><strong>システム</strong>
+<ul class="sub">
+<li><a href="javascript:user()">ユーザー</a></li>
+<li><a href="javascript:project_item()">企画情報</a></li>
+<li><a href="javascript:division()">区分設定</a></li>
+<li><a href="javascript:item_visibility()">画面生成</a></li>
+</ul>
+</li>
+<li><a href="javascript:help()">ヘルプ</a></li>
+</ul>
+<br />
+<input type="button" value="ログアウト" onclick="javascript:logout()">
+<br />
+<br />
+</div>
+</div>
+</form>
+</body>
+</html>

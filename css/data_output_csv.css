@@ -1,0 +1,57 @@
+/*
+    Document   : data_output
+    Created on : 2011/11/15, 15:53:54
+    Author     : raijin-oikawa
+    Description:
+        Purpose of the stylesheet follows.
+*/
+body {
+	background-color: #ffebcd;
+	font-family: "MS ゴシック", sans-serif;
+    font-size:10pt;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+th,td{
+    vertical-align: middle;
+    text-align:left;
+}
+
+tr.s_key th,tr.s_key td{
+    padding-left: 20px;
+}
+
+#Header{
+	text-align: center;
+	margin-bottom: 10px;
+}
+
+#container { margin-left: 50px;}
+
+input, select {
+	margin: 5px 0 0 5px;
+} 
+
+th {
+	font-weight: normal; 
+}
+
+.title {
+	font-size: 20px;
+}
+
+.search-box {
+	margin: 0 0 5px 30px;
+}
+
+.submit-box {
+	text-align: center;
+}
+
+#dl-btn { font-size: 15px; font-weight: normal; margin-bottom: 30px; }
+
+#date_from, #date_to {
+	width: 80px;
+	text-align:center;
+}

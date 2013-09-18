@@ -1,0 +1,20 @@
+body {
+	width: 990px;
+	height: 100%;
+	background-color: #ffebcd;
+    font-size:10pt;
+    margin-left: 0;
+    margin-right: auto;
+}
+
+#Main {
+	font-size: 10pt;
+	font-family: "MS ゴシック", sans-serif;
+}
+
+#container {
+	width: 95%;
+	margin: 0 auto;
+	padding: 0;
+	text-align: left;
+}

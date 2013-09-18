@@ -1,0 +1,55 @@
+/*
+    Document   : main
+    Created on : 2011/11/15, 15:53:54
+    Author     : raijin-oikawa
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+#item_area{
+}
+#item_area span{
+	margin-right:10px;
+}
+#item_area {
+}
+.btndisp{
+	margin-left:20px;
+	vertical-align:top;
+}
+#list_area{
+    margin-top: 20px;
+}
+table#select_box, table#edit_list {
+    text-align: center;
+    margin-left: 20px;
+    border-collapse: collapse;
+}
+
+#select_box td {
+    text-align:left;
+    padding: 4px;
+    vertical-align: middle;
+}
+
+#edit_list th {
+    text-align:left;
+    padding:8px;
+    border:1px #000000 solid;
+    background-color: #FFFFBB;
+}
+
+#edit_list td {
+    text-align:center;
+    padding:0 8px;
+    border:1px #000000 solid;
+    vertical-align: middle;
+    background-color: #FFFFFF;
+    height:30px;
+}
+
+#edit_list td.name{
+    text-align:left;
+    vertical-align: middle;
+    width:35%;
+}

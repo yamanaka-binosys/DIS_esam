@@ -1,0 +1,273 @@
+/* 
+    Document   : main
+    Created on : 2011/10/19, 17:15:54
+    Author     : raijin-aiba
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+body {
+	width: 580px;
+	height: 100%;
+	background-color: #ffebcd;
+	font-family: "MS ゴシック", sans-serif;
+    font-size:10pt;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+th,td{
+    white-space: nowrap;
+}
+
+
+input,textarea{
+	font-family: "ＭＳ ゴシック", serif;
+}
+
+ul{
+    list-style:none;
+}
+
+img{
+    border-style:none;
+}
+
+td.left{
+    text-align:left;
+}
+
+td.right{
+    text-align:right;
+}
+
+.bold{
+    font-weight:bold;
+    font-size: 9pt;
+}
+
+.schedule a{
+    color:#000000;
+    text-decoration: none;
+}
+
+.schedule .saturday a{
+    color:#0000FF;
+    text-decoration: none;
+}
+
+.schedule .sunday a{
+    color: #FF0000;
+    text-decoration: none;
+}
+
+
+
+/**** HEADER *********************************/
+#Header{
+	background-color: #FFFFBB;
+	border-spacing:0;
+	border-bottom: solid #000000 2px;
+	width: 580px;
+}
+
+#pl_title{
+	border:1px #000000 solid;
+	text-align: center;
+	margin-left:8px;
+	border-collapse:collapse;
+	border-spacing:0;
+	font-family: "ＭＳ ゴシック", serif;
+	font-size:10pt;
+}
+
+#Header table{
+	overflow: hidden;
+}
+
+#Header td.title{
+	text-align:center;
+	text-align:left;
+	position: relative;
+	left: 245px;
+	font-size: 12pt;
+}
+
+
+#Header td.right{
+    width:200px;
+    overflow: hidden;
+    text-align:right;
+    font-size:10pt;
+}
+
+
+
+#Header td.errmsg{
+    text-align:center;
+}
+
+#Header td.btn{
+    text-align:right;
+    padding-right:30px;
+}
+
+#Header td.btn2{
+    text-align:right;
+/*    padding-right:30px;*/
+}
+
+
+/********* partner_list **********/
+#p_list {
+    width:500px;
+    height:100px;
+    margin-left:8px;
+    border: 1px #000000 solid;
+    display:inline;
+    overflow:auto;
+    float: left;
+}
+
+#p_list table {
+    border-spacing:0;
+    text-align:left;
+    white-space: nowrap;
+    border-collapse:collapse;
+}
+
+/******** partner_list title **************/
+#p_list td {
+    padding:3px 5px;
+    background-color:#ffffff;
+}
+
+th.l_left{
+    font-weight:normal;
+    padding:3px 5px;
+}
+
+th.l_right{
+    font-weight:normal;
+    padding:3px 5px;
+}
+
+th.l_center {
+    padding:3px 5px;
+    border-left: 1px #000000 solid;
+    border-right: 1px #000000 solid;
+    font-weight:normal;
+}
+
+/******** partner_list kubun **************/
+#p_list td.center {
+    border-left: 1px #000000 solid;
+    border-right: 1px #000000 solid;
+    padding:3px 5px;
+}
+
+/******** checker option ******************/
+#s_input {
+    float:right;
+}
+
+table#s_input {
+    width: 400px;
+    text-align: left;
+}
+
+/**** SIDE MENU ***********************************/
+#LMenu {
+	background-color: #ccffcc;
+	width:100px;
+	height:100%;
+	padding:8px 8px 0 8px;
+	font-size:10pt;
+	float:left;
+	text-align:left;
+	border-right:2px #000000 solid;
+	border-collapse:collapse;
+}
+
+#LMenu b{
+	text-align: center;
+}
+
+#LMenu hr{
+	border-style: dotted;
+}
+
+#LMenu ul{
+	background-color: #e5ffe8;
+}
+
+#LMenu a {
+	text-decoration: none;
+}
+/******* parent list *****************************/
+#LMenu ul.parent{
+    margin:0;
+    padding:2px 0;
+    border:1px #000000 solid;
+    margin:4px;
+}
+
+/******* sub list *******************************/
+#LMenu ul.sub{
+    margin:0;
+    padding:0px 0;
+    margin:4px;
+}
+
+/**** MAIN ***********************************/
+#Main {
+	font-size: 10pt;
+    margin-left:116px;
+    border-left: solid #000000 2px;  
+    padding-top:8px;
+}
+
+#container {
+	width: 95%;
+	margin: 0 auto;
+	text-align: left;
+}
+
+#container .button {
+	width: 60px;
+}
+#container .input {
+	font-size: 10pt;
+}
+#container .input_hankaku {
+	ime-mode: inactive;
+	font-size: 10pt;
+}
+
+/**** TAB ***********************************/
+#tab {
+	margin: 0;
+	padding: 0;
+	border-bottom: 2px solid #333333;
+	height: 1.5em;
+	overflow: hidden;
+}
+
+#green{
+    background-color:#f0fff0;
+}
+
+#yellow{
+    background-color:#fffacd;
+}
+
+#red{
+    background-color:#ffa07a;
+}
+
+#gray{
+    background-color:#C0C0C0;
+}
+
+
+

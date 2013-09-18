@@ -1,0 +1,33 @@
+body {
+	background-color: #ffebcd;
+    font-size:10pt;
+    margin-left: 0;
+}
+
+#Main {
+	font-size: 10pt;
+	font-family: "MS ゴシック", sans-serif;
+}
+
+#container {
+	margin: 4px 0 0 10px;
+	padding: 0;
+	text-align: left;
+}
+#container .button {
+	width: 60px;
+}
+
+#container .input {
+	font-size: 10pt;
+}
+
+#container .input_hankaku {
+	ime-mode: inactive;
+	font-size: 10pt;
+}
+
+span.cal-time {
+	padding-right: 2px;
+	color: #555;
+}

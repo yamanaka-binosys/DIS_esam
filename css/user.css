@@ -1,0 +1,245 @@
+/* 
+    Document   : action_plan
+    Created on : 2011/10/27, 11:11:00
+    Author     : raijin-oikawa
+    Description:
+        Purpose of the stylesheet follows.
+*/
+body {
+	width: 850px;
+	background-color: #ffebcd;
+	font-family: "MS ゴシック", sans-serif;
+    font-size:10pt;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+th,td{
+    white-space: nowrap;
+}
+
+
+input,textarea{
+	font-family: "ＭＳ ゴシック", serif;
+}
+
+ul{
+    list-style:none;
+}
+
+img{
+    border-style:none;
+}
+
+td.left{
+    text-align:left;
+}
+
+td.right{
+    text-align:right;
+}
+
+.bold{
+    font-weight:bold;
+    font-size: 9pt;
+}
+
+.schedule a{
+    color:#000000;
+    text-decoration: none;
+}
+
+.schedule .saturday a{
+    color:#0000FF;
+    text-decoration: none;
+}
+
+.schedule .sunday a{
+    color: #FF0000;
+    text-decoration: none;
+}
+
+td,th{
+    white-space: nowrap;
+    vertical-align:top;
+}
+
+.list_title{
+    font-weight: bold;
+    font-size: 12pt;
+    border:1px #000000 solid;
+}
+
+.schedule{
+    border-collapse:collapse;
+    margin: 0 auto;
+    background-color: #ffff99;
+}
+
+.schedule th, .schedule td{
+    border:1px #000000 solid;
+    text-align:center;
+    width: 110px;
+}
+
+.schedule td{
+    background-color: #FFFFFF;
+}
+
+.p_list{
+    background-color:#FFFFFF;
+    height:100px;
+    margin:5px;
+    overflow-y:auto;
+    overflow-x:hidden;
+    border: 1px #000000 solid;
+}
+
+.p_list th{
+    font-weight:normal;
+    border-style: none;
+}
+
+.left th{
+    border-style: none;
+}
+
+.t_none table{
+    border-style: none;
+}
+
+.p_list td{
+    border-style: none;
+    padding:3px;
+}
+/**** MAIN ***********************************/
+#Main {
+	font-size: 10pt;
+    padding-top:8px;
+}
+
+#container {
+	width: 95%;
+	margin: 0 auto;
+	text-align: left;
+}
+
+#container .button {
+	width: 60px;
+}
+#container .input {
+	font-size: 10pt;
+}
+#container .input_hankaku {
+	ime-mode: inactive;
+	font-size: 10pt;
+}
+#container table.t_name{
+
+    border-collapse:collapse;
+}
+
+/**** table list name ****/
+#container th.left{
+    border-collapse:collapse;
+    border: 1px #000000 solid;
+    background-color:#ccffcc;
+}
+#container th.right{
+    border-collapse:collapse;
+    border: 1px #000000 solid;
+    background-color:#ffff00;
+}
+
+#container td.left{
+    margin:3px;
+    border-collapse:collapse;
+    border: 1px #000000 solid;
+    border-style:solid none none none;
+}
+
+#container td.center{
+    margin:3px;
+    border-collapse:collapse;
+    border: 1px #000000 solid;
+    border-style:solid solid none none;
+}
+
+#container td.right{
+    padding:3px;
+    border-collapse:collapse;
+    border: 1px #000000 solid;
+    border-style:solid none none none;
+}
+
+/***** list_title ******/
+
+#container th.t_left{
+    padding-top:5px;
+    text-align:left;
+    border-collapse:collapse;
+}
+
+#container th.t_center{
+    padding-top:5px;
+    text-align:left;
+    border-collapse:collapse;
+}
+
+#container th.t_right{
+    padding-top:5px;
+    text-align:left;
+    border-collapse:collapse;
+}
+
+
+/**p_list name **/
+#container th.l_left,#container th.l_center,#container th.l_right{
+    padding:2px;
+    text-align:left;
+    background-color:#ffff99;
+}
+
+/**p_list setting **/
+#container td.l_left{
+    padding:3px;
+    border-collapse:collapse;
+    border-style:none;
+}
+
+#container td.l_center{
+    padding:3px;
+    border-collapse:collapse;
+    border-style:none;
+}
+
+#container td.l_right{
+    padding:3px;
+    border-collapse:collapse;
+}
+
+#container th.info{
+    text-align:center;
+    border-collapse:collapse;
+    border: 1px #000000 solid;
+    background-color:#99ffff;
+
+}
+
+#container td.info{
+    text-align:left;
+    border-collapse:collapse;
+    border: 1px #000000 solid;
+    background-color:#ffffff;
+}
+
+#file_list{
+    border-collapse:collapse;
+    border: 1px #000000 solid;    
+}
+
+#file_list td{
+    background-color: #ffffff;
+    border-collapse:collapse;
+    border: 1px #000000 solid;    
+}

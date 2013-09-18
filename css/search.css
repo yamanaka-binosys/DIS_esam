@@ -1,0 +1,43 @@
+﻿/**** HEADER *********************************/
+#SearchHeader{
+    /*background-color:#FFFFCC;*/
+    background-color: #FFFFBB;
+    border-spacing:0;
+    border-bottom: solid #000000 2px;
+}
+
+#SearchHeader table{
+/*
+    overflow: hidden;
+	text-align: right;
+	margin: 0 auto;
+*/
+}
+
+#SearchHeader td.title{
+	text-align:center;
+	text-align:left;
+	position: relative;
+	left: 165px;
+	font-size: 12pt;
+}
+
+#SearchHeader td.right{
+    width:200px;
+    overflow: hidden;
+    text-align:right;
+    font-size:14px;
+}
+
+#SearchHeader td.errmsg{
+	text-align:left;
+	position: relative;
+	left: 165px;
+}
+
+#SearchHeader td.btn{
+    width:200px;
+    overflow: hidden;
+    text-align:right;
+}
+

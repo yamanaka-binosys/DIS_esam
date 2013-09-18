@@ -1,0 +1,37 @@
+#!/usr/bin/env php
+<?php
+// vim: ft=php
+ini_set('display_errors', 'on');
+
+$thisHelper = dirname(__FILE__);
+require_once($thisHelper . '/config/config.php');
+require_once($thisHelper . '/config/database.php');
+require_once($thisHelper . '/Core/Core.php');
+
+Logger::path(ROOT . '/log/');
+
+
+$usage = <<<EOL
+
+ Batch runner
+ ============
+
+ 使い方: php runner name
+
+ オプション
+   name    batches 以下のクラス名 
+
+EOL;
+
+if ($argc < 2)
+{
+  echo "引数が不正です。" . "\n";
+  echo $usage;
+  exit;
+}
+
+require_once(ROOT . '/batches/' . $argv[1] . '.php');
+
+$batch = new $argv[1]();
+$batch->run();
+

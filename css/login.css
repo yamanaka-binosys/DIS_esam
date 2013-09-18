@@ -1,0 +1,54 @@
+/* 
+    Document   : login
+    Created on : 2011/10/26, 14:13:33
+    Author     : raijin-aiba
+    Description:
+        Purpose of the stylesheet follows.
+*/
+/**** COMMON *********************************/
+html{
+	margin: 0;
+}
+
+body{
+	background-color: #FFEBCD;
+	font-family: "MS ゴシック", sans-serif;
+	font-size:10pt;
+	margin: 0;
+	padding: 0;
+}
+
+a {
+    text-decoration: none;
+}
+
+/**** HEADER *********************************/
+#Header{
+	background-color: #FFFFBB;
+	text-align: center;
+	height: 130px;
+	margin: 0 ;
+	border-bottom: 2px #000000 solid;
+}
+
+/*** LOGIN BOX *******************************/
+#Box,#change_pass {
+	margin-left: auto;
+	margin-right: auto;
+	padding-top: 20px;
+}
+#Box table,#change_pass table {
+	margin-left: auto;
+	margin-right: auto;
+}
+#Box tr {
+	height: 20px;
+}
+#Box input {
+	width: 150px;
+	ime-mode: inactive;
+}
+#Box td#button {
+	text-align: center;
+}
+

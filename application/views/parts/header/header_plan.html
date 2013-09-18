@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<meta http-equiv="Content-Script-Type" content="text/javascript">
+<link rel="stylesheet" type="text/css" href="http://localhost/sample/css/header.css">
+<title></title>
+</head>
+<body>
+<div id="Header">
+<table style="width:1024px;">
+<tr>
+<td class="title"><img src="http://localhost/sample/images/plan.gif" alt=""></td>
+<td rowspan="2" class="right">
+2012 / 2 / 27 (月)<br>
+システム部門システム部門<br>
+システム管理用<br>
+○○　○○<br>
+</td>
+</tr>
+<tr>
+<td class="errmsg">
+エラーメッセージ表示
+</td>
+</tr>
+</table>
+
+<table style="width: 900px; text-align: left">
+<tr>
+<td>確認者 <input type="text" style="width: 120px" class="input" name="checker" id="checker"  style="width:148px" maxlength="256" value="" >
+<input type="button" style="width: 60px" name="select_checker" id="select_checker" value="選択" onclick="location.href='select_checker.html'">
+</td>
+<td>日付
+<input type="text" style="width: 40px;" class="input" name="year" id="year" size="4" maxlength="4" value="" >年
+<input type="text" style="width: 20px;" class="input" name="month" id="month" size="2" maxlength="2" value="" >月
+<input type="text" style="width: 20px;" class="input" name="day" id="day" size="2" maxlength="2" value="" >日
+(<input type="text" style="width: 20px;" class="input" name="weekday" id="weekday" size="2" maxlength="2" value="Ｇ" disabled>)
+<input type="button" style="width: 50px;" class="input" name="before_day" id="before_day" size="1" value="<<前日" >
+<input type="button" style="width: 50px;" class="input" name="next_day" id="next_day" size="1" value="翌日>>" >
+</td>
+<td><input type="button" style="width: 60px;" class="setbtn" name="set" id="set" value="登録"></td>
+<td><input type="button" style="width: 60px;" class="setbtn" name="set" id="set" value="移動"></td>
+<td><input type="button" style="width: 60px;" class="setbtn" name="set" id="set" value="削除"></td>
+</tr>
+</table>
+
+</div>
+</body>
+</html>

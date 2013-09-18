@@ -1,0 +1,55 @@
+/*
+    Document   : select_client
+    Created on : 2011/10/27, 11:11:00
+    Author     : kiuchi
+    Description:
+        Purpose of the stylesheet follows.
+*/
+body {
+	width: 600px;
+	height: 100%;
+	background-color: #ffebcd;
+	font-family: "MS ゴシック", sans-serif;
+    font-size:10pt;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+th,td{
+    white-space: nowrap;
+}
+
+#Header table{
+	margin: 0 auto;
+}
+
+#container table {
+	margin: 0 auto;
+}
+
+#container select {
+	margin: 0 auto;
+}
+
+table.search_list_box {
+	margin: 0 auto;
+	width: 400px;
+	border:1px #000000 solid;
+}
+table.search_list_box_dairi {
+	margin: 0 auto;
+	width: 450px;
+	border:1px #000000 solid;
+}
+td.list_name {
+	padding-left: 80px;
+}
+
+select.search_list {
+	width: 180px;
+}
+
+input.search_list {
+	width: 175px;
+}
+
