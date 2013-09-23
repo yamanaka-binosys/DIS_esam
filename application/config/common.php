@@ -130,7 +130,8 @@
 			'index.php/user/index',
 			'index.php/project_item/index',
 			'index.php/division/index',
-			'index.php/item_visibility/index'
+			'index.php/item_visibility/index',
+            'index.php/holiday_item/index'
 		)
 	);
 	

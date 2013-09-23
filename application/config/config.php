@@ -15,7 +15,8 @@
 |
 */
 //$config['base_url']	= '';
-$config['base_url']	= 'http://10.30.1.36/elleair/';
+//$config['base_url']	= 'http://10.30.1.36/elleair/';
+$config['base_url']	= 'http://disesam.local/';
 
 /*
 |--------------------------------------------------------------------------

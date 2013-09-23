@@ -464,6 +464,7 @@ define('SHOW_DIVISION','division');
 define('SHOW_DIVISION_SU','division_update');
 define('SHOW_DIVISION_SD','division_delete');
 define('SHOW_ITEM_VISI','item_visibility');
+define('SHOW_HOLIDAY_ITEM','holiday_item');
 define('SHOW_HELP','help');
 define('SHOW_SELECT_CHECKER','select_checker');
 define('SHOW_SEARCH_CHECKER','search_checker');

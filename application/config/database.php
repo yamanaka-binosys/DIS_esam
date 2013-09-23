@@ -64,10 +64,10 @@ $db['default']['swap_pre'] = '';
 $db['default']['autoinit'] = TRUE;
 $db['default']['stricton'] = FALSE;
 
-$db['elleair']['hostname'] = '10.30.3.224';
+$db['elleair']['hostname'] = 'localhost';
 $db['elleair']['username'] = 'postgres';
-$db['elleair']['password'] = 'Daio123';
-$db['elleair']['database'] = 'elleair';
+$db['elleair']['password'] = 'hideki1';
+$db['elleair']['database'] = 'elleair0919';
 $db['elleair']['dbdriver'] = 'postgre';
 $db['elleair']['dbprefix'] = '';
 $db['elleair']['pconnect'] = TRUE;

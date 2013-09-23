@@ -63,8 +63,15 @@ log_message('debug',"\$base_url = $base_url");
 </div>
 </li>
 <li><a href="javascript:item_visibility('<?php echo $base_url ?>','<?php echo SHOW_ITEM_VISI ?>')">画面生成</a></li>
+
+
+
+<li><a href="javascript:holiday_item('<?php echo $base_url ?>','<?php echo SHOW_HOLIDAY_ITEM ?>')">祝日設定</a></li>
 </ul>
 </li>
+
+
+
 <li><a href="javascript:help('<?php echo $base_url ?>')">ヘルプ</a></li>
 </ul>
 <br />

@@ -399,6 +399,17 @@ class Common_manager {
 				$init_data['js_name']       = 'submit_item_visibility()'; // JavaScriptのファンクション名
 				break;
 
+			// 企画情報アイテム
+			case SHOW_HOLIDAY_ITEM:
+				// 初期共通項目情報
+				$init_data['title']       = "祝日設定";  		// タイトルに表示する文字列
+				$init_data['css']         = 'css/holiday_item.css'; // 個別CSSのアドレス
+				$init_data['errmsg']      = NULL;             // エラーメッセージ
+				$init_data['btn_name']    = "更新";           // ボタン表示名
+				$init_data['btn_confirmer'] = NULL;             // 確認者選択ボタン（確認者・認証者）
+				$init_data['gif_name']      = 'images/holiday_item.gif'; //
+				$init_data['js_name']       = 'submit_holiday_item()'; // JavaScriptのファンクション名
+				break;
 			// 相手先選択
 			case SHOW_SELECT_CLIENT:
 				$init_data['title']         = "相手先選択";    // タイトルに表示する文字列

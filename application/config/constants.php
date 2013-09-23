@@ -230,6 +230,7 @@ define('MY_VIEW_SELECT_CLIENT_SEARCH_AGENCY','parts/content/select_client_search
 define('MY_VIEW_SELECT_CLIENT_SEARCH_MAKER','parts/content/select_client_search_maker');
 define('MY_VIEW_S_RIREKI','parts/content/s_rireki');
 define('MY_VIEW_ITEM_VISIBILITY','parts/item_visibility');
+define('MY_VIEW_HOLIDAY_ITEM','parts/holiday_item');
 define('MY_VIEW_TODO','parts/content/todo');
 define('MY_VIEW_CHECK_TODO','parts/content/check_todo');
 define('MY_VIEW_MESSAGE','parts/content/message');
@@ -260,6 +261,13 @@ define('MY_NEW_VIEW_RESULT_V_TENPO','parts/result_view/new_tenpo');
 define('MY_NEW_VIEW_RESULT_V_DAIRI','parts/result_view/new_dairi');
 define('MY_NEW_VIEW_RESULT_V_GYOUSYA','parts/result_view/new_gyousya');
 define('MY_NEW_VIEW_RESULT_V_OFFICE','parts/result_view/new_office');
+
+/*
+|--------------------------------------------------------------------------
+| 活動区分定数
+|--------------------------------------------------------------------------
+*/
+define('MY_VIEW_HOLIDAY_DATA','parts/holiday_item');
 
 /*
 |--------------------------------------------------------------------------
@@ -464,6 +472,7 @@ define('SHOW_DIVISION','division');
 define('SHOW_DIVISION_SU','division_update');
 define('SHOW_DIVISION_SD','division_delete');
 define('SHOW_ITEM_VISI','item_visibility');
+define('SHOW_HOLIDAY_ITEM','holiday_item');
 define('SHOW_HELP','help');
 define('SHOW_SELECT_CHECKER','select_checker');
 define('SHOW_SEARCH_CHECKER','search_checker');

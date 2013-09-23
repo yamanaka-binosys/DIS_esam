@@ -90,6 +90,10 @@ function item_visibility(){
 	parent.content.location.href="http://localhost/sample/application/views/content/item_visibility.html";
 }
 
+function holiday_item(){
+	parent.content.location.href="http://localhost/sample/application/views/content/holiday_item.html";
+}
+
 function help(){
 	parent.content.location.href="http://localhost/sample/application/views/content/help.html";
 }

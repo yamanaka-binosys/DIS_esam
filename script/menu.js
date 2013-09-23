@@ -256,6 +256,17 @@ function item_visibility(base_url,head_name){
 	window.parent.document.getElementById('baseset').rows = "117, *";
 }
 
+function holiday_item(base_url,head_name){
+	// CONTENT画面
+	url=base_url.concat("index.php/holiday_item/index");
+	parent.content.location.href=url;
+	// HEADER画面
+	head_url=base_url.concat("index.php/header/index/",head_name);
+	parent.header.location.href=head_url;
+
+	window.parent.document.getElementById('baseset').rows = "117, *";
+}
+
 function help(base_url){
 	// CONTENT画面
 	url=base_url.concat("help.html");
