@@ -5,7 +5,7 @@ class Holiday_item extends MY_Controller{
   /***
    * @param mode TRUE：表有り　FALSE：表無し　
    */
-  function index($conf_name = MY_PROJECT_DATA)
+  function index($conf_name = MY_HOLIDAY_DATA)
   {
     try
     {
@@ -13,10 +13,10 @@ class Holiday_item extends MY_Controller{
       $data = $this->init($conf_name); // ヘッダデータ等初期情報取得
 
       // モデル呼び出し
-      $this->load->model('sgmtb080'); //
+      $this->load->model('sgmtb150'); //
 
       // 初期表示
-      $project_data = $this->sgmtb080->get_project_data($data["page"]);   //データ取得
+      $project_data = $this->sgmtb150->get_project_data($data["page"]);   //データ取得
       $data["page_tabel"] = $this->_get_page_button($data["page"]);            //ボタン
       $data["list_tabel"] = $this->_get_page_list($project_data); //表示
 
@@ -34,7 +34,7 @@ class Holiday_item extends MY_Controller{
    * 登録,更新,削除(内部的には、all削除、登録)
    * @param
    */
-  function register($conf_name = MY_PROJECT_DATA)
+  function register($conf_name = MY_HOLIDAY_DATA)
   {
     try
     {
@@ -59,7 +59,7 @@ class Holiday_item extends MY_Controller{
         //登録処理
         if($regist_data) {
           $res = $this->project_item_manager->set_db_insert_data($regist_data);
-          $page_max = ceil(count($regist_data) / MY_PROJECT_MAX_VIEW);
+          $page_max = ceil(count($regist_data) / MY_HOLIDAY_MAX_VIEW);
           if($page > $page_max) $page = $page_max;  //表示ページ調整
         }
       }
@@ -156,8 +156,8 @@ class Holiday_item extends MY_Controller{
 			if(!$page || $page < 0) $page=1;
 
 			$data["page"] = $page;  //現在のページ数
-			$data["max_view"] = MY_PROJECT_MAX_VIEW;  //一ページの表示数
-			$data["start_no"] = MY_PROJECT_MAX_VIEW * ($page-1);  //データ番号(javascriptでの採番に使用)
+			$data["max_view"] = MY_HOLIDAY_MAX_VIEW;  //一ページの表示数
+			$data["start_no"] = MY_HOLIDAY_MAX_VIEW * ($page-1);  //データ番号(javascriptでの採番に使用)
 
 			log_message('debug',"========== Holiday_item init end ==========");
 			return $data;
@@ -212,9 +212,9 @@ class Holiday_item extends MY_Controller{
 		{
 			log_message('debug',"========== Holiday_item _get_page_button start ==========");
 			// 初期化
-			$this->load->library('project_item_manager');
+			$this->load->library('holiday_item_manager');
 			$table_data = NULL;
-			$table_data = $this->project_item_manager->set_project_data_page($page);
+			$table_data = $this->holiday_item_manager->set_holiday_data_page($page);
 
 			log_message('debug',"========== Holiday_item _get_page_button end ==========");
 			return $table_data;
@@ -232,22 +232,22 @@ class Holiday_item extends MY_Controller{
 	 * @param $mode TRUE=登録　FALSE=更新、削除
 	 * @return string $table_data HTML-STRING文字列
 	 */
-  private function _get_page_list($project_data)
+  private function _get_page_list($holiday_data)
   {
     try
     {
       log_message('debug',"========== Holiday_item _get_page_list start ==========");
       // 初期化
-      $this->load->library('project_item_manager');
+      $this->load->library('holiday_item_manager');
       $table_data = "";
 
-      if(!$project_data) {
+      if(!$holiday_data) {
         //データなし
-        $table_data = $this->project_item_manager->get_project_data_list();
+        $table_data = $this->holiday_item_manager->get_holiday_data_list();
       } else {
         //データあり
-        foreach($project_data as $key => $val) {
-          $table_data .= $this->project_item_manager->get_project_data_list( $val["view_no"], $val['dbnrinm'], $val['dbnricd'], $val['itemnm'], $val['itemcd'] );
+        foreach($holiday_data as $key => $val) {
+          $table_data .= $this->holiday_item_manager->get_holiday_data_list( $val['syukid'], $val['syukdate'], $val['syukmemo'] );
         }
       }
 

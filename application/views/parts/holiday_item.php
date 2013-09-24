@@ -36,6 +36,11 @@ if(isset($form)) {
 <div id="">
 <div id="container">
 <br>
+<select>年度
+    <?php for($i=2012;$i<2022;$i++): ?>
+        <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
+    <?php endfor; ?>
+</select>        
 <div id="page1">
 <table>
 <tr>
@@ -48,8 +53,8 @@ if(isset($form)) {
       <td style="width: 85px">&nbsp;</td>
       <!--<td align="center" style="width: 30px">行</td>-->
       <td style="width: 85px">&nbsp;</td>
-      <td align="left" style="width: 200px">大分類名</td>
-      <td align="left" style="width: 250px">アイテム名</td>
+      <td align="left" style="width: 200px">設定日</td>
+      <td align="left" style="width: 250px">メモ</td>
     </tr>
   <?php echo $list_tabel; ?>
   </table>

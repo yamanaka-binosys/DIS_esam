@@ -79,6 +79,7 @@ define('MY_RESULT_OUT_SITU_KBN','014');
 define('MY_RESULT_OUT_SITU_BASHO_KBN','015');
 define('MY_CALENDAR_CHAR_CNT',12);
 define('MY_CALENDAR_SCR_CHAR_CNT',9);
+define('MY_HOLIDAY_MAX_VIEW',20);
 /*
 |--------------------------------------------------------------------------
 | タブ定義項目
@@ -139,6 +140,10 @@ define('MY_SELECT_WORK_TITLE', 's_select_work_title');
 define('MY_SELECT_OUT_SITUATION', 's_select_out_situation');
 define('MY_SELECT_OUT_LOCATION', 's_select_out_location');
 define('MY_SELECT_GENERAL_PURPOSE', 's_general_purpose');
+
+define('MY_HOLIDAY_DATA','s_holiday_item');
+define('MY_HOLIDAY_POSSESSION','s_holiday_possession');
+define('MY_HOLIDAY_POSSESSION_VIEW','s_holiday_possession_v');
 
 
 define('MY_SELECT_CLIENT_HEAD', 'select_head');

@@ -61,6 +61,7 @@ define('MY_TITLE_SPACE','space');
 define('MY_DEFAULT_LIST_SIZE','10');
 define('MY_CODE_LENGTH','5');
 define('MY_PROJECT_MAX_VIEW',20);
+define('MY_HOLIDAY_MAX_VIEW',20);
 define('MY_KBN_LINE_MAX',10);
 define('MY_KARI_KBN_NO',8);
 define('MY_TYPE_GENERAL','001');
@@ -139,7 +140,9 @@ define('MY_SELECT_WORK_TITLE', 's_select_work_title');
 define('MY_SELECT_OUT_SITUATION', 's_select_out_situation');
 define('MY_SELECT_OUT_LOCATION', 's_select_out_location');
 define('MY_SELECT_GENERAL_PURPOSE', 's_general_purpose');
-
+define('MY_HOLIDAY_DATA','s_holiday_item');
+define('MY_HOLIDAY_POSSESSION','s_holiday_possession');
+define('MY_HOLIDAY_POSSESSION_VIEW','s_holiday_possession_v');
 
 define('MY_SELECT_CLIENT_HEAD', 'select_head');
 define('MY_SELECT_CLIENT_MAKER', 'select_maker');

@@ -333,6 +333,16 @@
 		'btn_name' => "更新",
 		'form'     => "mt_seishiki"
 	);
+	// 祝日設定アイテム
+	$config['s_holiday_item'] = array(
+		'title'    => "祝日設定アイテム",
+		'css'      => NULL,
+		'image'    => 'images/holiday_item.gif',
+		'msg'      => NULL,
+		'errmsg'   => NULL,
+		'btn_name' => "更新",
+		'form'     => "index"
+	);
 	////////////////////////////////////////////////////
 
 	/////////// ポップアップテスト用////////////////////
