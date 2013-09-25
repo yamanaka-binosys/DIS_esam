@@ -570,7 +570,7 @@ class Sgmtb150 extends CI_Model {
    * @param	string $data = 更新情報
    * @return	boolean $res = TRUE = 成功:FALSE = 失敗
   */
-  public function insert_sgmtb080_data($data = NULL)
+  public function insert_sgmtb150_data($data = NULL)
   {
     try
     {
@@ -582,7 +582,7 @@ class Sgmtb150 extends CI_Model {
       //////////////////////////////
       //  削除処理
       //
-      $sql = "DELETE FROM SGMTB080";
+      $sql = "DELETE FROM SGMTB150 WHERE EXTRACT( year from syukdate) = EXTRACT( year from date()";
       log_message('debug',"sql=".$sql);
       // クエリ実行
       $query = $this->db->query($sql);

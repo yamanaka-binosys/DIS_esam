@@ -20,7 +20,8 @@ class Holiday_item extends MY_Controller{
       $data["page_tabel"] = $this->_get_page_button($data["page"]);            //ボタン
       $data["list_tabel"] = $this->_get_page_list($holiday_data); //表示
 
-      $data["s_year"] = $this->config->item('max_year');
+      $data["max_year"] = $this->config->item('max_year'); // 最大年
+      
       // Main表示情報取得
       $this->display($data); // 画面表示処理
       log_message('debug',"========== Holiday_item index end ==========");
@@ -43,8 +44,8 @@ class Holiday_item extends MY_Controller{
       $data = $this->init($conf_name); // ヘッダデータ等初期情報取得
 
             // モデル呼び出し
-      $this->load->model('sgmtb080'); //
-      $this->load->library('project_item_manager');
+      $this->load->model('sgmtb150'); //
+      $this->load->library('holiday_item_manager');
       $this->load->library('message_manager');
 
       $page = $data['page'];
@@ -55,18 +56,18 @@ class Holiday_item extends MY_Controller{
         $regist_data = array();
 
         // 登録データ生成
-        $regist_data = $this->project_item_manager->insert_data_set($_POST);
+        $regist_data = $this->holiday_item_manager->insert_data_set($_POST);
 
         //登録処理
         if($regist_data) {
-          $res = $this->project_item_manager->set_db_insert_data($regist_data);
+          $res = $this->holiday_item_manager->set_db_insert_data($regist_data);
           $page_max = ceil(count($regist_data) / MY_HOLIDAY_MAX_VIEW);
           if($page > $page_max) $page = $page_max;  //表示ページ調整
         }
       }
 
       // 表示
-      $holiday_data = $this->sgmtb080->get_project_data($page);   //データ取得
+      $holiday_data = $this->sgmtb150->get_holiday_data($page);   //データ取得
       $data["page_tabel"] = $this->_get_page_button($page);            //ボタン
       $data["list_tabel"] = $this->_get_page_list($holiday_data); //表示
 

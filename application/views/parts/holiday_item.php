@@ -37,7 +37,7 @@ if(isset($form)) {
 <div id="container">
 <br>
 <select name="holiday_year" onChange="holiday_year_chenge(this.options[this.selectedIndex].value)">
-    <?php for($i=2012;$i<$s_year+1;$i++): ?>
+    <?php for($i=2012;$i<$max_year+1;$i++): ?>
         <option value="<?php echo $i; ?>" <?php if($i==date("Y")) echo "selected"; ?>><?php echo $i; ?></option>
     <?php endfor; ?>
 </select>        

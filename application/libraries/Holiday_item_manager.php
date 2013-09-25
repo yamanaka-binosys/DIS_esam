@@ -251,17 +251,17 @@ class Holiday_item_manager {
    * @return array
   */
   public function set_db_insert_data($ins_data){
-    log_message('debug',"========== libraries Project_item_manager set_db_insert_data start ==========");
+    log_message('debug',"========== libraries Holiday_item_manager set_db_insert_data start ==========");
     // 初期化
     $CI =& get_instance();
-    $CI->load->model(array('sgmtb080'));
+    $CI->load->model(array('sgmtb150'));
 
     // DB登録処理
-    $res = $CI->sgmtb080->insert_sgmtb080_data($ins_data);
+    $res = $CI->sgmtb150->insert_sgmtb150_data($ins_data);
 
     return $res;
 
-    log_message('debug',"========== libraries Project_item_manager set_db_insert_data end ==========");
+    log_message('debug',"========== libraries Holiday_item_manager set_db_insert_data end ==========");
   }
 
 }
