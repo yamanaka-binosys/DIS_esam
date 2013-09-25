@@ -58,8 +58,32 @@ class Holiday_item_manager {
           <input type="button" name="dellbtn" id="dellbtn_'.$syukid.'" value="削除">
         </td>
         <td align="left" style="width: 200px">
-          <input type="text" name="dbnrinm[]" size="30" maxlength="256" value="'.$syukdate.'" style="width: 180px">
-          <input type="hidden" name="dbnricd[]" value="'.$syukdate.'">
+        <select name="dbnrinm[]" size="1">';
+        for($i=1;$i<13;$i++){
+            $string_table .= '<option value="' . $i . '"';
+            if($syukdate != ""){ 
+                $j = date_parse_from_format("Y-m-d", $syukdate);
+                if( $i == $j['month']) {
+                    $string_table .= 'selected';
+                };
+            };
+            $string_table .= '>' . $i . '</option>';
+        }
+    $string_table .= '</select>      
+        <select name="dbnricd[]" size="1">';
+        for($i=1;$i<32;$i++){
+            $string_table .= '<option value="' . $i . '"';
+            if($syukdate != ""){ 
+                $j = date_parse_from_format("Y-m-d", $syukdate);
+                if( $i == $j['day']) {
+                    $string_table .= 'selected';
+                };
+            };
+            $string_table .= '>' . $i . '</option>';
+        }
+    $string_table .= '</select>      
+          <!--<input type="text" name="dbnrinm[]" size="30" maxlength="256" value="'.$syukdate.'" style="width: 180px">
+          <input type="hidden" name="dbnricd[]" value="'.$syukdate.'">-->
         </td>
         <td align="left" style="width: 250px">
           <input type="text" name="itemnm[]" value="'.$syukmemo.'" style="width: 230px">
@@ -81,10 +105,10 @@ class Holiday_item_manager {
     log_message('debug',"========== libraries Project_item_manager insert_data_set start ==========");
     // 初期化
     $CI =& get_instance();
-    $CI->load->model('sgmtb080');
+    $CI->load->model('sgmtb150');
 
     //既存データ取得
-    $all_data = $CI->sgmtb080->get_kikaku_item_data("DbnriCd, DbnriNm, ItemCd, ItemNm, createdate, updatedate, view_no", "", "view_no");
+    $all_data = $CI->sgmtb150->get_kikaku_item_data("DbnriCd, DbnriNm, ItemCd, ItemNm, createdate, updatedate, view_no", "", "view_no");
 
     //ビュー№をkeyに置き換え
     $select_data = array();
@@ -129,18 +153,18 @@ class Holiday_item_manager {
         //データが存在時 更新データセット
 
         //大分類名が存在するかチェック
-        $dbnri_cd = $CI->sgmtb080->get_dname_check($dbnrinm);// 大分類コード取得
+        $dbnri_cd = $CI->sgmtb150->get_dname_check($dbnrinm);// 大分類コード取得
         if($dbnri_cd) {
           //存在：存在する大分類として登録
 
           //アイテム存在チェック
-          $target_view_no = $CI->sgmtb080->get_kikaku_item_data("view_no", "DbnriCd='{$dbnri_cd}' AND ItemCd='{$post_data["itemcd"][$i]}'");
+          $target_view_no = $CI->sgmtb150->get_kikaku_item_data("view_no", "DbnriCd='{$dbnri_cd}' AND ItemCd='{$post_data["itemcd"][$i]}'");
           if(($target_view_no[0]["view_no"] != $post_data["view_no"][$i])) {
             //アイテムコードが加算された場所と値を記憶
             if( isset($no_cnt[$dbnrinm]["item_cnt"]) ) {
               $no_cnt[$dbnrinm]["item_cnt"]++;
             } else {
-              $itemno = $CI->sgmtb080->get_project_item_cnt($dbnrinm);// アイテム数取得
+              $itemno = $CI->sgmtb150->get_project_item_cnt($dbnrinm);// アイテム数取得
               $no_cnt[$dbnrinm]["item_cnt"] = $itemno['max']+1;
             }
             $post_data["dbnricd"][$i] = $dbnri_cd;  //大分類コードセット
@@ -172,7 +196,7 @@ class Holiday_item_manager {
         //データが存在しない場合
 
         //大分類名が存在するかチェック
-        $dbnri_cd = $CI->sgmtb080->get_dname_check($dbnrinm);// 大分類コード取得
+        $dbnri_cd = $CI->sgmtb150->get_dname_check($dbnrinm);// 大分類コード取得
         if($dbnri_cd) {
           //存在：存在する大分類として登録
 
@@ -180,7 +204,7 @@ class Holiday_item_manager {
           if( isset($no_cnt[$dbnrinm]["item_cnt"]) ) {
             $no_cnt[$dbnrinm]["item_cnt"]++;
           } else {
-            $itemno = $CI->sgmtb080->get_project_item_cnt($dbnrinm);// アイテム数取得
+            $itemno = $CI->sgmtb150->get_project_item_cnt($dbnrinm);// アイテム数取得
             $no_cnt[$dbnrinm]["item_cnt"] = $itemno['max']+1;
           }
           $post_data["dbnricd"][$i] = $dbnri_cd;  //大分類コードセット

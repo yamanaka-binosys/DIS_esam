@@ -53,3 +53,11 @@ function dell_row(btn_id) {
   view_no = view_no[1]; //行番号
   $('#no_'+view_no).remove(); //指定行削除
 }
+
+
+  //年コンボがクリックされた時の処理
+function holiday_year_chenge(year_id) {
+    alert('コンボ選択したんだね？'+year_id);
+    //var btn_id  = $(this).attr("id");
+    //dell_row(btn_id);
+};  

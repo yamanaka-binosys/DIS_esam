@@ -36,9 +36,9 @@ if(isset($form)) {
 <div id="">
 <div id="container">
 <br>
-<select>年度
-    <?php for($i=2012;$i<2022;$i++): ?>
-        <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
+<select name="holiday_year" onChange="holiday_year_chenge(this.options[this.selectedIndex].value)">
+    <?php for($i=2012;$i<$s_year+1;$i++): ?>
+        <option value="<?php echo $i; ?>" <?php if($i==date("Y")) echo "selected"; ?>><?php echo $i; ?></option>
     <?php endfor; ?>
 </select>        
 <div id="page1">
@@ -53,7 +53,7 @@ if(isset($form)) {
       <td style="width: 85px">&nbsp;</td>
       <!--<td align="center" style="width: 30px">行</td>-->
       <td style="width: 85px">&nbsp;</td>
-      <td align="left" style="width: 200px">設定日</td>
+      <td align="left" style="width: 160px">設定月日</td>
       <td align="left" style="width: 250px">メモ</td>
     </tr>
   <?php echo $list_tabel; ?>
@@ -65,6 +65,5 @@ if(isset($form)) {
 </div>
 </div>
 <?php if(isset($form)) echo "</form>"; ?>
-
 </body>
 </html>

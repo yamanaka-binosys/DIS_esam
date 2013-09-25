@@ -16,10 +16,11 @@ class Holiday_item extends MY_Controller{
       $this->load->model('sgmtb150'); //
 
       // 初期表示
-      $project_data = $this->sgmtb150->get_project_data($data["page"]);   //データ取得
+      $holiday_data = $this->sgmtb150->get_holiday_data($data["page"]);   //データ取得
       $data["page_tabel"] = $this->_get_page_button($data["page"]);            //ボタン
-      $data["list_tabel"] = $this->_get_page_list($project_data); //表示
+      $data["list_tabel"] = $this->_get_page_list($holiday_data); //表示
 
+      $data["s_year"] = $this->config->item('max_year');
       // Main表示情報取得
       $this->display($data); // 画面表示処理
       log_message('debug',"========== Holiday_item index end ==========");
@@ -91,9 +92,10 @@ class Holiday_item extends MY_Controller{
       //$data = $this->init($conf_name); // ヘッダデータ等初期情報取得
 
       //挿入数
-      $add_num = (int)$this->input->post('add_num');
-      if(!$add_num) $add_num = 1;
-      if($add_num >= 10) $add_num = 9;
+      //$add_num = (int)$this->input->post('add_num');
+      $add_num = 1;                 // 常に１行だけ
+      //if(!$add_num) $add_num = 1;
+      //if($add_num >= 10) $add_num = 9;
 
       //追加位置
       $view_no = (int)$this->input->post('view_no');
@@ -274,12 +276,12 @@ class Holiday_item extends MY_Controller{
       log_message('debug',"========== Holiday_item _get_list_add_data start ==========");
 
       // 初期化
-      $this->load->library('project_item_manager');
+      $this->load->library('holiday_item_manager');
       $table_data="";
 
       //追加行取得
       for($i=0; $i < $add_num; $i++) {
-        $table_data .= $this->project_item_manager->get_project_data_list();
+        $table_data .= $this->holiday_item_manager->get_holiday_data_list();
       }
 
       log_message('debug',"========== Holiday_item _get_list_add_data end ==========");

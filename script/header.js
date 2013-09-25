@@ -543,3 +543,8 @@ function header_checkDate(year, month, day) {
     return true;
 }
 
+function submit_holiday_item() {
+  parent.content.document.forms[0].set.value = 1;
+  parent.content.document.forms[0].action = "register";
+  parent.content.document.forms[0].submit();
+}

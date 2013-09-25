@@ -133,7 +133,7 @@ class Sgmtb150 extends CI_Model {
 	 * @param	int $add = 追加したデータ数
 	 * @return	boolean $res = TRUE = 成功:FALSE = 失敗
 	 */
-	function get_project_data($page = 1,$add = 0,$add_end = 0)
+	function get_holiday_data($page = 1,$add = 0,$add_end = 0)
 	{
 		log_message('debug',"========== get_project_data start ==========");
 		// 初期化
@@ -170,7 +170,8 @@ class Sgmtb150 extends CI_Model {
 				FROM
 					SGMTB150
 				WHERE
-					deletedate IS NULL
+					deletedate IS NULL AND
+                    extract(year from syukdate) = extract(year from now())
 				ORDER BY syukdate 
 				LIMIT $limit + ? OFFSET ? + ?";
 		log_message('debug',"sql=".$sql);
