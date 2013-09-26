@@ -26,8 +26,8 @@ if(isset($form)) {
 
 <!-- hidden -->
 <input type="hidden" name="set" value="">
-<input type="hidden" name="page" id="page" value="<?php echo $page; ?>">
-<input type="hidden" name="start_no" id="start_no" value="<?php echo $start_no; ?>">
+<!--<input type="hidden" name="page" id="page" value="<?php echo $page; ?>">-->
+<!--\<input type="hidden" name="start_no" id="start_no" value="<?php echo $start_no; ?>">-->
 <div id="app_url" style="display:none"><?php echo $app_url; ?></div>
 <div id="add_view_no" style="display:none"></div>
 
@@ -44,7 +44,7 @@ if(isset($form)) {
 <div id="page1">
 <table>
 <tr>
-<td><?php echo $page_tabel; ?></td>
+<td><!--<?php echo $page_tabel; ?>--></td>
 </tr>
 <tr>
 <td>

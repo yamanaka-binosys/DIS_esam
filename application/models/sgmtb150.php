@@ -133,14 +133,14 @@ class Sgmtb150 extends CI_Model {
 	 * @param	int $add = 追加したデータ数
 	 * @return	boolean $res = TRUE = 成功:FALSE = 失敗
 	 */
-	function get_holiday_data($page = 1,$add = 0,$add_end = 0)
+	function get_holiday_data($holiday_year = 0)
 	{
 		log_message('debug',"========== get_project_data start ==========");
 		// 初期化
 		$res = NULL;
-		$limit = MY_PROJECT_MAX_VIEW;  //ページ表示件数
+		//$limit = MY_PROJECT_MAX_VIEW;  //ページ表示件数
 
-		$getPage = ($page - 1) * $limit;
+		//$getPage = ($page - 1) * $limit;
 		// sql文作成
 		/*
 		$sql = "SELECT
@@ -171,12 +171,12 @@ class Sgmtb150 extends CI_Model {
 					SGMTB150
 				WHERE
 					deletedate IS NULL AND
-                    extract(year from syukdate) = extract(year from now())
-				ORDER BY syukdate 
-				LIMIT $limit + ? OFFSET ? + ?";
+                    extract(year from syukdate) = ?
+				ORDER BY syukdate"; 
+				//LIMIT $limit + ? OFFSET ? + ?";
 		log_message('debug',"sql=".$sql);
 		// クエリ実行
-		$query = $this->db->query($sql,array($add,$getPage,$add_end));
+		$query = $this->db->query($sql,array($holiday_year));
 		if($query->num_rows() > 0)
 		{
 			$res = $query->result_array();
@@ -260,16 +260,14 @@ class Sgmtb150 extends CI_Model {
 	 * @access	public
 	 * @return	boolean $res = TRUE = 成功:FALSE = 失敗
 	 */
-	function get_project_dbnri_cnt()
+	function get_holiday_syukid_cnt()
 	{
-		log_message('debug',"========== get_project_dbnri_cnt start ==========");
+		log_message('debug',"========== get_holiday_syukid_cnt start ==========");
 		//log_message('debug',"shbn=".$shbn);
 		// 初期化
 		$res = NULL;
 		// sql文作成
-//		$sql = "SELECT MAX(CAST (dbnricd as int)) FROM sgmtb080;";
-		$sql = "SELECT MAX(CAST (dbnricd AS int)) AS dbnri_cnt FROM sgmtb080;";
-		//$sql = "SELECT COUNT(distinct dbnrinm) as dbnri_cnt FROM sgmtb080";
+		$sql = "SELECT MAX(CAST (syukid AS int)) AS syukid_cnt FROM sgmtb080;";
 		log_message('debug',"sql=".$sql);
 		// クエリ実行
 		$query = $this->db->query($sql);
@@ -279,7 +277,7 @@ class Sgmtb150 extends CI_Model {
 		}else{
 			$res = FALSE;
 		}
-		log_message('debug',"========== get_project_dbnri_cnt end ==========");
+		log_message('debug',"========== get_holiday_syukid_cnt end ==========");
 		return $res;
 	}
 

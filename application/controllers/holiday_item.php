@@ -16,8 +16,8 @@ class Holiday_item extends MY_Controller{
       $this->load->model('sgmtb150'); //
 
       // 初期表示
-      $holiday_data = $this->sgmtb150->get_holiday_data($data["page"]);   //データ取得
-      $data["page_tabel"] = $this->_get_page_button($data["page"]);            //ボタン
+      $holiday_data = $this->sgmtb150->get_holiday_data($data["holiday_year"]);   //データ取得
+      //$data["page_tabel"] = $this->_get_page_button($data["holiday_year"]);            //ボタン
       $data["list_tabel"] = $this->_get_page_list($holiday_data); //表示
 
       $data["max_year"] = $this->config->item('max_year'); // 最大年
@@ -55,9 +55,12 @@ class Holiday_item extends MY_Controller{
       {
         $regist_data = array();
 
+      log_message('debug',serialize($_POST));
+        
         // 登録データ生成
         $regist_data = $this->holiday_item_manager->insert_data_set($_POST);
 
+        
         //登録処理
         if($regist_data) {
           $res = $this->holiday_item_manager->set_db_insert_data($regist_data);
@@ -152,15 +155,19 @@ class Holiday_item extends MY_Controller{
 			$data['form']     = "/holiday_item/".$common_data['form'];  // フォームアクション
 			$data['form_name']   = "holiday_item_form";  // フォーム名
 
-			//ページ情報
-			$page = (int)$this->input->post('page');
-			if( $this->input->post('prev') ) $page = (int)$this->input->post('prev_page');
-			if( $this->input->post('next') ) $page = (int)$this->input->post('next_page');
-			if(!$page || $page < 0) $page=1;
+			//選択年情報
+            if($this->input->post('holiday_year') !==FALSE) {
+                $h_year = (int)$this->input->post('holiday_year');
+            }else{
+                $h_year = intval(date("Y"));
+            }
+			//if( $this->input->post('prev') ) $page = (int)$this->input->post('prev_page');
+			//if( $this->input->post('next') ) $page = (int)$this->input->post('next_page');
+			//if(!$page || $page < 0) $page=1;
 
-			$data["page"] = $page;  //現在のページ数
-			$data["max_view"] = MY_HOLIDAY_MAX_VIEW;  //一ページの表示数
-			$data["start_no"] = MY_HOLIDAY_MAX_VIEW * ($page-1);  //データ番号(javascriptでの採番に使用)
+			$data["holiday_year"] = $h_year;  //現在の年
+			//$data["max_view"] = MY_HOLIDAY_MAX_VIEW;  //一ページの表示数
+			//$data["start_no"] = MY_HOLIDAY_MAX_VIEW * ($page-1);  //データ番号(javascriptでの採番に使用)
 
 			log_message('debug',"========== Holiday_item init end ==========");
 			return $data;
