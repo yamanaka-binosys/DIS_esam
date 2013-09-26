@@ -18,7 +18,7 @@ class Holiday_item extends MY_Controller{
       // 初期表示
       $holiday_data = $this->sgmtb150->get_holiday_data($data["holiday_year"]);   //データ取得
       //$data["page_tabel"] = $this->_get_page_button($data["holiday_year"]);            //ボタン
-      $data["list_tabel"] = $this->_get_page_list($holiday_data); //表示
+      $data["list_tabel"] = $this->_get_page_list($holiday_data, $data['shbn']); //表示
 
       $data["max_year"] = $this->config->item('max_year'); // 最大年
       
@@ -54,8 +54,7 @@ class Holiday_item extends MY_Controller{
       if(isset($_POST['set']))
       {
         $regist_data = array();
-
-      log_message('debug',serialize($_POST));
+        $i_year = $_POST['holiday_year'];
         
         // 登録データ生成
         $regist_data = $this->holiday_item_manager->insert_data_set($_POST);
@@ -63,7 +62,7 @@ class Holiday_item extends MY_Controller{
         
         //登録処理
         if($regist_data) {
-          $res = $this->holiday_item_manager->set_db_insert_data($regist_data);
+          $res = $this->holiday_item_manager->set_db_insert_data($regist_data, $i_year);
           $page_max = ceil(count($regist_data) / MY_HOLIDAY_MAX_VIEW);
           if($page > $page_max) $page = $page_max;  //表示ページ調整
         }
@@ -242,11 +241,12 @@ class Holiday_item extends MY_Controller{
 	 * @param $mode TRUE=登録　FALSE=更新、削除
 	 * @return string $table_data HTML-STRING文字列
 	 */
-  private function _get_page_list($holiday_data)
+  private function _get_page_list($holiday_data, $syaban="")
   {
     try
     {
       log_message('debug',"========== Holiday_item _get_page_list start ==========");
+      log_message('debug',"*******" . $syaban . " =========");
       // 初期化
       $this->load->library('holiday_item_manager');
       $table_data = "";
@@ -257,7 +257,7 @@ class Holiday_item extends MY_Controller{
       } else {
         //データあり
         foreach($holiday_data as $key => $val) {
-          $table_data .= $this->holiday_item_manager->get_holiday_data_list( $val['syukid'], $val['syukdate'], $val['syukmemo'] );
+          $table_data .= $this->holiday_item_manager->get_holiday_data_list( $val['syukid'], $val['syukdate'], $val['syukmemo'], $val['createdate'], $syaban);
         }
       }
 

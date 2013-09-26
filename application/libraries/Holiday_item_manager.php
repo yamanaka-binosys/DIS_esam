@@ -43,7 +43,7 @@ class Holiday_item_manager {
    * @param
    * @return string $string_table HTML-STRING文字列
    */
-  public function get_holiday_data_list($syukid=0, $syukdate="", $syukmemo="",$createdate="")
+  public function get_holiday_data_list($syukid=0, $syukdate="", $syukmemo="",$createdate="",$syaban="")
   {
     $string_table = "";
 
@@ -52,8 +52,9 @@ class Holiday_item_manager {
     $string_table = '<tr name="no" id="no_'.$syukid.'">
         <td align="center" style="width: 85px">
           <input type="button" name="addbtn" id="addbtn_'.$syukid.'" value="追加">
-          <input type="hidden" name="view_no[]" value="'.$syukid.'">
-          <input type="hidden" name="create_date[]" value="'.$createdate.'">
+          <input type="hidden" name="syukid[]" value="'.$syukid.'">
+          <input type="hidden" name="createdate[]" value="'.$createdate.'">
+          <input type="hidden" name="syaban[]" value="'.$syaban.'">
         </td>
         <td align="center" style="width: 85px">
           <input type="button" name="dellbtn" id="dellbtn_'.$syukid.'" value="削除">
@@ -101,17 +102,22 @@ class Holiday_item_manager {
    */
   function insert_data_set($post_data){
     log_message('debug',"========== libraries Project_item_manager insert_data_set start ==========");
+
     // 初期化
     $CI =& get_instance();
     $CI->load->model('sgmtb150');
 
+    $db_set_syukid = $post_data['syukid'];
     $db_set_year  = $post_data['holiday_year'];
     $db_set_month = $post_data['syukmon'];
     $db_set_day   = $post_data['syukday'];
     $db_set_memo  = $post_data['syukmemo'];
+    $db_set_createdete  = $post_data['createdate'];
+    $db_set_syaban  = $post_data['syaban'];
     
     $regist_data = array();
     
+    // もしIDが未セットの場合の準備（現在の最大値を下調べする）
     $syukid_ret = $CI->sgmtb150->get_holiday_syukid_cnt();
     if(is_null($syukid_ret)){
         $syukid = 0;
@@ -119,13 +125,20 @@ class Holiday_item_manager {
         $syukid = (int)$syukid_ret['syukid_cnt'];
     }
     
-    
     // DB格納用の配列を作成する
     for($i=0;$i<count($db_set_month);$i++){
+        if($db_set_syukid[$i]==""){
+            $syukid_s = (string)$syukid;
+            $syukid++;
+        }else{
+            $syukid_s = $db_set_syukid[$i];
+        } 
         $regist_data[$i] = array(
-            'syukid' => (string)($syukid + $i),
+            'syukid' => $syukid_s,
             'syukdate' => $db_set_year . '-' . $db_set_month[$i] . '-' . $db_set_day[$i],
-            'syukmemo' => $db_set_memo[$i]);
+            'syukmemo' => $db_set_memo[$i],
+            'createdate' => $db_set_createdate[$i],
+            'syaban' => $db_set_syaban[$i]);
     }
     
     // TODO
@@ -160,14 +173,14 @@ class Holiday_item_manager {
    * @param  array $ins_data
    * @return array
   */
-  public function set_db_insert_data($ins_data){
+  public function set_db_insert_data($ins_data, $i_year){
     log_message('debug',"========== libraries Holiday_item_manager set_db_insert_data start ==========");
     // 初期化
     $CI =& get_instance();
     $CI->load->model(array('sgmtb150'));
 
     // DB登録処理
-    $res = $CI->sgmtb150->insert_sgmtb150_data($ins_data);
+    $res = $CI->sgmtb150->insert_sgmtb150_data($ins_data, $i_year);
 
     return $res;
 

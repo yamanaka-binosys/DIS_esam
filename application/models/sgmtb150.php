@@ -160,21 +160,15 @@ class Sgmtb150 extends CI_Model {
 				LIMIT $limit + ".$add." OFFSET ".$getPage ." +".$add_end;
 		*/
 		$sql = "SELECT
-					syukid,
-                    syukdate,
-                    syukmemo,
-                    createdate,
-                    updatedate,
-                    deletedate,
-                    syuksyaban
+					*
 				FROM
 					SGMTB150
 				WHERE
 					deletedate IS NULL AND
                     extract(year from syukdate) = ?
 				ORDER BY syukdate"; 
-				//LIMIT $limit + ? OFFSET ? + ?";
-		log_message('debug',"sql=".$sql);
+        
+		//log_message('debug',"sql=".$sql);
 		// クエリ実行
 		$query = $this->db->query($sql,array($holiday_year));
 		if($query->num_rows() > 0)
@@ -267,7 +261,7 @@ class Sgmtb150 extends CI_Model {
 		// 初期化
 		$res = NULL;
 		// sql文作成
-		$sql = "SELECT MAX(CAST (syukid AS int)) AS syukid_cnt FROM sgmtb080;";
+		$sql = "SELECT MAX(CAST (syukid AS int)) AS syukid_cnt FROM sgmtb150;";
 		log_message('debug',"sql=".$sql);
 		// クエリ実行
 		$query = $this->db->query($sql);
@@ -568,11 +562,11 @@ class Sgmtb150 extends CI_Model {
    * @param	string $data = 更新情報
    * @return	boolean $res = TRUE = 成功:FALSE = 失敗
   */
-  public function insert_sgmtb150_data($data = NULL)
+  public function insert_sgmtb150_data($data = NULL, $i_year = "0")
   {
     try
     {
-      log_message('debug',"========== insert_sgmtb080_data start ==========");
+      log_message('debug',"========== insert_sgmtb150_data start ==========");
 
       // トランザクション開始
       $this->db->trans_begin();
@@ -580,10 +574,11 @@ class Sgmtb150 extends CI_Model {
       //////////////////////////////
       //  削除処理
       //
-      $sql = "DELETE FROM SGMTB150 WHERE EXTRACT( year from syukdate) = EXTRACT( year from date()";
-      log_message('debug',"sql=".$sql);
+      $sql = "DELETE FROM SGMTB150 WHERE EXTRACT( year from syukdate) = ?";
+      log_message('debug',">>>>>>>>>>> sql=" . $sql . ", $i_year=" . $i_year);
+      log_message('debug',">>>>>>>>>>> data=" . serialize($data));
       // クエリ実行
-      $query = $this->db->query($sql);
+      $query = $this->db->query($sql, $i_year);
       /*
       if($query)
       {
@@ -604,27 +599,26 @@ class Sgmtb150 extends CI_Model {
       $res = NULL;
       $view_no = 1;
 
-      // sql文作成
-      $sql = "INSERT INTO SGMTB080
-        (DbnriCd ,
-         DbnriNm ,
-         ItemCd ,
-         ItemNm ,
-         CreateDate ,
-         UpdateDate ,
-         view_no)
-      values(?,?,?,?,?,?,?)";
+      // sql文作成 deletedateのみを除いてある
+      $sql = "INSERT INTO SGMTB150
+        (syukid ,
+         syukdate ,
+         syukmemo ,
+         createdate ,
+         updatedate ,
+         syuksyaban)
+      values(?,?,?,?,?,?)";
 
       foreach($data as $key => $d) {
         // クエリ実行
         $query = $this->db->query($sql,array(
-          $d['dbnricd'],
-          $d['dbnrinm'],
-          $d['itemcd'],
-          $d['itemnm'],
+          $d['syukid'],
+          $d['syukdate'],
+          $d['syukmemo'],
           $d['createdate'],
-          $d['updatedate'],
-          $view_no
+          date("Ymd"),          //$d['updatedate'] 今日の日付
+          //$d['deletedate'] ←これは入ることがあるか？
+          $d['syaban']
         ));
         // 結果判定
         if(!$query) {
@@ -639,7 +633,7 @@ class Sgmtb150 extends CI_Model {
       // トランザクション終了(コミット)
       $this->db->trans_complete();
 
-      log_message('debug',"========== insert_sgmtb080_data end ==========");
+      log_message('debug',"========== insert_sgmtb150_data end ==========");
       return $res;
     }catch(Exception $e){
       // ロールバック
@@ -650,14 +644,14 @@ class Sgmtb150 extends CI_Model {
   }
 
 	function get_all_item_name(){
-		log_message('debug',"========== sgmtb080 get_all_item_name start ==========");
+		log_message('debug',"========== sgmtb150 get_all_item_name start ==========");
 		// 初期化
 		$sql = ""; // sql_regcase文字列
 		$query = NULL; // SQL実行結果
 		$result_data = NULL; // 戻り値
 
 		// SQL文作成
-		$sql .= " SELECT dbnricd,itemcd,itemnm FROM sgmtb080";
+		$sql .= " SELECT dbnricd,itemcd,itemnm FROM sgmtb150";
 		$sql .= " WHERE deletedate is null";
 		$sql .= " ORDER BY dbnricd,itemcd";
 		$sql .= " ;";
@@ -670,7 +664,7 @@ class Sgmtb150 extends CI_Model {
 			$result_data = $query->result_array();
 		}
 
-		log_message('debug',"========== sgmtb080 get_all_item_name end ==========");
+		log_message('debug',"========== sgmtb150 get_all_item_name end ==========");
 		return $result_data;
 	}
 
