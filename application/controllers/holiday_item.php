@@ -76,7 +76,7 @@ class Holiday_item extends MY_Controller{
       $data["select_year"] = $select_year; // 最大年
       $data["max_year"] = $this->config->item('max_year'); // 最大年
 
-      log_message('debug',">>>>>>>>>>>>> " . $data["max_year"]);
+      //log_message('debug',">>>>>>>>>>>>> " . $data["max_year"]);
       //      
       // Main表示情報取得
       $this->display($data); // 画面表示処理

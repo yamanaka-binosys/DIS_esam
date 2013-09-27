@@ -57,7 +57,7 @@ function dell_row(btn_id) {
 
   //年コンボがクリックされた時の処理
 function holiday_year_chenge(year_id) {
-    alert('コンボ選択したんだね？'+year_id);
-    //var btn_id  = $(this).attr("id");
-    //dell_row(btn_id);
+  document.forms[0].set.value = 1;
+  document.forms[0].action = "changeyear";
+  document.forms[0].submit();
 };  

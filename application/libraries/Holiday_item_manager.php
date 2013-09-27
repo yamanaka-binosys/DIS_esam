@@ -122,23 +122,46 @@ class Holiday_item_manager {
     if(is_null($syukid_ret)){
         $syukid = 0;
     }else{
-        $syukid = (int)$syukid_ret['syukid_cnt'];
+        $syukid = (int)$syukid_ret + 1;
     }
     
     // DB格納用の配列を作成する
     for($i=0;$i<count($db_set_month);$i++){
-        if($db_set_syukid[$i]==""){
+        // IDの取得
+        if($db_set_syukid[$i]=="" || $db_set_syukid[$i]=="0"){
             $syukid_s = (string)$syukid;
             $syukid++;
         }else{
             $syukid_s = $db_set_syukid[$i];
-        } 
+        }
+        // 作成日付、更新日付のセット
+        if($db_set_memo[$i]==""){
+            $syukmemo_s = "";
+        }else{
+            $syukmemo_s = $db_set_memo[$i];
+        }
+        // 作成日付、更新日付のセット
+        if($db_set_createdate[$i]=="" || $db_set_createdate[$i]==NULL){
+            $createdate_s = date("Ymd");
+            $updatedate_s = null;
+        }else{
+            $createdate_s = $db_set_createdate[$i];
+            $updatedate_s = date("Ymd");
+        }
+        // 社番の取得
+        if($db_set_syaban[$i]==""){
+            $syaban_s = $post_data['syaban_now'];
+        }else{
+            $syaban_s = $db_set_syaban[$i];
+        }
+        
         $regist_data[$i] = array(
             'syukid' => $syukid_s,
             'syukdate' => $db_set_year . '-' . $db_set_month[$i] . '-' . $db_set_day[$i],
-            'syukmemo' => $db_set_memo[$i],
-            'createdate' => $db_set_createdate[$i],
-            'syaban' => $db_set_syaban[$i]);
+            'syukmemo' => $syukmemo_s,
+            'createdate' => $createdate_s,
+            'updatedate' => $updatedate_s,
+            'syaban' => $syaban_s);
     }
     
     // TODO
@@ -160,7 +183,7 @@ class Holiday_item_manager {
     }    
     */
     
-    log_message('debug', '<<<<< array count=' . count($regist_data) . ", serialize=" . serialize($regist_data));
+    //log_message('debug', '<<<<< array count=' . count($regist_data) . ", serialize=" . serialize($regist_data));
         
     
     log_message('debug',"========== libraries Project_item_manager insert_data_set end ==========");

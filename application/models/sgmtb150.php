@@ -262,12 +262,13 @@ class Sgmtb150 extends CI_Model {
 		$res = NULL;
 		// sql文作成
 		$sql = "SELECT MAX(CAST (syukid AS int)) AS syukid_cnt FROM sgmtb150;";
-		log_message('debug',"sql=".$sql);
+		//log_message('debug',"sql=".$sql);
 		// クエリ実行
 		$query = $this->db->query($sql);
 		if($query->num_rows() > 0)
 		{
-			$res = $query->row_array();
+            $row = $query->row();
+			$res = $row->syukid_cnt;
 		}else{
 			$res = FALSE;
 		}
@@ -556,7 +557,7 @@ class Sgmtb150 extends CI_Model {
   }
 
   /**
-   * 企画情報アイテムの登録(all 削除、登録)
+   * 祝日の登録(all 削除、登録)
    *
    * @access	public
    * @param	string $data = 更新情報
