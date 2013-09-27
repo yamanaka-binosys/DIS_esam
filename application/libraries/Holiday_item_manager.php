@@ -112,7 +112,7 @@ class Holiday_item_manager {
     $db_set_month = $post_data['syukmon'];
     $db_set_day   = $post_data['syukday'];
     $db_set_memo  = $post_data['syukmemo'];
-    $db_set_createdete  = $post_data['createdate'];
+    $db_set_createdate  = $post_data['createdate'];
     $db_set_syaban  = $post_data['syaban'];
     
     $regist_data = array();

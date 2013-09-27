@@ -17,9 +17,8 @@ class Holiday_item extends MY_Controller{
 
       // 初期表示
       $holiday_data = $this->sgmtb150->get_holiday_data($data["holiday_year"]);   //データ取得
-      //$data["page_tabel"] = $this->_get_page_button($data["holiday_year"]);            //ボタン
       $data["list_tabel"] = $this->_get_page_list($holiday_data, $data['shbn']); //表示
-
+      $data["select_year"] = date('Y');
       $data["max_year"] = $this->config->item('max_year'); // 最大年
       
       // Main表示情報取得
@@ -41,6 +40,8 @@ class Holiday_item extends MY_Controller{
     try
     {
       log_message('debug',"========== Holiday_item register start ==========");
+
+      $select_year = (int)$this->input->post('holiday_year');   //データ取得
       $data = $this->init($conf_name); // ヘッダデータ等初期情報取得
 
             // モデル呼び出し
@@ -48,7 +49,7 @@ class Holiday_item extends MY_Controller{
       $this->load->library('holiday_item_manager');
       $this->load->library('message_manager');
 
-      $page = $data['page'];
+      $holiday_year = $data['holiday_year'];
 
       //登録処理
       if(isset($_POST['set']))
@@ -63,16 +64,20 @@ class Holiday_item extends MY_Controller{
         //登録処理
         if($regist_data) {
           $res = $this->holiday_item_manager->set_db_insert_data($regist_data, $i_year);
-          $page_max = ceil(count($regist_data) / MY_HOLIDAY_MAX_VIEW);
-          if($page > $page_max) $page = $page_max;  //表示ページ調整
+          //$page_max = ceil(count($regist_data) / MY_HOLIDAY_MAX_VIEW);
+          //if($page > $page_max) $page = $page_max;  //表示ページ調整
+          
         }
       }
 
       // 表示
-      $holiday_data = $this->sgmtb150->get_holiday_data($page);   //データ取得
-      $data["page_tabel"] = $this->_get_page_button($page);            //ボタン
+      $holiday_data = $this->sgmtb150->get_holiday_data($holiday_year);   //データ取得
       $data["list_tabel"] = $this->_get_page_list($holiday_data); //表示
+      $data["select_year"] = $select_year; // 最大年
+      $data["max_year"] = $this->config->item('max_year'); // 最大年
 
+      log_message('debug',">>>>>>>>>>>>> " . $data["max_year"]);
+      //      
       // Main表示情報取得
       $this->display($data); // 画面表示処理
       log_message('debug',"========== Holiday_item register end ==========");
@@ -84,7 +89,42 @@ class Holiday_item extends MY_Controller{
   }
 
   /**
-   * 行追加
+   * 年変更
+   * @param
+   */
+  function changeyear($conf_name = MY_HOLIDAY_DATA)
+  {
+    try
+    {
+      log_message('debug',"========== Holiday_item changeyear start ==========");
+
+      log_message('debug',">>>>>>>>>>>>> " . $this->input->post('holiday_year'));
+
+      // モデル呼び出し
+      $this->load->model('sgmtb150'); //
+
+      $data = $this->init($conf_name); // ヘッダデータ等初期情報取得
+
+      // 表示
+      $holiday_data = $this->sgmtb150->get_holiday_data((int)$this->input->post('holiday_year'));   //データ取得
+      $data["list_tabel"] = $this->_get_page_list($holiday_data); //表示
+      $data["select_year"] = (int)$this->input->post('holiday_year'); // 最大年
+      $data["max_year"] = $this->config->item('max_year'); // 最大年
+
+      log_message('debug',">>>>>>>>>>>>> " . $data["max_year"]);
+      //      
+      // Main表示情報取得
+      $this->display($data); // 画面表示処理
+      log_message('debug',"========== Holiday_item changeyear end ==========");
+    }catch(Exception $e){
+      // エラー処理
+      $this->load->view('/parts/error/error.php',array('errcode' => 'Holiday_item-index'));
+      //$this->error_view($e);
+    }
+  }
+
+  /**
+   * 年行追加
    * @param unknown_type $conf_name
    */
   function ajax_add_row()
