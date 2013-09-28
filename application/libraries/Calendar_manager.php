@@ -142,6 +142,7 @@ class Calendar_manager {
 		$CI =& get_instance();
 		$CI->load->model('common');
 		$CI->load->model('sgmtb030');
+		$CI->load->model('sgmtb150');
 		$week_ja = $CI->config->item('c_day_week_ja'); // 曜日フォーマット取得
 		$sagyo = NULL;
 		$year = date("Y");
@@ -164,7 +165,28 @@ class Calendar_manager {
 			$day_week[$i]['0'] = date("n月j日", mktime(MY_ZERO, MY_ZERO, MY_ZERO, $month , $day+$i, $year)); // 日付取得
 			$day_week[$i]['1'] = $week_ja[date("w", mktime(MY_ZERO, MY_ZERO, MY_ZERO, $month , $day+$i, $year))]; // 曜日取得（日本語）
 			$day_week[$i]['2'] = strtolower(date("l", mktime(MY_ZERO, MY_ZERO, MY_ZERO, $month , $day+$i, $year))); // 曜日取得（英語）
-			
+            // 祝日チェック
+            $syuk = $CI->sgmtb150->check_holiday(date("Y-n-j", mktime(MY_ZERO, MY_ZERO, MY_ZERO, $month , $day+$i, $year)));
+            if(!isset($day_week[$i]['holiday'])){
+                $day_week[$i]['holiday'] = ''; // 初期化
+            }
+            // 振替チェック
+            if($syuk){  // この日が祝日だった場合
+                if($day_week[$i]['1']=='日'){           // 日曜の場合、振替
+                    if(($i + 1) < MY_WEEK_DAY){
+                        $day_week[$i+1]['holiday'] = '祝';
+
+                    }
+                }else{
+                    if($day_week[$i]['holiday']=='祝'){  // 既に祝日になっているか
+                        if(($i + 1) < MY_WEEK_DAY){     // 範囲内の
+                            $day_week[$i+1]['holiday'] = '祝'; // 祝日なら振替の振替
+                        }
+                    }else{
+                        $day_week[$i]['holiday'] = '祝'; // 祝日
+                    }
+                }
+            }
 			// 取得した予定情報を基に配列に時間・タイトルを設定
 			$data_count = MY_THREE; // 取得データ数カウンター初期化
 			$count = MY_ZERO; // データ数カウンター

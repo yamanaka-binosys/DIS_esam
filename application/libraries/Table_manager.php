@@ -179,9 +179,44 @@ class Table_manager {
 						$str_calendar .= " text-align:center;";
 						$str_calendar .= " background-color:" . $table_set['day_th_back_color'] . "\">\n";
 						$str_calendar .= "<a href=\"" . $calendar_data[$day_count]['link_url'] . "\"";
-						$str_calendar .= " style=\"color:" . $calendar_color[$value] . ";";
+
+//
+//         
+/*           
+            // 祝日チェック
+            $syuk = $CI->sgmtb150->check_holiday(date("Y-n-j", mktime(MY_ZERO, MY_ZERO, MY_ZERO, $month , $day+$i, $year)));
+            if(!isset($day_week[$i]['holiday'])){
+                $day_week[$i]['holiday'] = ''; // 初期化
+            }
+            // 振替チェック
+            if($syuk){  // この日が祝日だった場合
+                if($day_week[$i]['1']=='日'){           // 日曜の場合、振替
+                    if(($i + 1) < MY_WEEK_DAY){
+                        $day_week[$i+1]['holiday'] = '祝';
+
+                    }
+                }else{
+                    if($day_week[$i]['holiday']=='祝'){  // 既に祝日になっているか
+                        if(($i + 1) < MY_WEEK_DAY){     // 範囲内の
+                            $day_week[$i+1]['holiday'] = '祝'; // 祝日なら振替の振替
+                        }
+                    }else{
+                        $day_week[$i]['holiday'] = '祝'; // 祝日
+                    }
+                }
+            }
+
+*/
+//
+                        $str_calendar .= " style=\"color:" . $calendar_color[$value] . ";";
+//
+//						
+//												
 						$str_calendar .= " text-decoration:" . $table_set['day_a_text_decoration'] . "\">";
 						$str_calendar .= $calendar_data[$day_count]['day'];
+//
+//						
+//						
 						$str_calendar .= "</a>\n";
 						$str_calendar .= "</th>\n";
 						$day_count++; // 日付に１追加

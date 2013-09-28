@@ -35,7 +35,7 @@ if(isset($form)) {
 <div id="">
 <div id="container">
 <br>
-<select name="holiday_year" onChange="holiday_year_chenge(this.options[this.selectedIndex].value)">
+<select name="holiday_year" onChange="holiday_year_chenge(this.options[this.selectedIndex].value)" style="margin-left: 15px">
     <?php for($i=2012;$i<$max_year+1;$i++): ?>
         <option value="<?php echo $i; ?>" <?php if($i==$select_year) echo " selected"; ?>><?php echo $i; ?></option>
     <?php endfor; ?>
@@ -49,11 +49,11 @@ if(isset($form)) {
 <td>
   <table id="holiday_item_data">
     <tr>
-      <td style="width: 85px">&nbsp;</td>
+      <td style="width: 60px; margin: 5px;">&nbsp;</td>
       <!--<td align="center" style="width: 30px">行</td>-->
-      <td style="width: 85px">&nbsp;</td>
-      <td align="left" style="width: 160px">設定月日</td>
-      <td align="left" style="width: 250px">メモ</td>
+      <td style="width: 60px; margin: 5px;">&nbsp;</td>
+      <td align="left" style="width: 120px; padding-left: 40px;">設定月日</td>
+      <td align="left" style="width: 250px; margin: 5px;">メモ</td>
     </tr>
   <?php echo $list_tabel; ?>
   </table>

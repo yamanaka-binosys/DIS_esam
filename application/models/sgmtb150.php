@@ -341,6 +341,35 @@ class Sgmtb150 extends CI_Model {
         }
     }
 
+    /**
+     * 祝日の取得
+     *
+     * @access	public
+     * @return	boolean $res = TRUE = 成功:FALSE = 失敗
+     */
+    function check_holiday($date) {
+        log_message('debug', "----- " . __METHOD__ . " start -----");
+        // 初期化
+        $res = NULL;
+        // sql文作成
+        $sql = "SELECT * 
+				FROM SGMTB150
+                WHERE syukdate = ?;";
+
+        log_message('debug', "sql=" . $sql);
+        // クエリ実行
+        $query = $this->db->query($sql, array($date));
+        if ($query->num_rows() > 0) {
+            $res = TRUE;
+        } else {
+            $res = FALSE;
+        }
+
+        log_message('debug', "----- " . __METHOD__ . " end -----");
+        return $res;
+    }
+
+
 }
 
 ?>

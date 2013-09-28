@@ -9,7 +9,8 @@
 		</tr>
 		<tr class="calendar-preview-head">
 			<?php foreach($calendar_data as $d) { ?>
-			<th class="center"><a style="color: <?php switch($d[1]) {case '土': echo '#0000FF'; break; case '日': echo '#FF0000'; break; default: echo '#000'; }  ?>;"
+            <th class="center"><a style="color: <?php $clr = '#000'; switch($d[1]) {case '土': $clr = '#0000FF'; break; case '日': $clr = '#FF0000'; break; default: $clr = '#000'; } 
+            if ($d['holiday']=='祝') $clr = '#FF0000'; echo $clr; ?>;"
 				href="<?php echo base_url('index.php/plan/index/' . $d['link_day']) ?>"><?php echo $d[0] ?>(<?php echo $d[1] ?>)</a>
 			</th>
 			<?php } ?>

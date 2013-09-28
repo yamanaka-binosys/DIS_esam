@@ -20,16 +20,16 @@ class Holiday_item_manager {
         // 表示項目
         // 追加B　削除B　日付　メモ
         $string_table = '<tr name="no" id="no_' . $syukid . '">
-        <td align="center" style="width: 85px">
+        <td align="center" style="width: 60px; margin: 5px;">
           <input type="button" name="addbtn" id="addbtn_' . $syukid . '" value="追加">
           <input type="hidden" name="syukid[]" value="' . $syukid . '">
           <input type="hidden" name="createdate[]" value="' . $createdate . '">
           <input type="hidden" name="syaban[]" value="' . $syaban . '">
         </td>
-        <td align="center" style="width: 85px">
+        <td align="center" style="width: 60px; margin: 5px;">
           <input type="button" name="dellbtn" id="dellbtn_' . $syukid . '" value="削除">
         </td>
-        <td align="left" style="width: 200px">
+        <td align="left" style="width: 120px; padding-left: 20px;">
         <select name="syukmon[]" size="1">';
         for ($i = 1; $i < 13; $i++) {
             $string_table .= '<option value="' . $i . '"';
@@ -55,7 +55,7 @@ class Holiday_item_manager {
         }
         $string_table .= '</select>      
         </td>
-        <td align="left" style="width: 250px">
+        <td align="left" style="width: 250px; margin: 5px;">
           <input type="text" name="syukmemo[]" value="' . $syukmemo . '" style="width: 230px">
         </td>
       </tr>';
