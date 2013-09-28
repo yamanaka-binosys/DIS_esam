@@ -1,214 +1,174 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php
+
+if (!defined('BASEPATH'))
+    exit('No direct script access allowed');
 
 class Holiday_item_manager {
 
-  /**
-   * ページングボタンの作成
-   *
-   * @access private
-   * @param $post ARRAY
-   * @param $mode TRUE=登録　FALSE=更新、削除
-   * @return string $tab_data HTML-STRING文字列
-   */
-  public function set_holiday_data_page($page = 1)
-  {
-    // 初期化
-    $CI =& get_instance();
-    $CI->load->model('sgmtb150'); // 企画情報アイテム
-    $all_cnt = $CI->sgmtb150->get_holiday_all_cnt();
+    /**
+     * 祝日設定 リストHTML(内容)を作成
+     *
+     * @access private
+     * @param
+     * @return string $string_table HTML-STRING文字列
+     */
+    public function get_holiday_data_list($syukid = 0, $syukdate = "", $syukmemo = "", $createdate = "", $syaban = "") {
+        log_message('debug', "----- " . __METHOD__ . " start -----");
 
-    $max_page = ceil($all_cnt / MY_PROJECT_MAX_VIEW);
-    if($page < $max_page)
-    {
-      $next_page = $page + 1;
-    }else{
-      $next_page = $max_page;
-    }
-    $prev_page = ($page == 1) ? 1 : $page - 1;
-    $string_table = '<table><tr><td colspan="5" style="text-align: right; width: 800px;">';
-    if($page > 1) $string_table .= '<input type="submit" name="prev" id="prev" value=" 前項 ">';
-    $string_table .= '<input type="hidden" name="prev_page" id="prev_page" value="'.$prev_page.'" >' .
-    						'&emsp;&emsp;';
-    if($page != $max_page) $string_table .= '<input type="submit" name="next" id="next" value=" 次項 ">';
-    $string_table .= '<input type="hidden" name="next_page" id="next_page" value="'.$next_page.'" >' .
-    						'</td></tr></table>';
+        $string_table = "";
 
-    return $string_table;
-  }
-
-  /**
-   * 祝日設定 リストHTML(内容)を作成
-   *
-   * @access private
-   * @param
-   * @return string $string_table HTML-STRING文字列
-   */
-  public function get_holiday_data_list($syukid=0, $syukdate="", $syukmemo="",$createdate="",$syaban="")
-  {
-    $string_table = "";
-
-    // 表示項目
-    // 追加B　削除B　日付　メモ
-    $string_table = '<tr name="no" id="no_'.$syukid.'">
+        // 表示項目
+        // 追加B　削除B　日付　メモ
+        $string_table = '<tr name="no" id="no_' . $syukid . '">
         <td align="center" style="width: 85px">
-          <input type="button" name="addbtn" id="addbtn_'.$syukid.'" value="追加">
-          <input type="hidden" name="syukid[]" value="'.$syukid.'">
-          <input type="hidden" name="createdate[]" value="'.$createdate.'">
-          <input type="hidden" name="syaban[]" value="'.$syaban.'">
+          <input type="button" name="addbtn" id="addbtn_' . $syukid . '" value="追加">
+          <input type="hidden" name="syukid[]" value="' . $syukid . '">
+          <input type="hidden" name="createdate[]" value="' . $createdate . '">
+          <input type="hidden" name="syaban[]" value="' . $syaban . '">
         </td>
         <td align="center" style="width: 85px">
-          <input type="button" name="dellbtn" id="dellbtn_'.$syukid.'" value="削除">
+          <input type="button" name="dellbtn" id="dellbtn_' . $syukid . '" value="削除">
         </td>
         <td align="left" style="width: 200px">
         <select name="syukmon[]" size="1">';
-        for($i=1;$i<13;$i++){
+        for ($i = 1; $i < 13; $i++) {
             $string_table .= '<option value="' . $i . '"';
-            if($syukdate != ""){ 
+            if ($syukdate != "") {
                 $j = date_parse_from_format("Y-m-d", $syukdate);
-                if( $i == $j['month']) {
+                if ($i == $j['month']) {
                     $string_table .= 'selected';
                 };
             };
             $string_table .= '>' . $i . '</option>';
         }
-    $string_table .= '</select>      
+        $string_table .= '</select>      
         <select name="syukday[]" size="1">';
-        for($i=1;$i<32;$i++){
+        for ($i = 1; $i < 32; $i++) {
             $string_table .= '<option value="' . $i . '"';
-            if($syukdate != ""){ 
+            if ($syukdate != "") {
                 $j = date_parse_from_format("Y-m-d", $syukdate);
-                if( $i == $j['day']) {
+                if ($i == $j['day']) {
                     $string_table .= 'selected';
                 };
             };
             $string_table .= '>' . $i . '</option>';
         }
-    $string_table .= '</select>      
+        $string_table .= '</select>      
         </td>
         <td align="left" style="width: 250px">
-          <input type="text" name="syukmemo[]" value="'.$syukmemo.'" style="width: 230px">
+          <input type="text" name="syukmemo[]" value="' . $syukmemo . '" style="width: 230px">
         </td>
       </tr>';
 
-    return $string_table;
-  }
-
-  /**
-   * 登録用データ生成処理
-   *
-   * @access public
-   * @param  array $post_data POSTデータ
-   * @return array $res_data  DB登録用生成データ
-   */
-  function insert_data_set($post_data){
-    log_message('debug',"========== libraries Project_item_manager insert_data_set start ==========");
-
-    // 初期化
-    $CI =& get_instance();
-    $CI->load->model('sgmtb150');
-
-    $db_set_syukid = $post_data['syukid'];
-    $db_set_year  = $post_data['holiday_year'];
-    $db_set_month = $post_data['syukmon'];
-    $db_set_day   = $post_data['syukday'];
-    $db_set_memo  = $post_data['syukmemo'];
-    $db_set_createdate  = $post_data['createdate'];
-    $db_set_syaban  = $post_data['syaban'];
-    
-    $regist_data = array();
-    
-    // もしIDが未セットの場合の準備（現在の最大値を下調べする）
-    $syukid_ret = $CI->sgmtb150->get_holiday_syukid_cnt();
-    if(is_null($syukid_ret)){
-        $syukid = 0;
-    }else{
-        $syukid = (int)$syukid_ret + 1;
+        log_message('debug', "----- " . __METHOD__ . " end -----");
+        return $string_table;
     }
-    
-    // DB格納用の配列を作成する
-    for($i=0;$i<count($db_set_month);$i++){
-        // IDの取得
-        if($db_set_syukid[$i]=="" || $db_set_syukid[$i]=="0"){
-            $syukid_s = (string)$syukid;
-            $syukid++;
-        }else{
-            $syukid_s = $db_set_syukid[$i];
+
+    /**
+     * 登録用データ生成処理
+     *
+     * @access public
+     * @param  array $post_data POSTデータ
+     * @return array $res_data  DB登録用生成データ
+     */
+    function insert_data_set($post_data) {
+        log_message('debug', "----- " . __METHOD__ . " start -----");
+
+
+        // 初期化
+        $CI = & get_instance();
+        $CI->load->model('sgmtb150');
+
+        $db_set_syukid = $post_data['syukid'];
+        $db_set_year = $post_data['holiday_year'];
+        $db_set_month = $post_data['syukmon'];
+        $db_set_day = $post_data['syukday'];
+        $db_set_memo = $post_data['syukmemo'];
+        $db_set_createdate = $post_data['createdate'];
+        $db_set_syaban = $post_data['syaban'];
+
+        $regist_data = array();
+
+        // もしIDが未セットの場合の準備（現在の最大値を下調べする）
+        $syukid_ret = $CI->sgmtb150->get_holiday_syukid_cnt();
+        if (is_null($syukid_ret)) {
+            $syukid = 0;
+        } else {
+            $syukid = (int) $syukid_ret + 1;
         }
-        // 作成日付、更新日付のセット
-        if($db_set_memo[$i]==""){
-            $syukmemo_s = "";
-        }else{
-            $syukmemo_s = $db_set_memo[$i];
-        }
-        // 作成日付、更新日付のセット
-        if($db_set_createdate[$i]=="" || $db_set_createdate[$i]==NULL){
-            $createdate_s = date("Ymd");
-            $updatedate_s = null;
-        }else{
-            $createdate_s = $db_set_createdate[$i];
-            $updatedate_s = date("Ymd");
-        }
-        // 社番の取得
-        if($db_set_syaban[$i]==""){
-            $syaban_s = $post_data['syaban_now'];
-        }else{
-            $syaban_s = $db_set_syaban[$i];
-        }
-        
-        $regist_data[$i] = array(
-            'syukid' => $syukid_s,
-            'syukdate' => $db_set_year . '-' . $db_set_month[$i] . '-' . $db_set_day[$i],
-            'syukmemo' => $syukmemo_s,
-            'createdate' => $createdate_s,
-            'updatedate' => $updatedate_s,
-            'syaban' => $syaban_s);
-    }
-    
-    // TODO
-    // 重複検出
-    /*
-    // 作成した配列内の重複を確認する
-    for($i=0;$i<count($db_set_month);$i++){
-        if (isset($regist_data[$i])){      // 重複していた場合、既に削除されているかも知れないので
-            for($j=0;$j<count($db_set_month);$j++){
-                if($i!==$j){    // 同じ行は無視
-                    // もし重複があったら配列から除く
-                    if ($regist_data[$i]['syukdate'] === $regist_data[$j]['syukdate']){
-                        unset($regist_data[$i]);
-                        continue;
-                    }
-                }
+
+        // DB格納用の配列を作成する
+        for ($i = 0; $i < count($db_set_month); $i++) {
+            // 既存/追加のレコード判別
+            if ($db_set_syukid[$i] == "" || $db_set_syukid[$i] == "0") {
+                // 追加の場合の処理
+                $syukid_s = (string) $syukid;
+                $syukid++;
+                $createdate_s = date("Ymd");
+                $updatedate_s = null;
+                $syaban_s = $post_data['syaban_now'];
+            } else {
+                // 既存レコードの更新の場合の処理
+                $syukid_s = $db_set_syukid[$i];
+                $createdate_s = $db_set_createdate[$i];
+                $updatedate_s = date("Ymd");
+                $syaban_s = $db_set_syaban[$i];
             }
+
+            $regist_data[$i] = array(
+                'syukid' => $syukid_s,
+                'syukdate' => $db_set_year . '-' . $db_set_month[$i] . '-' . $db_set_day[$i],
+                'syukmemo' => $db_set_memo[$i],
+                'createdate' => $createdate_s,
+                'updatedate' => $updatedate_s,
+                'syaban' => $syaban_s);
         }
-    }    
-    */
-    
-    //log_message('debug', '<<<<< array count=' . count($regist_data) . ", serialize=" . serialize($regist_data));
-        
-    
-    log_message('debug',"========== libraries Project_item_manager insert_data_set end ==========");
-    return $regist_data;
-  }
 
-  /**
-   * 登録処理
-   * @access public
-   * @param  array $ins_data
-   * @return array
-  */
-  public function set_db_insert_data($ins_data, $i_year){
-    log_message('debug',"========== libraries Holiday_item_manager set_db_insert_data start ==========");
-    // 初期化
-    $CI =& get_instance();
-    $CI->load->model(array('sgmtb150'));
+        // TODO
+        // 重複検出
+        /*
+          // 作成した配列内の重複を確認する
+          for($i=0;$i<count($db_set_month);$i++){
+          if (isset($regist_data[$i])){      // 重複していた場合、既に削除されているかも知れないので
+          for($j=0;$j<count($db_set_month);$j++){
+          if($i!==$j){    // 同じ行は無視
+          // もし重複があったら配列から除く
+          if ($regist_data[$i]['syukdate'] === $regist_data[$j]['syukdate']){
+          unset($regist_data[$i]);
+          continue;
+          }
+          }
+          }
+          }
+          }
+         */
 
-    // DB登録処理
-    $res = $CI->sgmtb150->insert_sgmtb150_data($ins_data, $i_year);
+        //log_message('debug', '<<<<< array count=' . count($regist_data) . ", serialize=" . serialize($regist_data));
 
-    return $res;
 
-    log_message('debug',"========== libraries Holiday_item_manager set_db_insert_data end ==========");
-  }
+        log_message('debug', "----- " . __METHOD__ . " end -----");
+        return $regist_data;
+    }
+
+    /**
+     * 登録処理
+     * @access public
+     * @param  array $ins_data
+     * @return array
+     */
+    public function set_db_insert_data($ins_data, $i_year) {
+        log_message('debug', "----- " . __METHOD__ . " start -----");
+        // 初期化
+        $CI = & get_instance();
+        $CI->load->model(array('sgmtb150'));
+
+        // DB登録処理
+        $res = $CI->sgmtb150->insert_sgmtb150_data($ins_data, $i_year);
+
+        return $res;
+
+        log_message('debug', "----- " . __METHOD__ . " end -----");
+    }
 
 }
 
