@@ -8,116 +8,6 @@ class Sgmtb150 extends CI_Model {
     }
 
     /**
-     * ユーザ情報の登録
-     *
-     * @access	public
-     * @param	string $post = 登録情報
-     * @return	boolean $res = TRUE = 成功:FALSE = 失敗
-     */
-    function insert_dbnri_item($data = NULL) {
-        log_message('debug', "----- " . __METHOD__ . " start -----");
-        foreach ($data as $key => $up) {
-            log_message('debug', $key . "=" . $up);
-        }
-
-        // 初期化
-        $res = NULL;
-        // sql文作成
-        $sql = "INSERT INTO SGMTB080
-					(DbnriCd ,
-					 DbnriNm ,
-					 ItemCd ,
-					 ItemNm ,
-					 CreateDate ,
-					 UpdateDate ,
-					 view_no)
-				values(?,?,?,?,?,?,?)";
-        // クエリ実行
-        $query = $this->db->query($sql, array(
-            $data['dbnricd'],
-            $data['dbnrinm'],
-            $data['itemcd'],
-            $data['itemnm'],
-            $data['createdate'],
-            $data['updatedate'],
-            $data['view_no']
-                )
-        );
-        log_message('debug', "sql=" . $sql);
-        // 結果判定
-        if ($query) {
-            $res = TRUE;
-        } else {
-            $res = FALSE;
-        }
-
-        log_message('debug', "----- " . __METHOD__ . " end -----");
-        return $res;
-    }
-
-    /**
-     * 企画情報アイテムの更新
-     *
-     * @access	public
-     * @param	string $data = 更新情報
-     * @return	boolean $res = TRUE = 成功:FALSE = 失敗
-     */
-    function update_dbnri_item($data = NULL) {
-        try {
-            log_message('debug', "----- " . __METHOD__ . " start -----");
-            foreach ($data as $key => $up) {
-                log_message('debug', $key . "=" . $up);
-            }
-            // トランザクション開始
-            $this->db->trans_start();
-            // 初期化
-            $res = NULL;
-            // sql文作成
-            $sql = "UPDATE SGMTB080
-					SET
-						DbnriCd = ?,
-						DbnriNm = ?,
-						ItemCd = ?,
-						ItemNm = ?,
-						CreateDate = ?,
-						UpdateDate = ?
-					WHERE
-						DbnriCd = ? AND ItemCd = ?
-					";
-            log_message('debug', "sql=" . $sql);
-            // クエリ実行
-            $query = $this->db->query($sql, array(
-                $data['dbnricd'],
-                $data['dbnrinm'],
-                $data['itemcd'],
-                $data['itemnm'],
-                $data['createdate'],
-                $data['updatedate'],
-                $data['update_dbnricd'],
-                $data['update_itemcd'])
-            );
-            // 結果判定
-            if ($query) {
-                $res = TRUE;
-                // トランザクション終了(コミット)
-                $this->db->trans_complete();
-            } else {
-                $res = FALSE;
-                // ロールバック
-                $this->db->trans_rollback();
-            }
-
-            log_message('debug', "----- " . __METHOD__ . " end -----");
-            return $res;
-        } catch (Exception $e) {
-            // ロールバック
-            $this->db->trans_rollback();
-            $res = FALSE;
-            return $res;
-        }
-    }
-
-    /**
      * 企画情報相手の取得
      *
      * @access	public
@@ -171,39 +61,7 @@ class Sgmtb150 extends CI_Model {
     }
 
     /**
-     * 大分類名チェック
-     *
-     * @access	public
-     * @param	int $page = 表示ページ№
-     * @return	boolean $res = TRUE = 成功:FALSE = 失敗
-     */
-    function get_dname_check($name) {
-        log_message('debug', "----- " . __METHOD__ . " start -----");
-        // 初期化
-        $res = NULL;
-        // sql文作成
-        $sql = "SELECT
-					dbnricd
-				FROM
-					SGMTB080
-				WHERE
-					dbnrinm = ?
-				";
-        log_message('debug', "sql=" . $sql);
-        // クエリ実行
-        $query = $this->db->query($sql, array($name));
-        if ($query->num_rows() > 0) {
-            $result = $query->row_array();
-            $res = $result['dbnricd'];
-        } else {
-            $res = FALSE;
-        }
-        log_message('debug', "----- " . __METHOD__ . " end -----");
-        return $res;
-    }
-
-    /**
-     * 大分類数の取得
+     * 祝日ID最大数の取得
      *
      * @access	public
      * @return	boolean $res = TRUE = 成功:FALSE = 失敗
@@ -356,7 +214,7 @@ class Sgmtb150 extends CI_Model {
 				FROM SGMTB150
                 WHERE syukdate = ?;";
 
-        log_message('debug', "sql=" . $sql);
+        //log_message('debug', "sql=" . $sql);
         // クエリ実行
         $query = $this->db->query($sql, array($date));
         if ($query->num_rows() > 0) {

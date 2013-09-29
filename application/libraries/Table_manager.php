@@ -115,6 +115,8 @@ class Table_manager {
 		$day_week_ja = $CI->config->item('c_day_week_ja');          // 曜日（日本語）
 		$day_week_en = $CI->config->item('c_day_week_en');          // 曜日（英語）
 		$calendar_mode = $CI->session->userdata('calendar_mode');
+        $CI->load->model('sgmtb150');
+        
 		$str_calendar = "";                                         // カレンダーHTML文字列
 		$disabled = "";                                             // 前月ボタンdisabled設定
 		$day_count = MY_INT_START_DAY;                              // 日付
@@ -179,45 +181,57 @@ class Table_manager {
 						$str_calendar .= " text-align:center;";
 						$str_calendar .= " background-color:" . $table_set['day_th_back_color'] . "\">\n";
 						$str_calendar .= "<a href=\"" . $calendar_data[$day_count]['link_url'] . "\"";
+                        
+                        // 　　この日のタイムスタンプを取得
+                        $timestamp_temp = mktime(MY_ZERO, MY_ZERO, MY_ZERO, $month , $calendar_data[$day_count]['day'], $year);
 
-//
-//         
-/*           
-            // 祝日チェック
-            $syuk = $CI->sgmtb150->check_holiday(date("Y-n-j", mktime(MY_ZERO, MY_ZERO, MY_ZERO, $month , $day+$i, $year)));
-            if(!isset($day_week[$i]['holiday'])){
-                $day_week[$i]['holiday'] = ''; // 初期化
-            }
-            // 振替チェック
-            if($syuk){  // この日が祝日だった場合
-                if($day_week[$i]['1']=='日'){           // 日曜の場合、振替
-                    if(($i + 1) < MY_WEEK_DAY){
-                        $day_week[$i+1]['holiday'] = '祝';
-
-                    }
-                }else{
-                    if($day_week[$i]['holiday']=='祝'){  // 既に祝日になっているか
-                        if(($i + 1) < MY_WEEK_DAY){     // 範囲内の
-                            $day_week[$i+1]['holiday'] = '祝'; // 祝日なら振替の振替
+                        // 祝日チェック
+                        if($CI->sgmtb150->check_holiday(date("Y-n-j", $timestamp_temp))){
+                            // この日が祝日だった場合
+                            $str_calendar_c = " style=\"color:" . $calendar_color['sunday'] . ";";
+                        }else{
+                            // この日が平日だった場合
+                            // 平日の標準色をセット
+                            $str_calendar_c = " style=\"color:" . $calendar_color[$value] . ";";
+                            
+                            //   前日が日曜日で祝日だった場合（振替の処理）
+                            if(date("w", $timestamp_temp)=='1'){
+                                log_message('debug', '---- 昨日は日曜日 ----');
+                                // 前日が日曜日だった
+                                // 前日が祝日かどうか
+                                if($CI->sgmtb150->check_holiday(date("Y-n-j", $timestamp_temp - 86400))){  // 前日が祝日だった場合、この日は振替休日
+                                    $str_calendar_c = " style=\"color:" . $calendar_color['sunday'] . ";";
+                                }
+                            }
+                            
+                            // 前々日が日曜日で祝日で前日も祝日だった場合（振替の振替）
+                            if(date("w", $timestamp_temp)=='2'){
+                                if($CI->sgmtb150->check_holiday(date("Y-n-j", $timestamp_temp - (86400 * 2)))){  // 前々日が祝日だった場合
+                                    // 前日が祝日かチェック
+                                    if($CI->sgmtb150->check_holiday(date("Y-n-j", $timestamp_temp - 86400 ))){  // 前日が祝日だった場合、この日は振替休日
+                                        $str_calendar_c = " style=\"color:" . $calendar_color['sunday'] . ";";
+                                    }
+                                }                            
+                            }
+                            
+                            // 前々々日が日曜日で祝日で前々日も祝日、前日も祝日だった場合（振替の振替の振替、現実的には存在しない?）
+                            if(date("w", $timestamp_temp)=='3'){
+                                if($CI->sgmtb150->check_holiday(date("Y-n-j", $timestamp_temp - (86400 * 3)))){  // 前々々日が祝日だった場合
+                                    if($CI->sgmtb150->check_holiday(date("Y-n-j", $timestamp_temp - (86400 * 2)))){  // 前々日が祝日だった場合
+                                        // 前日が祝日かチェック
+                                        if($CI->sgmtb150->check_holiday(date("Y-n-j", $timestamp_temp - 86400))){  // 前日が祝日だった場合、この日は振替休日
+                                            $str_calendar_c = " style=\"color:" . $calendar_color['sunday'] . ";";
+                                        }
+                                    }                            
+                                }                            
+                            }
                         }
-                    }else{
-                        $day_week[$i]['holiday'] = '祝'; // 祝日
-                    }
-                }
-            }
-
-*/
-//
-                        $str_calendar .= " style=\"color:" . $calendar_color[$value] . ";";
-//
-//						
-//												
+						$str_calendar .= $str_calendar_c;
+                        
 						$str_calendar .= " text-decoration:" . $table_set['day_a_text_decoration'] . "\">";
 						$str_calendar .= $calendar_data[$day_count]['day'];
-//
-//						
-//						
-						$str_calendar .= "</a>\n";
+
+                        $str_calendar .= "</a>\n";
 						$str_calendar .= "</th>\n";
 						$day_count++; // 日付に１追加
 						$count++; // カウント数に１追加
