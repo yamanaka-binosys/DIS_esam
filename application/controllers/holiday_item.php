@@ -43,14 +43,35 @@ class Holiday_item extends MY_Controller {
 
             $holiday_year = $data['holiday_year'];
 
-            //登録処理
-            if (isset($_POST['set'])) {
+            // データチェック
+            $err_flag = FALSE;
+            $i = 0;
+            foreach($_POST['syukmon'] as $syukmon){
+                if(!checkdate($syukmon, $_POST['syukday'][$i], $select_year)){
+                    $data['errmsg'] = "設定月日が正しくありません";
+                    $err_flag = TRUE;
+                    break;
+                }       
+                $i++;
+            }
+            if (isset($_POST['syukmemo'])) {
+                foreach($_POST['syukmemo'] as $syukmemo){
+                    if($syukmemo == ""){
+                        $data['errmsg'] = "メモが入力されていません";
+                        $err_flag = TRUE;
+                        break;
+                    }       
+                }
+            }
+
+            if(!$err_flag){
+                // 登録前処理
                 $regist_data = array();
+
                 $i_year = $_POST['holiday_year'];
 
                 // 登録データ生成
                 $regist_data = $this->holiday_item_manager->insert_data_set($_POST);
-
 
                 //登録処理
                 if ($regist_data) {

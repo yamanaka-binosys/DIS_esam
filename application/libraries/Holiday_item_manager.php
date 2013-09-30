@@ -56,7 +56,7 @@ class Holiday_item_manager {
         $string_table .= '</select>      
         </td>
         <td align="left" style="width: 250px; margin: 5px;">
-          <input type="text" name="syukmemo[]" value="' . $syukmemo . '" style="width: 230px">
+          <input type="text" name="syukmemo[]" class="required" title="メモ" value="' . $syukmemo . '" style="width: 230px">
         </td>
       </tr>';
 

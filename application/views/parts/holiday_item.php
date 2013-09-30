@@ -4,6 +4,7 @@ $this->load->helper('html');
 $base_url = $this->config->item('base_url');
 $meta = $this->config->item('c_meta');
 log_message('debug',"\$base_url = $base_url");
+log_message('debug',"\$errmsg = $errmsg");
 ?>
 
 <?php echo doctype('html4-frame')."\n"; ?>
@@ -15,9 +16,18 @@ log_message('debug',"\$base_url = $base_url");
 <script type="text/javascript" src="<?php echo $base_url; ?>script/jquery-1.7.1.min.js"></script>
 <script type="text/javascript" src="<?php echo $base_url; ?>script/holiday_item.js"></script>
 <script type="text/javascript" src="<?php echo $base_url; ?>script/header.js"></script>
+
+ <script>
+  function fn_onload(){
+      parent.header.document.getElementById("errmsg").innerText = '<?php echo $errmsg; ?>';
+      parent.header.document.getElementById("errmsg").textContent = '<?php echo $errmsg; ?>';
+      /*parent.header.document.getElementById("errmsg").className = '<?php echo $msg_type; ?>';*/
+      parent.header.document.getElementById("errmsg").style = "color: #FF0000;";
+  }
+  </script>
 </head>
 
-<body>
+<body onLoad="fn_onload()">
 <?php
 if(isset($form)) {
   echo '<form action="'.$app_url.$form.'" method="POST" name="'.$form_name.'" id="'.$form_name.'">'."\n";
