@@ -2053,6 +2053,24 @@ class Result_manager {
 		return $data;
 	}
 
+    function st_et_check($shbn, $select_day, $st, $et){
+		// 初期化
+		$CI =& get_instance();
+		$CI->load->model('srntb010');
+        $CI->load->model('srntb020');
+        $CI->load->model('srntb030');
+        $CI->load->model('srntb040');
+        $CI->load->model('srntb060');
+        
+        // ここで登録済みの時刻とブッキングしていないか確認する。ブッキングしていたら真を返す
+        if($CI->srntb010->st_et_check($shbn, $select_day, $st, $et)) return true;
+        if($CI->srntb020->st_et_check($shbn, $select_day, $st, $et)) return true;
+        if($CI->srntb030->st_et_check($shbn, $select_day, $st, $et)) return true;
+        if($CI->srntb040->st_et_check($shbn, $select_day, $st, $et)) return true;
+        if($CI->srntb060->st_et_check($shbn, $select_day, $st, $et)) return true;
+
+        return FALSE;
+	}
 	
 }
 

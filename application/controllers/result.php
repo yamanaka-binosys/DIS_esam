@@ -603,7 +603,31 @@ class Result extends MY_Controller {
 			} else {
 				$hold_flg = '0';
 			}
-			
+
+            // 時刻重複事前チェック
+            $stt = array();
+            $ett = array();
+            $i = 0;
+			foreach ($data as $key => $value) {
+				if(!empty($value['data_no'])){
+					$stt[$i] = strtotime($select_day . 't' . $data[$key]['sth_'.$value['data_no']].$data[$key]['stm_'.$value['data_no']] . '00');
+					$ett[$i] = strtotime($select_day . 't' . $data[$key]['edh_'.$value['data_no']].$data[$key]['edm_'.$value['data_no']] . '00');
+                    $i++;
+                }
+            }
+            for($j=0;$j<$i;$j++){
+                for($k=0;$k<$i;$k++){
+                    if($stt[$k] < $stt[$j] && $stt[$j] < $ett[$k]){
+						$msg ="開始時刻と終了時刻の時間帯で重複しているものがあります。";
+						return $msg;
+                    }
+                    if($stt[$k] < $ett[$j] && $ett[$j] < $ett[$k]){
+						$msg ="開始時刻と終了時刻の時間帯で重複しているものがあります。";
+						return $msg;
+                    }
+                }
+            }
+            
 			// 登録処理
 			foreach ($data as $key => $value) {
 				if(!empty($value['data_no'])){
@@ -614,7 +638,7 @@ class Result extends MY_Controller {
 						$msg ="開始時刻と終了時刻の時系列が誤っています。";
 						return $msg;
 					}
-				
+                    
 					$tmp_data = NULL;
 					// エスケープされた情報No、枝番を戻す
 					$variable_name = 'jyohonum_'.$value['data_no'];
@@ -633,7 +657,15 @@ class Result extends MY_Controller {
 					// 一時保存フラグ
 					$variable_name = 'hold_flg_'.$value['data_no'];
 					$data[$key][$variable_name] = $hold_flg;
-					if($value[$action_name] === 'srntb010'){
+
+                    // ここで登録済みの時刻とブッキングしていないか確認する。ブッキングしていたら真
+                    if($this->result_manager->st_et_check($shbn, $select_day, $start_time, $end_time, $value[$action_name])){
+						$msg ="開始時刻と終了時刻の時間帯は既に登録があります。";
+						return $msg;
+                    }
+
+                    
+                    if($value[$action_name] === 'srntb010'){
 						
 						$motojyohonum = $this->result_manager->record_honbu_data($shbn,$data[$key],$value['data_no']);
 						$this->result_manager->record_honbu_rireki($shbn,$data[$key],$value['data_no'],$motojyohonum);

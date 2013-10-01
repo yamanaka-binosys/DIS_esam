@@ -196,7 +196,41 @@ class Srntb010 extends CI_Model {
 		}
 		return $result_data;
 	}
-	
+
+  	function st_et_check($shbn, $ymd, $st, $et)
+	{
+		// 初期化
+		$sql = ""; // sql_regcase文字列
+		$query = NULL; // SQL実行結果
+		$result_data = NULL; // 戻り値
+		
+		// SQL文作成
+		$sql .= " SELECT shbn, ymd, sthm, edhm FROM srntb010 WHERE shbn = ? AND ymd = ? ";
+		log_message('debug',"\$sql = $sql");
+		// SQL実行
+		$query = $this->db->query($sql,array($shbn, $ymd));
+		// 取得確認
+		if($query->num_rows() > 0)
+		{
+			$result_data = $query->result_array();
+            $start_time = strtotime($ymd . 't' . $st . '00');       // 入力開始時刻
+            $end_time = strtotime($ymd . 't' . $et . '00');         // 入力終了時刻
+            foreach ($result_data as $rec){
+                $rec_start_time = strtotime($rec['ymd'] . 't' . $rec['sthm'] . '00');
+                $rec_end_time = strtotime($rec['ymd'] . 't' . $rec['sthm'] . '00');
+                // 登録済み開始時刻 < 入力開始時刻 < 登録済み終了時刻 
+                if($rec_start_time < $start_time && $start_time < $rec_end_time ){
+                    return TRUE;
+                }
+                // 登録済み開始時刻 < 入力終了時刻 < 登録済み終了時刻 
+                if($rec_start_time < $end_time && $end_time < $rec_end_time ){
+                    return TRUE;
+                }
+            }
+		}
+		return FALSE;
+	}
+
 }
 
 ?>
