@@ -32,14 +32,20 @@ log_message('debug',"\$base_url = $base_url");
       var errmsg = top.header.document.getElementById("errmsg");
       <?php if (!empty($infomsg)) {  ?>
     	errmsg.setAttribute('class', 'msg-info');
-      errmsg.setAttribute('className', 'msg-info'); // for ie6
-      errmsg.innerText = '<?php echo $infomsg; ?>';
-			errmsg.textContent = '<?php echo $infomsg; ?>'; // for not ie
+        errmsg.setAttribute('className', 'msg-info'); // for ie6
+        errmsg.innerText = '<?php echo $infomsg; ?>';
+        errmsg.textContent = '<?php echo $infomsg; ?>'; // for not ie
+        <?php if($infomsg=="開始時刻と終了時刻の時間帯で重複しているものがあります。"){
+            echo 'alert("開始時刻と終了時刻の時間帯で重複しているものがあります。");'; 
+        }  ?>
       <?php } else { ?>
-      errmsg.setAttribute('class', 'msg-error');
-      errmsg.setAttribute('className', 'msg-error'); // for ie6
-      errmsg.innerText = '<?php echo $errmsg; ?>';
-			errmsg.textContent = '<?php echo $errmsg; ?>'; // for not ie
+        errmsg.setAttribute('class', 'msg-error');
+        errmsg.setAttribute('className', 'msg-error'); // for ie6
+        errmsg.innerText = '<?php echo $errmsg; ?>';
+        errmsg.textContent = '<?php echo $errmsg; ?>'; // for not ie
+        <?php if($infomsg=="開始時刻と終了時刻の時間帯で重複しているものがあります。"){
+            echo 'alert("開始時刻と終了時刻の時間帯で重複しているものがあります。");'; 
+        } ?>
       <?php } ?>
   }
   </script>
