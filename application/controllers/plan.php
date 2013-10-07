@@ -637,6 +637,30 @@ class Plan extends MY_Controller {
 			// ユニット長社番チェック（確認者番に無ければ追加）
 			$kakninshbn = $this->plan_manager->get_confirmer_no($shbn,$post['kakninshbn']);
 
+            // 時刻重複事前チェック
+            $stt = array();
+            $ett = array();
+            $i = 0;
+			foreach ($data as $key => $value) {
+				if(!empty($value['data_no'])){
+					$stt[$i] = strtotime($select_day . 't' . $data[$key]['sth_'.$value['data_no']].$data[$key]['stm_'.$value['data_no']] . '00');
+					$ett[$i] = strtotime($select_day . 't' . $data[$key]['edh_'.$value['data_no']].$data[$key]['edm_'.$value['data_no']] . '00');
+                    $i++;
+                }
+            }
+            for($j=0;$j<$i;$j++){
+                for($k=0;$k<$i;$k++){
+                    if($stt[$k] < $stt[$j] && $stt[$j] < $ett[$k]){
+						$msg ="開始時刻と終了時刻の時間帯で重複しているものがあります。";
+						return $msg;
+                    }
+                    if($stt[$k] < $ett[$j] && $ett[$j] < $ett[$k]){
+						$msg ="開始時刻と終了時刻の時間帯で重複しているものがあります。";
+						return $msg;
+                    }
+                }
+            }
+
 			// 登録処理
 			foreach ($data as $key => $value) {
 				if(!empty($value['data_no'])){

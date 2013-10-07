@@ -43,7 +43,7 @@ log_message('debug',"\$base_url = $base_url");
         errmsg.setAttribute('className', 'msg-error'); // for ie6
         errmsg.innerText = '<?php echo $errmsg; ?>';
         errmsg.textContent = '<?php echo $errmsg; ?>'; // for not ie
-        <?php if($infomsg=="開始時刻と終了時刻の時間帯で重複しているものがあります。"){
+        <?php if($errmsg=="開始時刻と終了時刻の時間帯で重複しているものがあります。"){
             echo 'alert("開始時刻と終了時刻の時間帯で重複しているものがあります。");'; 
         } ?>
       <?php } ?>
