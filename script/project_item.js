@@ -10,8 +10,10 @@ $(document).ready(function(){
   });
   //削除ボタンがクリックされた時の処理
   $("input[name=dellbtn]").live('click', function(event) {
-    var btn_id  = $(this).attr("id");
-    dell_row(btn_id);
+    if(confirm("削除しますか？")){
+      var btn_id  = $(this).attr("id");
+      dell_row(btn_id);
+    }
   });
 });
 
@@ -49,7 +51,29 @@ function add_row_res(data) {
 
 //-----------------------------------------
 function dell_row(btn_id) {
-  var view_no = btn_id.split("_");  //no_1 をアンダーバーでスプリット
-  view_no = view_no[1]; //行番号
-  $('#no_'+view_no).remove(); //指定行削除
+  var view_no = btn_id.split("_");
+  view_no = view_no[1];
+  var app_url = $('#app_url').text();
+
+  //送信
+  var res = $.ajax({
+    type: "POST",
+    url: app_url+'/project_item/del_item',
+    async: true,
+    data: {view_no:view_no},
+    datatype: "text",
+    success: del_row_res
+  });
+
+  //var view_no = btn_id.split("_");  //no_1 をアンダーバーでスプリット
+  //view_no = view_no[1]; //行番号
+  //$('#no_'+view_no).remove(); //指定行削除
+}
+
+function del_row_res(data) {
+  if(data=="error"){
+    alert("エラーが発生しました。");
+  }else{
+    $('#no_'+data).remove(); //指定行削除
+  }
 }

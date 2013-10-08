@@ -607,6 +607,7 @@ class Plan extends MY_Controller {
 			if(is_null($post)){
 				throw new Exception("Error Processing Request", ERROR_SYSTEM);
 			}
+			
 			// 初期化
 			$old_data = $post;
 			$this->load->library('plan_manager');

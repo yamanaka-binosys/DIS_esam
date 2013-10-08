@@ -171,7 +171,8 @@ class Sgmtb080 extends CI_Model {
 				FROM
 					SGMTB080
 				WHERE
-					deletedate IS NULL
+					deletedate IS NULL AND
+					delete_flg = '0'
 				ORDER BY view_no,DbnriCd,ItemCd
 				LIMIT $limit + ? OFFSET ? + ?";
 		log_message('debug',"sql=".$sql);
@@ -493,16 +494,18 @@ class Sgmtb080 extends CI_Model {
 			log_message('debug',"========== delete trans_start end ==========");
 			// 初期化
 			$res = NULL;
-			$date = date("Ymd");
+			//$date = date("Ymd");
 			// sql文作成
-			$sql = "UPDATE sgmtb080
+			$flg = "1";
+			$sql = 'UPDATE sgmtb080
 					SET
-						deletedate = ?
+						delete_flg = ? ,
+						view_no = ?
 					WHERE
-						view_no = ?;";
+						view_no = ?;';
 			log_message('debug',"sql=".$sql);
 			// クエリ実行
-			$query = $this->db->query($sql,array($date,$view_no));
+			$query = $this->db->query($sql,array($flg,999,$view_no));
 			// 結果判定
 			if($query)
 			{
@@ -582,7 +585,7 @@ class Sgmtb080 extends CI_Model {
       //////////////////////////////
       //  削除処理
       //
-      $sql = "DELETE FROM SGMTB080";
+      $sql = "DELETE FROM SGMTB080 where delete_flg = '0'";
       log_message('debug',"sql=".$sql);
       // クエリ実行
       $query = $this->db->query($sql);

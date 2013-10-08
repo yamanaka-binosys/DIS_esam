@@ -55,7 +55,7 @@ class Project_item extends MY_Controller{
 
         // 登録データ生成
         $regist_data = $this->project_item_manager->insert_data_set($_POST);
-
+        
         //登録処理
         if($regist_data) {
           $res = $this->project_item_manager->set_db_insert_data($regist_data);
@@ -355,6 +355,33 @@ class Project_item extends MY_Controller{
 
 		return $this->message_manager->get_message($e,$item);
 	}
+
+	/**
+   * アイテム削除
+   *
+   */
+   function del_item()
+  {
+    try
+    {
+      //データ取得
+      $view_no = $this->input->post('view_no');
+
+      $this->load->model('sgmtb080'); 
+
+      //削除処理
+      if($this->sgmtb080->delete_project_item($view_no)){
+      	echo $view_no;
+      }else{
+      	echo "error";
+      }
+
+    }catch(Exception $e){
+      //エラー処理
+      $this->load->view('/parts/error/error.php',array('errcode' => 'Project_item_del_item'));
+    }
+  }
+
 }
 
 /* End of file Plan.php */

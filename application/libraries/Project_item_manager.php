@@ -85,7 +85,7 @@ class Project_item_manager {
     $CI->load->model('sgmtb080');
 
     //既存データ取得
-    $all_data = $CI->sgmtb080->get_kikaku_item_data("DbnriCd, DbnriNm, ItemCd, ItemNm, createdate, updatedate, view_no", "", "view_no");
+    $all_data = $CI->sgmtb080->get_kikaku_item_data("DbnriCd, DbnriNm, ItemCd, ItemNm, createdate, updatedate, view_no", "delete_flg='0'", "view_no");
 
     //ビュー№をkeyに置き換え
     $select_data = array();
