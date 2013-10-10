@@ -86,7 +86,11 @@ class Regular_plan extends MY_Controller {
 				$data['kakninshbn'] = "";
 				$data['kakninshnm'] = "";
 			}
-			// 画面表示
+            
+            $data['error_date'] = $this->error_date;
+            $this->error_date = null;       // エラー日付を渡したらすぐに初期化する
+
+            // 画面表示
 			log_message('debug',"========== controllers plan index end ==========");
 			$this->display($data);
 		}catch(Exception $e){
@@ -393,6 +397,7 @@ class Regular_plan extends MY_Controller {
 			$group_count = 0;
 			$regular_day = array();
 			$flg = FALSE;
+            $this->error_date = NULL;
 
 			// 現在日
 			$select_year = substr($post['select_day'],0,4);
