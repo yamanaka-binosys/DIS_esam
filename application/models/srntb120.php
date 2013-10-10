@@ -2,6 +2,8 @@
 
 class Srntb120 extends CI_Model {
 	
+    public $error_date;         // エラーが発生した日付を格納
+
 	function __construct()
 	{
 		// Model クラスのコンストラクタを呼び出す
@@ -156,6 +158,44 @@ class Srntb120 extends CI_Model {
 		return $result_data;
 	}
 	
+    //
+    // 既に登録されている同日同時刻のデータの有無を確認する。
+    //
+    function st_et_check($shbn, $startdatetime, $enddatetime) {
+
+        log_message('debug', "========== " . __METHOD__ . " (" . $shbn . ", " . $startdatetime . ", " . $enddatetime . ") start ==========");
+
+        // 初期化
+        $sql = ""; // sql_regcase文字列
+        $query = NULL; // SQL実行結果
+        $result_data = NULL; // 戻り値
+        $this->error_date = null;   // エラー日付初期化
+        // SQL文作成
+        $sql .= " SELECT shbn, ymd, sthm, edhm FROM srntb120 WHERE shbn = ? AND ymd = ? ";
+        log_message('debug', "\$sql = $sql");
+        // SQL実行
+        $query = $this->db->query($sql, array($shbn, date("Ymd", $startdatetime)));
+        // 取得確認
+        if ($query->num_rows() > 0) {
+            $result_data = $query->result_array();
+            foreach ($result_data as $rec) {
+                $rec_start_time = strtotime($rec['ymd'] . 't' . $rec['sthm'] . '00');   // DBに登録されている開始日付時刻
+                $rec_end_time = strtotime($rec['ymd'] . 't' . $rec['edhm'] . '00');     // DBに登録されている終了日付時刻
+                // 登録済み開始時刻 < 入力開始時刻 < 登録済み終了時刻 
+                if ($rec_start_time < $startdatetime && $startdatetime < $rec_end_time) {
+                    $this->error_date = $startdatetime;
+                    return TRUE;
+                }
+                // 登録済み開始時刻 < 入力終了時刻 < 登録済み終了時刻 
+                if ($rec_start_time < $enddatetime && $enddatetime < $rec_end_time) {
+                    $this->error_date = $startdatetime;
+                    return TRUE;
+                }
+            }
+        }
+        return FALSE;
+    }
+
 }
 
 ?>

@@ -2,6 +2,8 @@
 
 class Plan_manager {
 	
+    public $error_date;     // エラーが発生した日付を格納
+    
 	/**
 	 * 
 	 */
@@ -2765,6 +2767,51 @@ class Plan_manager {
 		return $data;
 	}
 
+    //
+    // すでに予約済みの時刻かをチェックする
+    //
+    function st_et_check($shbn, $select_day, $start_hour, $start_minute, $end_hour, $end_minute) {
+
+        log_message('debug', "========== " . __METHOD__ . " (" . $shbn . ", " . $select_day . ", " . $start_hour . ", " . $start_minute . ", " . $end_hour . ", " . $end_minute . ") start ==========");
+
+        // 初期化
+        $CI = & get_instance();
+        $CI->load->model('srntb110');
+        $CI->load->model('srntb120');
+        $CI->load->model('srntb130');
+        $CI->load->model('srntb140');
+        $CI->load->model('srntb160');
+
+        // 予定開始時刻と予定終時刻をtimestamp型にする
+        log_message('debug', "========== " . __METHOD__ . " (" . substr($select_day, 4, 2) . ", " . substr($select_day, 6, 2) . ", " . substr($select_day, 0, 4) . ", " . $start_hour . ", " . $start_minute . ", " . $end_hour . ", " . $end_minute . ") start ==========");
+
+        $st = mktime($start_hour, $start_minute, '00', substr($select_day, 4, 2), substr($select_day, 6, 2), substr($select_day, 0, 4));
+        $et = mktime($end_hour, $end_minute, '00', substr($select_day, 4, 2), substr($select_day, 6, 2), substr($select_day, 0, 4));
+
+        // ここで登録済みの時刻とブッキングしていないか確認する。ブッキングしていたら真を返す
+        if ($CI->srntb110->st_et_check($shbn, $st, $et)){
+            $this->error_date = $CI->srntb110->error_date;
+            return true;
+        }
+        if ($CI->srntb120->st_et_check($shbn, $st, $et)){
+            $this->error_date = $CI->srntb120->error_date;
+            return true;
+        }
+        if ($CI->srntb130->st_et_check($shbn, $st, $et)){
+            $this->error_date = $CI->srntb130->error_date;
+            return true;
+        }
+        if ($CI->srntb140->st_et_check($shbn, $st, $et)){
+            $this->error_date = $CI->srntb140->error_date;
+            return true;
+        }
+        if ($CI->srntb160->st_et_check($shbn, $st, $et)){
+            $this->error_date = $CI->srntb160->error_date;
+            return true;
+        }
+
+        return FALSE;   // 時刻の重複がなければ偽を返す
+    }
 	
 	
 }

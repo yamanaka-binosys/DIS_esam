@@ -22,7 +22,21 @@ log_message('debug',"\$base_url = $base_url");
 <script type="text/javascript" src="<?php echo $base_url; ?>script/regular_plan.js"></script>
 </head>
 
-<body onload="new_action_view('<?php echo $base_url; ?>','<?php echo SHOW_REGULAR_PLAN ?>','<?php echo $tmp_flg; ?>')">
+<script type="text/javascript">
+<!--
+function body_onload(){
+    <?php if ($error_date != null) {
+        echo "alert(\"" . date("Y", $error_date) . "年" . date("m", $error_date) . "月" . date("d", $error_date) . "日 " . date("H", $error_date) . "時" . date("i", $error_date) . "分に登録済みのデータがあるため登録できません" . "\");\n";
+    } ?>
+    new_action_view('<?php echo $base_url; ?>','<?php echo SHOW_REGULAR_PLAN ?>','<?php echo $tmp_flg; ?>');
+}
+// -->
+</script>
+
+
+
+<!--<body onload="new_action_view('<?php echo $base_url; ?>','<?php echo SHOW_REGULAR_PLAN ?>','<?php echo $tmp_flg; ?>')">-->
+<body onload="body_onload();">
 <?php
 
 if($tmp_flg){

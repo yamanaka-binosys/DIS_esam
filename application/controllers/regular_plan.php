@@ -2,6 +2,8 @@
 
 class Regular_plan extends MY_Controller {
 
+    public $error_date;         // エラーが発生した日付を格納
+    
 	function index($select_day = NULL){
 		try{
 			// 登録ボタン押下判定を入れる
@@ -408,343 +410,418 @@ class Regular_plan extends MY_Controller {
 			}else{
 				return;
 			}
-			// 定期区分
-			// 1 = 選択日,2 = 月末,3 = 曜日
-			if($post['hkubun_01'] == 1){
+            // 定期区分
+            // 1 = 選択日,2 = 月末,3 = 曜日
+            if ($post['hkubun_01'] == 1) {
 //				$day = $post['designated_day_01'];
-				$day = sprintf('%02d',$post['designated_day_01']);
-				log_message('debug',"\$day = $day");
-				while ($flg === FALSE) {
-					$u_deadline_date = strtotime(date("Ymd",mktime(0,0,0,$deadline_month,$deadline_day,$deadline_year)));
-					$u_select_date = strtotime(date("Ymd",mktime(0,0,0,$select_month,$day,$select_year)));
+                $day = sprintf('%02d', $post['designated_day_01']);
+                log_message('debug', "\$day = $day");
+                while ($flg === FALSE) {
+                    $u_deadline_date = strtotime(date("Ymd", mktime(0, 0, 0, $deadline_month, $deadline_day, $deadline_year)));
+                    $u_select_date = strtotime(date("Ymd", mktime(0, 0, 0, $select_month, $day, $select_year)));
 //					log_message('debug',"\$u_deadline_date = $u_deadline_date");
 //					log_message('debug',"\$u_select_date = $u_select_date");
-					log_message('debug',"========== u_deadline_date ".$u_deadline_date." ==========");
-					log_message('debug',"========== u_select_date ".$u_select_date." ==========");
-					if($u_deadline_date >= $u_select_date){
-						if($to_select_date <= $u_select_date){
-							$regular_day_check = date("Ymd",mktime(0,0,0,sprintf('%02d',$select_month),$day,sprintf('%02d',$select_year)));
-							if(substr($regular_day_check,4,2)===sprintf('%02d',$select_month)){
-							log_message('debug',"========== if(substr($regular_day_check,4,2)==$select_month)  ".substr($regular_day_check,4,2)."::".sprintf('%02d',$select_month)." ==========");
-								$regular_day[] = date("Ymd",mktime(0,0,0,sprintf('%02d',$select_month),$day,sprintf('%02d',$select_year)));
-							}else{
-							log_message('debug',"========== if(substr($regular_day_check,4,2)==$select_month)　月末に変換 ".substr($regular_day_check,4,2)."::".sprintf('%02d',$select_month)." ==========");
-								$select_month_p = $select_month + 1;
-								log_message('debug',"==========select_month ".$select_month." ==========");
-								$regular_day[] = date("Ymd",mktime(0,0,0,sprintf('%02d',$select_month_p),0,sprintf('%02d',$select_year)));
-							}
-						}
-					}else{
-						$flg = TRUE;
-					}
-					log_message('debug',"========== regular_day ".date("Ymd",mktime(0,0,0,sprintf('%02d',$select_month),$day,sprintf('%02d',$select_year)))." ==========");
-					// 月を移動
+                    log_message('debug', "========== u_deadline_date " . $u_deadline_date . " ==========");
+                    log_message('debug', "========== u_select_date " . $u_select_date . " ==========");
+                    if ($u_deadline_date >= $u_select_date) {
+                        if ($to_select_date <= $u_select_date) {
+                            $regular_day_check = date("Ymd", mktime(0, 0, 0, sprintf('%02d', $select_month), $day, sprintf('%02d', $select_year)));
+                            if (substr($regular_day_check, 4, 2) === sprintf('%02d', $select_month)) {
+                                log_message('debug', "========== if(substr($regular_day_check,4,2)==$select_month)  " . substr($regular_day_check, 4, 2) . "::" . sprintf('%02d', $select_month) . " ==========");
+                                $regular_day[] = date("Ymd", mktime(0, 0, 0, sprintf('%02d', $select_month), $day, sprintf('%02d', $select_year)));
+                            } else {
+                                log_message('debug', "========== if(substr($regular_day_check,4,2)==$select_month)　月末に変換 " . substr($regular_day_check, 4, 2) . "::" . sprintf('%02d', $select_month) . " ==========");
+                                $select_month_p = $select_month + 1;
+                                log_message('debug', "==========select_month " . $select_month . " ==========");
+
+                                // TODO
+                                // ここに時刻の重複チェックを入れる
+                                if ($this->plan_manager->st_et_check($shbn, $post['select_day'], $post['sth_01'], $post['stm_01'], $post['edh_01'], $post['edm_01'])) {
+                                    log_message("debug", " ------- " . __METHOD__  . $shbn . ", " . date("Ymt", mktime(0, 0, 0, $select_month, 1, $select_year)) . ", " . $post['sth_01'] . ", " . $post['stm_01'] . ", " . $post['edh_01'] . ", " . $post['edm_01']);
+                                    $this->error_date = $this->plan_manager->error_date;
+                                    return;
+                                }
+
+                                $regular_day[] = date("Ymd", mktime(0, 0, 0, sprintf('%02d', $select_month_p), 0, sprintf('%02d', $select_year)));
+                            }
+                        }
+                    } else {
+                        $flg = TRUE;
+                    }
+                    log_message('debug', "========== regular_day " . date("Ymd", mktime(0, 0, 0, sprintf('%02d', $select_month), $day, sprintf('%02d', $select_year))) . " ==========");
+                    // 月を移動
 //					log_message('debug',"\$select_year = $select_year");
 //					log_message('debug',"\$select_month = $select_month");
-					if((int)$select_month < 12){
-						$select_month = (int)$select_month + 1;
+                    if ((int) $select_month < 12) {
+                        $select_month = (int) $select_month + 1;
 //						log_message('debug',"\$select_month = $select_month");
-					}else{
-						$select_month = "01";
-						$select_year = (int)$select_year + 1;
+                    } else {
+                        $select_month = "01";
+                        $select_year = (int) $select_year + 1;
 //						log_message('debug',"\$select_month = $select_month");
 //						log_message('debug',"\$select_year = $select_year");
-					}
-				}
+                    }
+                }
 //				foreach ($regular_day as $key => $value) {
 //					log_message('debug',"regular_day = $value");
 //				}
-			}else if($post['hkubun_01'] == 2){
-				while ($flg === FALSE) {
-					$u_deadline_date = strtotime(date("Ymd",mktime(0,0,0,$deadline_month,$deadline_day,$deadline_year)));
-					$u_select_date = strtotime(date("Ymt",mktime(0,0,0,$select_month,1,$select_year)));
-					log_message('debug',"select month end = ".date("Ymt",mktime(0,0,0,$select_month,1,$select_year)));
-					if($u_deadline_date >= $u_select_date){
-						if($to_select_date <= $u_select_date){
-							$regular_day[] = date("Ymt",mktime(0,0,0,$select_month,1,$select_year));
-						}
-					}else{
-						$flg = TRUE;
-					}
-					if((int)$select_month < 12){
-						$select_month = (int)$select_month + 1;
+            } else if ($post['hkubun_01'] == 2) {
+                while ($flg === FALSE) {
+                    $u_deadline_date = strtotime(date("Ymd", mktime(0, 0, 0, $deadline_month, $deadline_day, $deadline_year)));
+                    $u_select_date = strtotime(date("Ymt", mktime(0, 0, 0, $select_month, 1, $select_year)));
+                    log_message('debug', "select month end = " . date("Ymt", mktime(0, 0, 0, $select_month, 1, $select_year)));
+                    if ($u_deadline_date >= $u_select_date) {
+                        if ($to_select_date <= $u_select_date) {
+
+                            log_message("debug", "--------------" . $shbn . ", " . date("Ymt", mktime(0, 0, 0, $select_month, 1, $select_year)) . ", " . $post['sth_01'] . ", " . $post['stm_01'] . ", " . $post['edh_01'] . ", " . $post['edm_01']);
+                            // TODO
+                            // ここに時刻の重複チェックを入れる
+                            if ($this->plan_manager->st_et_check($shbn, date("Ymt", mktime(0, 0, 0, $select_month, 1, $select_year)), $post['sth_01'], $post['stm_01'], $post['edh_01'], $post['edm_01'])) {
+                                log_message("debug", " ------- " . __METHOD__  . $shbn . ", " . date("Ymt", mktime(0, 0, 0, $select_month, 1, $select_year)) . ", " . $post['sth_01'] . ", " . $post['stm_01'] . ", " . $post['edh_01'] . ", " . $post['edm_01']);
+                                $this->error_date = $this->plan_manager->error_date;
+                                log_message("debug", "error_date = " . $this->error_date);
+                                return;
+                            }
+
+                            $regular_day[] = date("Ymt", mktime(0, 0, 0, $select_month, 1, $select_year));
+                        }
+                    } else {
+                        $flg = TRUE;
+                    }
+                    if ((int) $select_month < 12) {
+                        $select_month = (int) $select_month + 1;
 //						log_message('debug',"\$select_month = $select_month");
-					}else{
-						$select_month = "01";
-						$select_year = (int)$select_year + 1;
+                    } else {
+                        $select_month = "01";
+                        $select_year = (int) $select_year + 1;
 //						log_message('debug',"\$select_month = $select_month");
 //						log_message('debug',"\$select_year = $select_year");
-					}
-				}
+                    }
+                }
 //				foreach ($regular_day as $key => $value) {
 //					log_message('debug',"regular_day = $value");
 //				}
-			}else if($post['hkubun_01'] == 3){
-				$u_deadline_date = strtotime(date("Ymd",mktime(0,0,0,$deadline_month,$deadline_day,$deadline_year)));
-				// 日曜日
-				if(isset($post['designated_sun_01'])){
-					if($post['designated_sun_01'] === "on"){
-						$select_year = substr($post['select_day'],0,4);
-						$select_month = substr($post['select_day'],4,2);
-						$select_day = substr($post['select_day'],6,2);
-						$select_week_day = date("w",mktime(0,0,0,$select_month,$select_day,$select_year));
-						$month_last_day = date("t",mktime(0,0,0,$select_month,1,$select_year));
-						$flg = FALSE;
-						if($select_week_day == 0){
-							$select_day = (int)$select_day -7;
-						}else if($select_week_day > 0){
-							$select_day = (int)$select_day - (int)$select_week_day;
-						}
-						while($flg === FALSE) {
-							$select_day = (int)$select_day + 7;
-							if($select_day > $month_last_day){
-								$select_day = (int)$select_day - (int)$month_last_day;
-								$select_month = (int)$select_month + 1;
-								$month_last_day = date("t",mktime(0,0,0,$select_month,1,$select_year));
-								if((int)$select_month > 12){
-									$select_month = "01";
-									$select_year = (int)$select_year + 1;
-								}
-							}
-							$u_select_date = strtotime(date("Ymd",mktime(0,0,0,$select_month,$select_day,$select_year)));
-							if($u_deadline_date >= $u_select_date){
-								if($to_select_date <= $u_select_date){
-									$regular_day[] = date("Ymd",mktime(0,0,0,sprintf('%02d',$select_month),sprintf('%02d',$select_day),sprintf('%02d',$select_year)));
-								}
-							}else{
-								$flg = TRUE;
-							}
-						}
-					}
-				}
-				// 月曜日
-				if(isset($post['designated_mon_01'])){
-					if($post['designated_mon_01'] === "on"){
-						$select_year = substr($post['select_day'],0,4);
-						$select_month = substr($post['select_day'],4,2);
-						$select_day = substr($post['select_day'],6,2);
-						$select_week_day = date("w",mktime(0,0,0,$select_month,$select_day,$select_year));
-						$month_last_day = date("t",mktime(0,0,0,$select_month,1,$select_year));
-						$flg = FALSE;
-						if($select_week_day == 1){
-							$select_day = (int)$select_day -7;
-						}else if($select_week_day < 1){
-							$select_day = (int)$select_day - 7 + (1 - (int)$select_week_day);
-						}else if($select_week_day > 1){
-							$select_day = (int)$select_day - ((int)$select_week_day - 1);
-						}
-						while($flg === FALSE) {
-							$select_day = (int)$select_day + 7;
-							if($select_day > $month_last_day){
-								$select_day = (int)$select_day - (int)$month_last_day;
-								$select_month = (int)$select_month + 1;
-								$month_last_day = date("t",mktime(0,0,0,$select_month,1,$select_year));
-								if((int)$select_month > 12){
-									$select_month = "01";
-									$select_year = (int)$select_year + 1;
-								}
-							}
-							$u_select_date = strtotime(date("Ymd",mktime(0,0,0,$select_month,$select_day,$select_year)));
-							if($u_deadline_date >= $u_select_date){
-								if($to_select_date <= $u_select_date){
-									$regular_day[] = date("Ymd",mktime(0,0,0,sprintf('%02d',$select_month),sprintf('%02d',$select_day),sprintf('%02d',$select_year)));
-								}
-							}else{
-								$flg = TRUE;
-							}
-						}
-					}
-				}
-				// 火曜日
-				if(isset($post['designated_tues_01'])){
-					if($post['designated_tues_01'] === "on"){
-						$select_year = substr($post['select_day'],0,4);
-						$select_month = substr($post['select_day'],4,2);
-						$select_day = substr($post['select_day'],6,2);
-						$select_week_day = date("w",mktime(0,0,0,$select_month,$select_day,$select_year));
-						$month_last_day = date("t",mktime(0,0,0,$select_month,1,$select_year));
-						$flg = FALSE;
-						if($select_week_day == 2){
-							$select_day = (int)$select_day -7;
-						}else if($select_week_day < 2){
-							$select_day = (int)$select_day - 7 + (2 - (int)$select_week_day);
-						}else if($select_week_day > 2){
-							$select_day = (int)$select_day - ((int)$select_week_day - 2);
-						}
-						while($flg === FALSE) {
-							$select_day = (int)$select_day + 7;
-							if($select_day > $month_last_day){
-								$select_day = (int)$select_day - (int)$month_last_day;
-								$select_month = (int)$select_month + 1;
-								$month_last_day = date("t",mktime(0,0,0,$select_month,1,$select_year));
-								if((int)$select_month > 12){
-									$select_month = "01";
-									$select_year = (int)$select_year + 1;
-								}
-							}
-							$u_select_date = strtotime(date("Ymd",mktime(0,0,0,$select_month,$select_day,$select_year)));
-							if($u_deadline_date >= $u_select_date){
-								if($to_select_date <= $u_select_date){
-									$regular_day[] = date("Ymd",mktime(0,0,0,sprintf('%02d',$select_month),sprintf('%02d',$select_day),sprintf('%02d',$select_year)));
-								}
-							}else{
-								$flg = TRUE;
-							}
-						}
-					}
-				}
-				// 水曜日
-				if(isset($post['designated_wed_01'])){
-					if($post['designated_wed_01'] === "on"){
-						$select_year = substr($post['select_day'],0,4);
-						$select_month = substr($post['select_day'],4,2);
-						$select_day = substr($post['select_day'],6,2);
-						$select_week_day = date("w",mktime(0,0,0,$select_month,$select_day,$select_year));
-						$month_last_day = date("t",mktime(0,0,0,$select_month,1,$select_year));
-						$flg = FALSE;
-						if($select_week_day == 3){
-							$select_day = (int)$select_day -7;
-						}else if($select_week_day < 3){
-							$select_day = (int)$select_day - 7 + (3 - (int)$select_week_day);
-						}else if($select_week_day > 3){
-							$select_day = (int)$select_day - ((int)$select_week_day - 3);
-						}
-						while($flg === FALSE) {
-							$select_day = (int)$select_day + 7;
-							if($select_day > $month_last_day){
-								$select_day = (int)$select_day - (int)$month_last_day;
-								$select_month = (int)$select_month + 1;
-								$month_last_day = date("t",mktime(0,0,0,$select_month,1,$select_year));
-								if((int)$select_month > 12){
-									$select_month = "01";
-									$select_year = (int)$select_year + 1;
-								}
-							}
-							$u_select_date = strtotime(date("Ymd",mktime(0,0,0,$select_month,$select_day,$select_year)));
-							if($u_deadline_date >= $u_select_date){
-								if($to_select_date <= $u_select_date){
-									$regular_day[] = date("Ymd",mktime(0,0,0,sprintf('%02d',$select_month),sprintf('%02d',$select_day),sprintf('%02d',$select_year)));
-								}
-							}else{
-								$flg = TRUE;
-							}
-						}
-					}
-				}
-				// 木曜日
-				if(isset($post['designated_thurs_01'])){
-					if($post['designated_thurs_01'] === "on"){
-						$select_year = substr($post['select_day'],0,4);
-						$select_month = substr($post['select_day'],4,2);
-						$select_day = substr($post['select_day'],6,2);
-						$select_week_day = date("w",mktime(0,0,0,$select_month,$select_day,$select_year));
-						$month_last_day = date("t",mktime(0,0,0,$select_month,1,$select_year));
-						$flg = FALSE;
-						if($select_week_day == 4){
-							$select_day = (int)$select_day -7;
-						}else if($select_week_day < 4){
-							$select_day = (int)$select_day - 7 + (4 - (int)$select_week_day);
-						}else if($select_week_day > 4){
-							$select_day = (int)$select_day - ((int)$select_week_day - 4);
-						}
-						while($flg === FALSE) {
-							$select_day = (int)$select_day + 7;
-							if($select_day > $month_last_day){
-								$select_day = (int)$select_day - (int)$month_last_day;
-								$select_month = (int)$select_month + 1;
-								$month_last_day = date("t",mktime(0,0,0,$select_month,1,$select_year));
-								if((int)$select_month > 12){
-									$select_month = "01";
-									$select_year = (int)$select_year + 1;
-								}
-							}
-							$u_select_date = strtotime(date("Ymd",mktime(0,0,0,$select_month,$select_day,$select_year)));
-							if($u_deadline_date >= $u_select_date){
-								if($to_select_date <= $u_select_date){
-									$regular_day[] = date("Ymd",mktime(0,0,0,sprintf('%02d',$select_month),sprintf('%02d',$select_day),sprintf('%02d',$select_year)));
-								}
-							}else{
-								$flg = TRUE;
-							}
-						}
-					}
-				}
-				// 金曜日
-				if(isset($post['designated_fri_01'])){
-					if($post['designated_fri_01'] === "on"){
-						$select_year = substr($post['select_day'],0,4);
-						$select_month = substr($post['select_day'],4,2);
-						$select_day = substr($post['select_day'],6,2);
-						$select_week_day = date("w",mktime(0,0,0,$select_month,$select_day,$select_year));
-						$month_last_day = date("t",mktime(0,0,0,$select_month,1,$select_year));
-						$flg = FALSE;
-						if($select_week_day == 5){
-							$select_day = (int)$select_day -7;
-						}else if($select_week_day < 5){
-							$select_day = (int)$select_day - 7 + (5 - (int)$select_week_day);
-						}else if($select_week_day > 5){
-							$select_day = (int)$select_day - ((int)$select_week_day - 5);
-						}
-						while($flg === FALSE) {
-							$select_day = (int)$select_day + 7;
-							if($select_day > $month_last_day){
-								$select_day = (int)$select_day - (int)$month_last_day;
-								$select_month = (int)$select_month + 1;
-								$month_last_day = date("t",mktime(0,0,0,$select_month,1,$select_year));
-								if((int)$select_month > 12){
-									$select_month = "01";
-									$select_year = (int)$select_year + 1;
-								}
-							}
-							$u_select_date = strtotime(date("Ymd",mktime(0,0,0,$select_month,$select_day,$select_year)));
-							if($u_deadline_date >= $u_select_date){
-								if($to_select_date <= $u_select_date){
-									$regular_day[] = date("Ymd",mktime(0,0,0,sprintf('%02d',$select_month),sprintf('%02d',$select_day),sprintf('%02d',$select_year)));
-								}
-							}else{
-								$flg = TRUE;
-							}
-						}
-					}
-				}
-				// 土曜日
-				if(isset($post['designated_sat_01'])){
-					if($post['designated_sat_01'] === "on"){
-						$select_year = substr($post['select_day'],0,4);
-						$select_month = substr($post['select_day'],4,2);
-						$select_day = substr($post['select_day'],6,2);
-						$select_week_day = date("w",mktime(0,0,0,$select_month,$select_day,$select_year));
-						$month_last_day = date("t",mktime(0,0,0,$select_month,1,$select_year));
-						$flg = FALSE;
-						if($select_week_day == 6){
-							$select_day = (int)$select_day -7;
-						}else if($select_week_day < 6){
-							$select_day = (int)$select_day - 7 + (6 - (int)$select_week_day);
-						}else if($select_week_day > 6){
-							$select_day = (int)$select_day - ((int)$select_week_day - 6);
-						}
-						while($flg === FALSE) {
-							$select_day = (int)$select_day + 7;
-							if($select_day > $month_last_day){
-								$select_day = (int)$select_day - (int)$month_last_day;
-								$select_month = (int)$select_month + 1;
-								$month_last_day = date("t",mktime(0,0,0,$select_month,1,$select_year));
-								if((int)$select_month > 12){
-									$select_month = "01";
-									$select_year = (int)$select_year + 1;
-								}
-							}
-							$u_select_date = strtotime(date("Ymd",mktime(0,0,0,$select_month,$select_day,$select_year)));
-							if($u_deadline_date >= $u_select_date){
-								if($to_select_date <= $u_select_date){
-									$regular_day[] = date("Ymd",mktime(0,0,0,sprintf('%02d',$select_month),sprintf('%02d',$select_day),sprintf('%02d',$select_year)));
-								}
-							}else{
-								$flg = TRUE;
-							}
-						}
-					}
-				}
+            } else if ($post['hkubun_01'] == 3) {
+                $u_deadline_date = strtotime(date("Ymd", mktime(0, 0, 0, $deadline_month, $deadline_day, $deadline_year)));
+                // 日曜日
+                if (isset($post['designated_sun_01'])) {
+                    if ($post['designated_sun_01'] === "on") {
+                        $select_year = substr($post['select_day'], 0, 4);
+                        $select_month = substr($post['select_day'], 4, 2);
+                        $select_day = substr($post['select_day'], 6, 2);
+                        $select_week_day = date("w", mktime(0, 0, 0, $select_month, $select_day, $select_year));
+                        $month_last_day = date("t", mktime(0, 0, 0, $select_month, 1, $select_year));
+                        $flg = FALSE;
+                        if ($select_week_day == 0) {
+                            $select_day = (int) $select_day - 7;
+                        } else if ($select_week_day > 0) {
+                            $select_day = (int) $select_day - (int) $select_week_day;
+                        }
+                        while ($flg === FALSE) {
+                            $select_day = (int) $select_day + 7;
+                            if ($select_day > $month_last_day) {
+                                $select_day = (int) $select_day - (int) $month_last_day;
+                                $select_month = (int) $select_month + 1;
+                                $month_last_day = date("t", mktime(0, 0, 0, $select_month, 1, $select_year));
+                                if ((int) $select_month > 12) {
+                                    $select_month = "01";
+                                    $select_year = (int) $select_year + 1;
+                                }
+                            }
+                            $u_select_date = strtotime(date("Ymd", mktime(0, 0, 0, $select_month, $select_day, $select_year)));
+                            if ($u_deadline_date >= $u_select_date) {
+                                if ($to_select_date <= $u_select_date) {
+                                    // TODO
+                                    // ここに時刻の重複チェックを入れる
+                                    if ($this->plan_manager->st_et_check($shbn, $select_date, $post['sth_01'], $post['stm_01'], $post['edh_01'], $post['edm_01'])) {
+                                        log_message("debug", " ------- " . __METHOD__  . $shbn . ", " . date("Ymt", mktime(0, 0, 0, $select_month, 1, $select_year)) . ", " . $post['sth_01'] . ", " . $post['stm_01'] . ", " . $post['edh_01'] . ", " . $post['edm_01']);
+                                        return;
+                                    }
+
+
+                                    $regular_day[] = date("Ymd", mktime(0, 0, 0, sprintf('%02d', $select_month), sprintf('%02d', $select_day), sprintf('%02d', $select_year)));
+                                }
+                            } else {
+                                $flg = TRUE;
+                            }
+                        }
+                    }
+                }
+                // 月曜日
+                if (isset($post['designated_mon_01'])) {
+                    if ($post['designated_mon_01'] === "on") {
+                        $select_year = substr($post['select_day'], 0, 4);
+                        $select_month = substr($post['select_day'], 4, 2);
+                        $select_day = substr($post['select_day'], 6, 2);
+                        $select_week_day = date("w", mktime(0, 0, 0, $select_month, $select_day, $select_year));
+                        $month_last_day = date("t", mktime(0, 0, 0, $select_month, 1, $select_year));
+                        $flg = FALSE;
+                        if ($select_week_day == 1) {
+                            $select_day = (int) $select_day - 7;
+                        } else if ($select_week_day < 1) {
+                            $select_day = (int) $select_day - 7 + (1 - (int) $select_week_day);
+                        } else if ($select_week_day > 1) {
+                            $select_day = (int) $select_day - ((int) $select_week_day - 1);
+                        }
+                        while ($flg === FALSE) {
+                            $select_day = (int) $select_day + 7;
+                            if ($select_day > $month_last_day) {
+                                $select_day = (int) $select_day - (int) $month_last_day;
+                                $select_month = (int) $select_month + 1;
+                                $month_last_day = date("t", mktime(0, 0, 0, $select_month, 1, $select_year));
+                                if ((int) $select_month > 12) {
+                                    $select_month = "01";
+                                    $select_year = (int) $select_year + 1;
+                                }
+                            }
+                            $u_select_date = strtotime(date("Ymd", mktime(0, 0, 0, $select_month, $select_day, $select_year)));
+                            if ($u_deadline_date >= $u_select_date) {
+                                if ($to_select_date <= $u_select_date) {
+
+                                    // TODO
+                                    // ここに時刻の重複チェックを入れる
+                                    if ($this->plan_manager->st_et_check($shbn, $select_date, $post['sth_01'], $post['stm_01'], $post['edh_01'], $post['edm_01'])) {
+                                        log_message("debug", " ------- " . __METHOD__  . $shbn . ", " . date("Ymt", mktime(0, 0, 0, $select_month, 1, $select_year)) . ", " . $post['sth_01'] . ", " . $post['stm_01'] . ", " . $post['edh_01'] . ", " . $post['edm_01']);
+                                        return;
+                                    }
+                                    $regular_day[] = date("Ymd", mktime(0, 0, 0, sprintf('%02d', $select_month), sprintf('%02d', $select_day), sprintf('%02d', $select_year)));
+                                }
+                            } else {
+                                $flg = TRUE;
+                            }
+                        }
+                    }
+                }
+                // 火曜日
+                if (isset($post['designated_tues_01'])) {
+                    if ($post['designated_tues_01'] === "on") {
+                        $select_year = substr($post['select_day'], 0, 4);
+                        $select_month = substr($post['select_day'], 4, 2);
+                        $select_day = substr($post['select_day'], 6, 2);
+                        $select_week_day = date("w", mktime(0, 0, 0, $select_month, $select_day, $select_year));
+                        $month_last_day = date("t", mktime(0, 0, 0, $select_month, 1, $select_year));
+                        $flg = FALSE;
+                        if ($select_week_day == 2) {
+                            $select_day = (int) $select_day - 7;
+                        } else if ($select_week_day < 2) {
+                            $select_day = (int) $select_day - 7 + (2 - (int) $select_week_day);
+                        } else if ($select_week_day > 2) {
+                            $select_day = (int) $select_day - ((int) $select_week_day - 2);
+                        }
+                        while ($flg === FALSE) {
+                            $select_day = (int) $select_day + 7;
+                            if ($select_day > $month_last_day) {
+                                $select_day = (int) $select_day - (int) $month_last_day;
+                                $select_month = (int) $select_month + 1;
+                                $month_last_day = date("t", mktime(0, 0, 0, $select_month, 1, $select_year));
+                                if ((int) $select_month > 12) {
+                                    $select_month = "01";
+                                    $select_year = (int) $select_year + 1;
+                                }
+                            }
+                            $u_select_date = strtotime(date("Ymd", mktime(0, 0, 0, $select_month, $select_day, $select_year)));
+                            if ($u_deadline_date >= $u_select_date) {
+                                if ($to_select_date <= $u_select_date) {
+
+                                    // TODO
+                                    // ここに時刻の重複チェックを入れる
+                                    if ($this->plan_manager->st_et_check($shbn, $select_date, $post['sth_01'], $post['stm_01'], $post['edh_01'], $post['edm_01'])) {
+                                        log_message("debug", " ------- " . __METHOD__  . $shbn . ", " . date("Ymt", mktime(0, 0, 0, $select_month, 1, $select_year)) . ", " . $post['sth_01'] . ", " . $post['stm_01'] . ", " . $post['edh_01'] . ", " . $post['edm_01']);
+                                        return;
+                                    }
+
+                                    $regular_day[] = date("Ymd", mktime(0, 0, 0, sprintf('%02d', $select_month), sprintf('%02d', $select_day), sprintf('%02d', $select_year)));
+                                }
+                            } else {
+                                $flg = TRUE;
+                            }
+                        }
+                    }
+                }
+                // 水曜日
+                if (isset($post['designated_wed_01'])) {
+                    if ($post['designated_wed_01'] === "on") {
+                        $select_year = substr($post['select_day'], 0, 4);
+                        $select_month = substr($post['select_day'], 4, 2);
+                        $select_day = substr($post['select_day'], 6, 2);
+                        $select_week_day = date("w", mktime(0, 0, 0, $select_month, $select_day, $select_year));
+                        $month_last_day = date("t", mktime(0, 0, 0, $select_month, 1, $select_year));
+                        $flg = FALSE;
+                        if ($select_week_day == 3) {
+                            $select_day = (int) $select_day - 7;
+                        } else if ($select_week_day < 3) {
+                            $select_day = (int) $select_day - 7 + (3 - (int) $select_week_day);
+                        } else if ($select_week_day > 3) {
+                            $select_day = (int) $select_day - ((int) $select_week_day - 3);
+                        }
+                        while ($flg === FALSE) {
+                            $select_day = (int) $select_day + 7;
+                            if ($select_day > $month_last_day) {
+                                $select_day = (int) $select_day - (int) $month_last_day;
+                                $select_month = (int) $select_month + 1;
+                                $month_last_day = date("t", mktime(0, 0, 0, $select_month, 1, $select_year));
+                                if ((int) $select_month > 12) {
+                                    $select_month = "01";
+                                    $select_year = (int) $select_year + 1;
+                                }
+                            }
+                            $u_select_date = strtotime(date("Ymd", mktime(0, 0, 0, $select_month, $select_day, $select_year)));
+                            if ($u_deadline_date >= $u_select_date) {
+                                if ($to_select_date <= $u_select_date) {
+
+                                    // TODO
+                                    // ここに時刻の重複チェックを入れる
+                                    if ($this->plan_manager->st_et_check($shbn, $select_date, $post['sth_01'], $post['stm_01'], $post['edh_01'], $post['edm_01'])) {
+                                        log_message("debug", " ------- " . __METHOD__  . $shbn . ", " . date("Ymt", mktime(0, 0, 0, $select_month, 1, $select_year)) . ", " . $post['sth_01'] . ", " . $post['stm_01'] . ", " . $post['edh_01'] . ", " . $post['edm_01']);
+                                        return;
+                                    }
+
+                                    $regular_day[] = date("Ymd", mktime(0, 0, 0, sprintf('%02d', $select_month), sprintf('%02d', $select_day), sprintf('%02d', $select_year)));
+                                }
+                            } else {
+                                $flg = TRUE;
+                            }
+                        }
+                    }
+                }
+                // 木曜日
+                if (isset($post['designated_thurs_01'])) {
+                    if ($post['designated_thurs_01'] === "on") {
+                        $select_year = substr($post['select_day'], 0, 4);
+                        $select_month = substr($post['select_day'], 4, 2);
+                        $select_day = substr($post['select_day'], 6, 2);
+                        $select_week_day = date("w", mktime(0, 0, 0, $select_month, $select_day, $select_year));
+                        $month_last_day = date("t", mktime(0, 0, 0, $select_month, 1, $select_year));
+                        $flg = FALSE;
+                        if ($select_week_day == 4) {
+                            $select_day = (int) $select_day - 7;
+                        } else if ($select_week_day < 4) {
+                            $select_day = (int) $select_day - 7 + (4 - (int) $select_week_day);
+                        } else if ($select_week_day > 4) {
+                            $select_day = (int) $select_day - ((int) $select_week_day - 4);
+                        }
+                        while ($flg === FALSE) {
+                            $select_day = (int) $select_day + 7;
+                            if ($select_day > $month_last_day) {
+                                $select_day = (int) $select_day - (int) $month_last_day;
+                                $select_month = (int) $select_month + 1;
+                                $month_last_day = date("t", mktime(0, 0, 0, $select_month, 1, $select_year));
+                                if ((int) $select_month > 12) {
+                                    $select_month = "01";
+                                    $select_year = (int) $select_year + 1;
+                                }
+                            }
+                            $u_select_date = strtotime(date("Ymd", mktime(0, 0, 0, $select_month, $select_day, $select_year)));
+                            if ($u_deadline_date >= $u_select_date) {
+                                if ($to_select_date <= $u_select_date) {
+
+                                    // TODO
+                                    // ここに時刻の重複チェックを入れる
+                                    if ($this->plan_manager->st_et_check($shbn, $select_date, $post['sth_01'], $post['stm_01'], $post['edh_01'], $post['edm_01'])) {
+                                        log_message("debug", " ------- " . __METHOD__  . $shbn . ", " . date("Ymt", mktime(0, 0, 0, $select_month, 1, $select_year)) . ", " . $post['sth_01'] . ", " . $post['stm_01'] . ", " . $post['edh_01'] . ", " . $post['edm_01']);
+                                        return;
+                                    }
+
+                                    $regular_day[] = date("Ymd", mktime(0, 0, 0, sprintf('%02d', $select_month), sprintf('%02d', $select_day), sprintf('%02d', $select_year)));
+                                }
+                            } else {
+                                $flg = TRUE;
+                            }
+                        }
+                    }
+                }
+                // 金曜日
+                if (isset($post['designated_fri_01'])) {
+                    if ($post['designated_fri_01'] === "on") {
+                        $select_year = substr($post['select_day'], 0, 4);
+                        $select_month = substr($post['select_day'], 4, 2);
+                        $select_day = substr($post['select_day'], 6, 2);
+                        $select_week_day = date("w", mktime(0, 0, 0, $select_month, $select_day, $select_year));
+                        $month_last_day = date("t", mktime(0, 0, 0, $select_month, 1, $select_year));
+                        $flg = FALSE;
+                        if ($select_week_day == 5) {
+                            $select_day = (int) $select_day - 7;
+                        } else if ($select_week_day < 5) {
+                            $select_day = (int) $select_day - 7 + (5 - (int) $select_week_day);
+                        } else if ($select_week_day > 5) {
+                            $select_day = (int) $select_day - ((int) $select_week_day - 5);
+                        }
+                        while ($flg === FALSE) {
+                            $select_day = (int) $select_day + 7;
+                            if ($select_day > $month_last_day) {
+                                $select_day = (int) $select_day - (int) $month_last_day;
+                                $select_month = (int) $select_month + 1;
+                                $month_last_day = date("t", mktime(0, 0, 0, $select_month, 1, $select_year));
+                                if ((int) $select_month > 12) {
+                                    $select_month = "01";
+                                    $select_year = (int) $select_year + 1;
+                                }
+                            }
+                            $u_select_date = strtotime(date("Ymd", mktime(0, 0, 0, $select_month, $select_day, $select_year)));
+                            if ($u_deadline_date >= $u_select_date) {
+                                if ($to_select_date <= $u_select_date) {
+
+                                    // TODO
+                                    // ここに時刻の重複チェックを入れる
+                                    if ($this->plan_manager->st_et_check($shbn, $select_date, $post['sth_01'], $post['stm_01'], $post['edh_01'], $post['edm_01'])) {
+                                        log_message("debug", " ------- " . __METHOD__  . $shbn . ", " . date("Ymt", mktime(0, 0, 0, $select_month, 1, $select_year)) . ", " . $post['sth_01'] . ", " . $post['stm_01'] . ", " . $post['edh_01'] . ", " . $post['edm_01']);
+                                        return;
+                                    }
+
+                                    $regular_day[] = date("Ymd", mktime(0, 0, 0, sprintf('%02d', $select_month), sprintf('%02d', $select_day), sprintf('%02d', $select_year)));
+                                }
+                            } else {
+                                $flg = TRUE;
+                            }
+                        }
+                    }
+                }
+                // 土曜日
+                if (isset($post['designated_sat_01'])) {
+                    if ($post['designated_sat_01'] === "on") {
+                        $select_year = substr($post['select_day'], 0, 4);
+                        $select_month = substr($post['select_day'], 4, 2);
+                        $select_day = substr($post['select_day'], 6, 2);
+                        $select_week_day = date("w", mktime(0, 0, 0, $select_month, $select_day, $select_year));
+                        $month_last_day = date("t", mktime(0, 0, 0, $select_month, 1, $select_year));
+                        $flg = FALSE;
+                        if ($select_week_day == 6) {
+                            $select_day = (int) $select_day - 7;
+                        } else if ($select_week_day < 6) {
+                            $select_day = (int) $select_day - 7 + (6 - (int) $select_week_day);
+                        } else if ($select_week_day > 6) {
+                            $select_day = (int) $select_day - ((int) $select_week_day - 6);
+                        }
+                        while ($flg === FALSE) {
+                            $select_day = (int) $select_day + 7;
+                            if ($select_day > $month_last_day) {
+                                $select_day = (int) $select_day - (int) $month_last_day;
+                                $select_month = (int) $select_month + 1;
+                                $month_last_day = date("t", mktime(0, 0, 0, $select_month, 1, $select_year));
+                                if ((int) $select_month > 12) {
+                                    $select_month = "01";
+                                    $select_year = (int) $select_year + 1;
+                                }
+                            }
+                            $u_select_date = strtotime(date("Ymd", mktime(0, 0, 0, $select_month, $select_day, $select_year)));
+                            if ($u_deadline_date >= $u_select_date) {
+                                if ($to_select_date <= $u_select_date) {
+
+                                    // TODO
+                                    // ここに時刻の重複チェックを入れる
+                                    if ($this->plan_manager->st_et_check($shbn, $select_date, $post['sth_01'], $post['stm_01'], $post['edh_01'], $post['edm_01'])) {
+                                        log_message("debug", " ------- " . __METHOD__ . $shbn . ", " . date("Ymt", mktime(0, 0, 0, $select_month, 1, $select_year)) . ", " . $post['sth_01'] . ", " . $post['stm_01'] . ", " . $post['edh_01'] . ", " . $post['edm_01']);
+                                        return;
+                                    }
+
+                                    $regular_day[] = date("Ymd", mktime(0, 0, 0, sprintf('%02d', $select_month), sprintf('%02d', $select_day), sprintf('%02d', $select_year)));
+                                }
+                            } else {
+                                $flg = TRUE;
+                            }
+                        }
+                    }
+                }
 //				foreach ($regular_day as $key => $value) {
 //					log_message('debug',"regular_day = $value");
 //				}
