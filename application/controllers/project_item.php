@@ -247,7 +247,7 @@ class Project_item extends MY_Controller{
       } else {
         //データあり
         foreach($project_data as $key => $val) {
-          $table_data .= $this->project_item_manager->get_project_data_list( $val["view_no"], $val['dbnrinm'], $val['dbnricd'], $val['itemnm'], $val['itemcd'] );
+          $table_data .= $this->project_item_manager->get_project_data_list( $val["view_no"], $val['dbnrinm'], $val['dbnricd'], $val['itemnm'], $val['itemcd'], $val['view_flg']);
         }
       }
 

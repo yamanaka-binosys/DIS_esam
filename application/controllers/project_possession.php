@@ -78,7 +78,7 @@ class Project_possession extends MY_Controller {
   		$this->load->model('srktb070'); // 企画獲得情報
 
   		//企画情報アイテムデータ(大分類情報取得, アイテム情報取得)
-  		$data["kiaku_data"] = $this->sgmtb080->get_kikaku_item_data("DbnriCd, DbnriNm, ItemCd, ItemNm, view_no", "", "view_no");
+  		$data["kiaku_data"] = $this->sgmtb080->get_kikaku_item_data("DbnriCd, DbnriNm, ItemCd, ItemNm, view_no, view_flg", "", "view_no");
 
   		//登録データ取得
   		$data["kakutoku_data"] = "";
@@ -90,7 +90,7 @@ class Project_possession extends MY_Controller {
   				//直近の入力データを取得
   				$last_regist_ym = $this->srktb070->get_kikaku_kakutoku_data("year, month", "shbn='{$data['shbn']}' AND aiteskcd='{$data['aiteskcd']}'", "year DESC,month DESC");
   				if($last_regist_ym) {
-  					$data["kakutoku_data"] = $this->srktb070->get_kikaku_kakutoku_data("shbn,year,month,aiteskcd,dbnricd,itemcd,kbn,null as edlp_kaisiymd,null as edlp_shryoymd,null as edlp_tenponum,null as edlp_baika,null as end_kaisiymd,null as end_shryoymd,null as end_tenponum,null as end_baika,null as trs_kaisu,null as trs_tenponum,null as trs_baika", "shbn='{$data['shbn']}' AND aiteskcd='{$data['aiteskcd']}' AND year='{$last_regist_ym[0]["year"]}' AND month='{$last_regist_ym[0]["month"]}' ", "year DESC,month DESC");
+  					$data[""] = $this->srktb070->get_kikaku_kakutoku_data("shbn,year,month,aiteskcd,dbnricd,itemcd,kbn,null as edlp_kaisiymd,null as edlp_shryoymd,null as edlp_tenponum,null as edlp_baika,null as end_kaisiymd,null as end_shryoymd,null as end_tenponum,null as end_baika,null as trs_kaisu,null as trs_tenponum,null as trs_baika", "shbn='{$data['shbn']}' AND aiteskcd='{$data['aiteskcd']}' AND year='{$last_regist_ym[0]["year"]}' AND month='{$last_regist_ym[0]["month"]}' ", "year DESC,month DESC");
   					//$data["output"] .= "　".$data["kakutoku_data"][0]["year"]."年".$data["kakutoku_data"][0]["month"]."月";
   				}
   			}
@@ -157,7 +157,7 @@ class Project_possession extends MY_Controller {
       //  表示
       //
       //企画情報アイテムデータ(大分類情報取得, アイテム情報取得)
-      $data["kiaku_data"] = $this->sgmtb080->get_kikaku_item_data("DbnriCd, DbnriNm, ItemCd, ItemNm, view_no", "", "view_no");
+      $data["kiaku_data"] = $this->sgmtb080->get_kikaku_item_data("DbnriCd, DbnriNm, ItemCd, ItemNm, view_no, view_flg", "", "view_no");
 
       //登録データ取得
       $data["kakutoku_data"] = $this->srktb070->get_kikaku_kakutoku_data("*", "shbn='{$data['shbn']}' AND aiteskcd='{$data['aiteskcd']}' AND year='{$data["year"]}' AND month='{$data["month"]}' ", "year,month");
@@ -205,7 +205,7 @@ class Project_possession extends MY_Controller {
       $this->load->model('srktb070'); // 企画獲得情報
 
       //企画情報アイテムデータ(大分類情報取得, アイテム情報取得)
-      $data["kiaku_data"] = $this->sgmtb080->get_kikaku_item_data("DbnriCd, DbnriNm, ItemCd, ItemNm, view_no", "", "view_no");
+      $data["kiaku_data"] = $this->sgmtb080->get_kikaku_item_data("DbnriCd, DbnriNm, ItemCd, ItemNm, view_no, view_flg", "", "view_no");
 
       //指定登録データ取得
       $year = (int)$_GET['year'];
@@ -332,7 +332,7 @@ class Project_possession extends MY_Controller {
 
       //企画情報アイテムデータ(大分類情報取得, アイテム情報取得)
       $DbnriCd = $this->input->post('selected_val');
-      $data["kiaku_data"] = $this->sgmtb080->get_kikaku_item_data("DbnriCd, DbnriNm, ItemCd, ItemNm, view_no", "DbnriCd='{$DbnriCd}'");
+      $data["kiaku_data"] = $this->sgmtb080->get_kikaku_item_data("DbnriCd, DbnriNm, ItemCd, ItemNm, view_no, view_flg", "DbnriCd='{$DbnriCd}'");
 
       //表示用データ作成
       $this->_make_view_data($data);
@@ -363,7 +363,7 @@ class Project_possession extends MY_Controller {
 
       //企画情報アイテムデータ(大分類情報取得, アイテム情報取得)
       $add_view_no = $this->input->post('add_view_no');
-      $data["kiaku_data"] = $this->sgmtb080->get_kikaku_item_data("DbnriCd, DbnriNm, ItemCd, ItemNm, view_no", "", "view_no");
+      $data["kiaku_data"] = $this->sgmtb080->get_kikaku_item_data("DbnriCd, DbnriNm, ItemCd, ItemNm, view_no, view_flg", "", "view_no");
 
       //表示用データ作成
       $this->_add_view_data($data, $add_view_no);
@@ -591,8 +591,11 @@ class Project_possession extends MY_Controller {
     $kiaku_data = $data["kiaku_data"];
 
     foreach($kiaku_data as $d) {
-      $daibunrui_list[$d["dbnricd"]] = $d["dbnrinm"];  //大分類リスト作成
-      $item_list[$d["dbnricd"]][$d["itemcd"]] = $d["itemnm"];  //アイテムリスト作成
+      //表示状態でないものはのぞく
+      if($d['view_flg']!=0){
+        $daibunrui_list[$d["dbnricd"]] = $d["dbnrinm"];  //大分類リスト作成
+        $item_list[$d["dbnricd"]][$d["itemcd"]] = $d["itemnm"];  //アイテムリスト作成
+      }
     }
 
     //ドロップダウン作成

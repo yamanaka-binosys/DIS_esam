@@ -167,7 +167,8 @@ class Sgmtb080 extends CI_Model {
 					CreateDate ,
 					UpdateDate ,
 					DeleteDate ,
-					view_no
+					view_no,
+					view_flg
 				FROM
 					SGMTB080
 				WHERE
@@ -617,8 +618,9 @@ class Sgmtb080 extends CI_Model {
          ItemNm ,
          CreateDate ,
          UpdateDate ,
-         view_no)
-      values(?,?,?,?,?,?,?)";
+         view_no ,
+         view_flg)
+      values(?,?,?,?,?,?,?,?)";
 
       foreach($data as $key => $d) {
         // クエリ実行
@@ -629,7 +631,8 @@ class Sgmtb080 extends CI_Model {
           $d['itemnm'],
           $d['createdate'],
           $d['updatedate'],
-          $view_no
+          $view_no,
+          $d['view_flg']
         ));
         // 結果判定
         if(!$query) {

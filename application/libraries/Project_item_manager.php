@@ -43,7 +43,7 @@ class Project_item_manager {
    * @param
    * @return string $string_table HTML-STRING文字列
    */
-  public function get_project_data_list($view_no=0, $dbnrinm="", $dbnricd="", $itemnm="", $itemcd="" )
+  public function get_project_data_list($view_no=0, $dbnrinm="", $dbnricd="", $itemnm="", $itemcd="",$view_flg=0 )
   {
     $string_table = "";
 
@@ -66,6 +66,29 @@ class Project_item_manager {
           <input type="text" name="itemnm[]" value="'.$itemnm.'" style="width: 230px">
           <input type="hidden" name="itemcd[]" value="'.$itemcd.'">
         </td>
+        <td align="left">
+          <input type="checkbox"  onclick="c_check(this)"';
+          if($view_no!=0){
+             $string_table .= 'name="view_flg_v'.$view_no.'"';
+          }else{
+             $add_id = rand();
+             $string_table .= 'name="view_flg_a'.$add_id.'"';
+          }
+          if($view_flg==1) $string_table .= 'checked'; 
+     $string_table .=  '>
+          <input type="hidden" name="view_flg[]"  ';
+          if($view_flg!=0){
+             $string_table .= 'value="1"';
+          }else{
+             $string_table .= 'value="0"';
+          }
+          if($view_no!=0){
+             $string_table .= 'id="view_flg_v'.$view_no.'"';
+          }else{
+             $string_table .= 'id="view_flg_a'.$add_id.'"';
+          }
+     $string_table .=     '>
+        </td>
       </tr>';
 
     return $string_table;
@@ -81,11 +104,12 @@ class Project_item_manager {
   function insert_data_set($post_data){
     log_message('debug',"========== libraries Project_item_manager insert_data_set start ==========");
     // 初期化
+
     $CI =& get_instance();
     $CI->load->model('sgmtb080');
 
     //既存データ取得
-    $all_data = $CI->sgmtb080->get_kikaku_item_data("DbnriCd, DbnriNm, ItemCd, ItemNm, createdate, updatedate, view_no", "delete_flg='0'", "view_no");
+    $all_data = $CI->sgmtb080->get_kikaku_item_data("DbnriCd, DbnriNm, ItemCd, ItemNm, createdate, updatedate, view_no, view_flg", "delete_flg='0'", "view_no");
 
     //ビュー№をkeyに置き換え
     $select_data = array();
@@ -135,7 +159,7 @@ class Project_item_manager {
           //存在：存在する大分類として登録
 
           //アイテム存在チェック
-          $target_view_no = $CI->sgmtb080->get_kikaku_item_data("view_no", "DbnriCd='{$dbnri_cd}' AND ItemCd='{$post_data["itemcd"][$i]}'");
+          $target_view_no = $CI->sgmtb080->get_kikaku_item_data("view_no, view_flg", "DbnriCd='{$dbnri_cd}' AND ItemCd='{$post_data["itemcd"][$i]}'");
           if(($target_view_no[0]["view_no"] != $post_data["view_no"][$i])) {
             //アイテムコードが加算された場所と値を記憶
             if( isset($no_cnt[$dbnrinm]["item_cnt"]) ) {
@@ -169,6 +193,7 @@ class Project_item_manager {
         $tmp_data['createdate']  = $select_data[$post_data["view_no"][$i]]['createdate'];
         $tmp_data['updatedate']  = $date;
         $tmp_data['view_no'] = $post_data["view_no"][$i];
+        $tmp_data['view_flg'] = $post_data["view_flg"][$i];
       } else {
         //データが存在しない場合
 
@@ -208,6 +233,7 @@ class Project_item_manager {
         $tmp_data['createdate']  = $date;
         $tmp_data['updatedate']  = $date;
         $tmp_data['view_no'] = $post_data["view_no"][$i];
+        $tmp_data['view_flg'] = $post_data["view_flg"][$i];
       }
       $regist_data[] = $tmp_data;
     }

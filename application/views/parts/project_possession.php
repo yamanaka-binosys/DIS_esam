@@ -51,7 +51,7 @@ if(isset($form)) {
           <td style="width: 72px">販売店名</td>
           <td style="width: 130px">
             <input type="text" name="aitesk_name" id="aitesk_name" readonly="readonly" class="" style="width:148px" maxlength="256" value="<?php echo $aitesk_name;?>" <?php echo $disabled;?> >
-            <input type="hidden" name="aiteskcd" id="aiteskcd" class="required" title="販売店名" value="<?php echo $aiteskcd;?>">
+            <input type="hidden" name="aiteskcd" id="aiteskcd" class="required" title="販売店名" value="<?php echo $aiteskcd;?>14402000">
             <input type="hidden" value="" name="referer" id="referer">
             <input type="hidden" value="" name="keep_val" id="keep_val">
             <input type="hidden" name="gkubun" value="<?php echo MY_SELECT_CLIENT_HEAD;?>">

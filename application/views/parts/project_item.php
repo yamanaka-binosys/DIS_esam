@@ -15,6 +15,15 @@ log_message('debug',"\$base_url = $base_url");
 <script type="text/javascript" src="<?php echo $base_url; ?>script/jquery-1.7.1.min.js"></script>
 <script type="text/javascript" src="<?php echo $base_url; ?>script/project_item.js"></script>
 <script type="text/javascript" src="<?php echo $base_url; ?>script/header.js"></script>
+<script type="text/javascript">
+  function c_check(obj){
+      if(parent.content.document.getElementById(obj.name).value ==0){
+          parent.content.document.getElementById(obj.name).value = 1;
+      }else{
+          parent.content.document.getElementById(obj.name).value = 0;
+      }
+  }
+</script>
 </head>
 
 <body>
@@ -23,6 +32,7 @@ if(isset($form)) {
   echo '<form action="'.$app_url.$form.'" method="POST" name="'.$form_name.'" id="'.$form_name.'">'."\n";
 }
 ?>
+
 
 <!-- hidden -->
 <input type="hidden" name="set" value="">
@@ -50,6 +60,7 @@ if(isset($form)) {
       <td style="width: 85px">&nbsp;</td>
       <td align="left" style="width: 200px">大分類名</td>
       <td align="left" style="width: 250px">アイテム名</td>
+      <td align="left" >表示</td>
     </tr>
   <?php echo $list_tabel; ?>
   </table>
