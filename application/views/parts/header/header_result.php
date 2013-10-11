@@ -1,5 +1,5 @@
 <?php
-log_message('debug',"===== Start header.php =====");
+log_message('debug',"===== Start header_result.php =====");
 $this->load->helper('html');
 $base_url = $this->config->item('base_url');
 $meta = $this->config->item('c_meta');
@@ -50,6 +50,7 @@ if(!is_null($header_name)){
 	echo $header_name."<br>\n";
 }
 ?>
+<input type="button" style="width: 50px;" class="input" name="back_alender" id="back_alender" size="1" value="戻る" onclick="submit_back_result_calender('<?php echo $base_url; ?>');">    
 </td>
 </tr>
 <tr>

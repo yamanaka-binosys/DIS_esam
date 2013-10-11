@@ -1,5 +1,5 @@
 <?php
-log_message('debug',"===== Start header.php =====");
+log_message('debug',"===== Start header_plan.php =====");
 $this->load->helper('html');
 $base_url = $this->config->item('base_url');
 $meta = $this->config->item('c_meta');

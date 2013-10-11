@@ -548,3 +548,23 @@ function submit_holiday_item() {
   parent.content.document.forms[0].action = "register";
   parent.content.document.forms[0].submit();
 }
+
+function submit_back_result_calender(base_url){
+    // 戻るボタン押下時の動作（実績画面）
+    var select_day = parent.content.document.getElementById('select_day');
+    url=base_url.concat("index.php/calendar/back/",select_day.value.substring(0, 6));
+    //alert(url);
+    parent.content.location.href=url;
+
+	// HEADER画面
+	head_url=base_url.concat("index.php/header/index/","calendar");
+	parent.header.location.href=head_url;
+
+	window.parent.document.getElementById('baseset').rows = "117, *";
+}
+
+
+function submit_back_plan_calender(){
+    // 戻るボタン押下時の動作（予定画面）
+}
+
