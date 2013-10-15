@@ -499,7 +499,7 @@ class Calendar_manager {
 			// データ取得出来なかった場合には日付のみ設定
 			for($i=(int)$start_day; $i < ((int)$end_day)+1; $i++)
 			{
-//				log_message('debug',"\$day = $i");
+				log_message('debug',"\$day =" .  $i . ", \$month = " . $month);
 				$plan_day = date("Ymd", mktime(0, 0, 0, $month , $i, $year)); // リンクURLに渡す日付
 				$calendar_data[$i]['day'] = date("d", mktime(0, 0, 0, $month , $i, $year)); // 日付を取得（ゼロパディング）
 				$calendar_data[$i]['week'] = strtolower(date("l", mktime(0, 0, 0, $month , $i, $year))); // 曜日取得（英語）

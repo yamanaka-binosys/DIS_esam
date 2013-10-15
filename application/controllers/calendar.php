@@ -206,6 +206,30 @@ class Calendar extends MY_Controller {
 	}
 	
 	/**
+	 * カレンダーへ戻る処理
+	 */
+	function back_calendar($ym){
+		try{
+			log_message('debug', "========== " . __METHOD__ . " start ==========" );
+			log_message('debug', " ----------- \$ym = " . $ym);
+            // セッションからカレンダーモード取得
+            $calendar_mode = $this->session->userdata('calendar_mode');
+            // セッションが切れている場合
+            if(!$calendar_mode){
+                $calendar_mode = MY_CALENDAR_MIX;
+            }
+
+            log_message('debug', " ----------- \$calendar_mode = " . $calendar_mode);
+
+			$this->get_calendar($ym, $calendar_mode);
+            
+            log_message('debug', "========== " . __METHOD__ . " end ==========" );
+            
+		}catch(Exception $e){
+		}
+	}
+
+    /**
 	 * 
 	 */
 	function move(){
@@ -227,24 +251,6 @@ class Calendar extends MY_Controller {
 		}
 	}
 	
-	/**
-	 * カレンダーへ戻る処理
-	 */
-	function back($ym){
-		try{
-			log_message('debug',"========== calendar back start ==========" . $ym);
-			
-            // セッションからカレンダーモード取得
-            $calendar_mode = $this->session->userdata('calendar_mode');
-            // セッションが切れている場合
-            if(!$calendar_mode){
-                $calendar_mode = MY_CALENDAR_MIX;
-            }
-
-			$this->get_calendar($ym, $calendar_mode);
-		}catch(Exception $e){
-		}
-	}
 }
 
 /* End of file calendar.php */

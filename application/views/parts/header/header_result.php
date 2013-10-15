@@ -50,7 +50,6 @@ if(!is_null($header_name)){
 	echo $header_name."<br>\n";
 }
 ?>
-<input type="button" style="width: 50px;" class="input" name="back_alender" id="back_alender" size="1" value="戻る" onclick="submit_back_result_calendar('<?php echo $base_url; ?>');">    
 </td>
 </tr>
 <tr>
@@ -61,6 +60,9 @@ if(!is_null($header_name)){
 	}
 	?>
 </div>
+</td>
+<td>
+<input type="button" style="width: 50px;" class="input" name="back_calendar" id="back_calendar" size="1" value="戻る" onclick="submit_back_result_calendar('<?php echo $base_url; ?>');">    
 </td>
 </tr>
 <!--

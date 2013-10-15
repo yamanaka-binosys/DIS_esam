@@ -2,7 +2,7 @@
 <div id="Main">
 <br>
 <div id="container">
-<form action="select" method="POST">
+<form action="/index.php/calendar/select" method="POST">
 <?php
 	echo "<input type=\"hidden\" name=\"select_calendar\" value=\"";
 	echo $select_calendar;

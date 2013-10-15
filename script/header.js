@@ -552,7 +552,7 @@ function submit_holiday_item() {
 function submit_back_result_calendar(base_url){
     // 戻るボタン押下時の動作（実績画面）
     var select_day = parent.content.document.getElementById('select_day');
-    url=base_url.concat("index.php/calendar/back/",select_day.value.substring(0, 6));
+    url=base_url.concat("index.php/calendar/back_calendar/",select_day.value.substring(0, 6));
     //alert(url);
     parent.content.location.href=url;
 
@@ -567,7 +567,7 @@ function submit_back_result_calendar(base_url){
 function submit_back_plan_calendar(base_url){
     // 戻るボタン押下時の動作（予定画面）
     var select_day = parent.content.document.getElementById('select_day');
-    url=base_url.concat("index.php/calendar/back/",select_day.value.substring(0, 6));
+    url=base_url.concat("index.php/calendar/back_calendar/",select_day.value.substring(0, 6));
     //alert(url);
     parent.content.location.href=url;
 
