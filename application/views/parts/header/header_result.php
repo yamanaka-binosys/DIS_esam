@@ -53,7 +53,7 @@ if(!is_null($header_name)){
 </td>
 </tr>
 <tr>
-<td colspan="7">
+<td colspan="6">
 <div id="errmsg" class="<?php if(isset($errclass) && $errclass!=""){ echo $errclass;  } ?>">
 	<?php if( ! is_null($errmsg)) {
 		echo $errmsg;

@@ -59,7 +59,7 @@ if(!is_null($header_name)){
 </td>
 </tr>
 <tr>
-<td class="errmsg" id="errmsg" colspan="5">
+<td class="errmsg" id="errmsg" colspan="4">
 <?php
 if( ! is_null($errmsg)){
 	echo $errmsg;
