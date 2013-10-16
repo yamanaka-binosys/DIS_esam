@@ -31,12 +31,20 @@ $base_url = $this->config->item('base_url');
 <table style="border:1px solid #000000; width:800px">
 <tr>
 <td>
+
 <table>
 <tr>
-<td>
-<td><label> スケジュール終了日 </label>
+<td><label> スケジュール期間 </label>
+<input type="text" style="width: 80px;ime-mode: disabled;" name="schedule_start_day_<?php echo $count; ?>" id="schdule_start_day_<?php echo $count; ?>" value="<?php echo isset($plan['schdule_start_day']) ? date_format(date_create($plan['schdule_start_day']), 'Y/m/d'):'';?>" class="cal required " title="スケジュール開始日">
+</td>
+<td><label> ～ </label>
 <input type="text" style="width: 80px;ime-mode: disabled;" name="deadline_day_<?php echo $count; ?>" id="deadline_day_<?php echo $count; ?>" value="<?php echo isset($plan['deadline_day']) ? date_format(date_create($plan['deadline_day']), 'Y/m/d'):'';?>" class="cal required " title="スケジュール終了日">
 </td>
+</tr>
+</table>
+    
+<table>
+<tr>
 <td style="padding-left: 10px">
 <input type="radio" name="hkubun_<?php echo $count; ?>" id="hkubun_<?php echo $count; ?>" value="1" <?php if(isset($plan['hkubun']) && $plan['hkubun'] === '1') echo " checked "; ?> onclick="check_radio('<?php echo $count; ?>')" class="checked_item1<?php echo $count; ?>"> 毎月
 <input type="text" style="width: 20px;ime-mode: disabled;" name="designated_day_<?php echo $count; ?>" id="designated_day_<?php echo $count; ?>" value="<?php echo isset($plan['designated_day']) ? $plan['designated_day'] : ''?>"  maxlength="2" onkeypress='if(event.keyCode<"0".charCodeAt(0) || "9".charCodeAt(0)<event.keyCode)return false;' class="checked_item1<?php echo $count; ?> required c_group" title="毎月の予定日"  />日

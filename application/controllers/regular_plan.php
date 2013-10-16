@@ -404,7 +404,22 @@ class Regular_plan extends MY_Controller {
 			$select_month = substr($post['select_day'],4,2);
 			$select_day = substr($post['select_day'],6,2);
 			$to_select_date = strtotime(date("Ymd",mktime(0,0,0,$select_month,$select_day,$select_year)));
-			// 定期期限
+            // 定期期限（開始日）
+			if(!empty($post['schedule_start_day_01'])){
+				$schedule_start_year = substr($post['schedule_start_day_01'],0,4);
+				$schedule_start_month = substr($post['schedule_start_day_01'],5,2);
+				$schedule_start_day = substr($post['schedule_start_day_01'],8,2);
+			}else{
+                // 開始日が無指定の場合は今日を選んだことにする
+				$schedule_start_year = $select_year;
+				$schedule_start_month = $select_month;
+				$schedule_start_day = $select_day;
+			}
+            log_message('debug',"\$schedule_start_year = $schedule_start_year");
+            log_message('debug',"\$schedule_start_month = $schedule_start_month");
+            log_message('debug',"\$schedule_start_day = $schedule_start_day");
+
+                // 定期期限（終了日）
 			if(!empty($post['deadline_day_01'])){
 				$deadline_year = substr($post['deadline_day_01'],0,4);
 				$deadline_month = substr($post['deadline_day_01'],5,2);
@@ -422,13 +437,15 @@ class Regular_plan extends MY_Controller {
                 $day = sprintf('%02d', $post['designated_day_01']);
                 log_message('debug', "\$day = $day");
                 while ($flg === FALSE) {
+                    $u_startline_date = strtotime(date("Ymd", mktime(0, 0, 0, $schedule_start_month, $schedule_start_day, $schedule_start_year)));
                     $u_deadline_date = strtotime(date("Ymd", mktime(0, 0, 0, $deadline_month, $deadline_day, $deadline_year)));
                     $u_select_date = strtotime(date("Ymd", mktime(0, 0, 0, $select_month, $day, $select_year)));
 //					log_message('debug',"\$u_deadline_date = $u_deadline_date");
 //					log_message('debug',"\$u_select_date = $u_select_date");
                     log_message('debug', "========== u_deadline_date " . $u_deadline_date . " ==========");
                     log_message('debug', "========== u_select_date " . $u_select_date . " ==========");
-                    if ($u_deadline_date >= $u_select_date) {
+                    if (($u_startline_date <= $u_select_date) &&
+                        ($u_deadline_date >= $u_select_date)){
                         if ($to_select_date <= $u_select_date) {
                             $regular_day_check = date("Ymd", mktime(0, 0, 0, sprintf('%02d', $select_month), $day, sprintf('%02d', $select_year)));
                             if (substr($regular_day_check, 4, 2) === sprintf('%02d', $select_month)) {
@@ -472,10 +489,12 @@ class Regular_plan extends MY_Controller {
 //				}
             } else if ($post['hkubun_01'] == 2) {
                 while ($flg === FALSE) {
+                    $u_startline_date = strtotime(date("Ymd", mktime(0, 0, 0, $schedule_start_month, $schedule_start_day, $schedule_start_year)));
                     $u_deadline_date = strtotime(date("Ymd", mktime(0, 0, 0, $deadline_month, $deadline_day, $deadline_year)));
                     $u_select_date = strtotime(date("Ymt", mktime(0, 0, 0, $select_month, 1, $select_year)));
                     log_message('debug', "select month end = " . date("Ymt", mktime(0, 0, 0, $select_month, 1, $select_year)));
-                    if ($u_deadline_date >= $u_select_date) {
+                    if (($u_startline_date <= $u_select_date) &&
+                        ($u_deadline_date >= $u_select_date)){
                         if ($to_select_date <= $u_select_date) {
 
                             log_message("debug", "--------------" . $shbn . ", " . date("Ymt", mktime(0, 0, 0, $select_month, 1, $select_year)) . ", " . $post['sth_01'] . ", " . $post['stm_01'] . ", " . $post['edh_01'] . ", " . $post['edm_01']);
@@ -507,6 +526,7 @@ class Regular_plan extends MY_Controller {
 //					log_message('debug',"regular_day = $value");
 //				}
             } else if ($post['hkubun_01'] == 3) {
+                $u_startline_date = strtotime(date("Ymd", mktime(0, 0, 0, $schedule_start_month, $schedule_start_day, $schedule_start_year)));
                 $u_deadline_date = strtotime(date("Ymd", mktime(0, 0, 0, $deadline_month, $deadline_day, $deadline_year)));
                 // 日曜日
                 if (isset($post['designated_sun_01'])) {
@@ -534,7 +554,8 @@ class Regular_plan extends MY_Controller {
                                 }
                             }
                             $u_select_date = strtotime(date("Ymd", mktime(0, 0, 0, $select_month, $select_day, $select_year)));
-                            if ($u_deadline_date >= $u_select_date) {
+                            if (($u_startline_date <= $u_select_date) &&
+                                ($u_deadline_date >= $u_select_date)){
                                 if ($to_select_date <= $u_select_date) {
                                     // TODO
                                     // ここに時刻の重複チェックを入れる
@@ -580,7 +601,8 @@ class Regular_plan extends MY_Controller {
                                 }
                             }
                             $u_select_date = strtotime(date("Ymd", mktime(0, 0, 0, $select_month, $select_day, $select_year)));
-                            if ($u_deadline_date >= $u_select_date) {
+                            if (($u_startline_date <= $u_select_date) &&
+                                ($u_deadline_date >= $u_select_date)){
                                 if ($to_select_date <= $u_select_date) {
 
                                     // TODO
@@ -625,7 +647,8 @@ class Regular_plan extends MY_Controller {
                                 }
                             }
                             $u_select_date = strtotime(date("Ymd", mktime(0, 0, 0, $select_month, $select_day, $select_year)));
-                            if ($u_deadline_date >= $u_select_date) {
+                            if (($u_startline_date <= $u_select_date) &&
+                                ($u_deadline_date >= $u_select_date)){
                                 if ($to_select_date <= $u_select_date) {
 
                                     // TODO
@@ -671,7 +694,8 @@ class Regular_plan extends MY_Controller {
                                 }
                             }
                             $u_select_date = strtotime(date("Ymd", mktime(0, 0, 0, $select_month, $select_day, $select_year)));
-                            if ($u_deadline_date >= $u_select_date) {
+                            if (($u_startline_date <= $u_select_date) &&
+                                ($u_deadline_date >= $u_select_date)){
                                 if ($to_select_date <= $u_select_date) {
 
                                     // TODO
@@ -717,7 +741,8 @@ class Regular_plan extends MY_Controller {
                                 }
                             }
                             $u_select_date = strtotime(date("Ymd", mktime(0, 0, 0, $select_month, $select_day, $select_year)));
-                            if ($u_deadline_date >= $u_select_date) {
+                            if (($u_startline_date <= $u_select_date) &&
+                                ($u_deadline_date >= $u_select_date)){
                                 if ($to_select_date <= $u_select_date) {
 
                                     // TODO
@@ -763,7 +788,8 @@ class Regular_plan extends MY_Controller {
                                 }
                             }
                             $u_select_date = strtotime(date("Ymd", mktime(0, 0, 0, $select_month, $select_day, $select_year)));
-                            if ($u_deadline_date >= $u_select_date) {
+                            if (($u_startline_date <= $u_select_date) &&
+                                ($u_deadline_date >= $u_select_date)){
                                 if ($to_select_date <= $u_select_date) {
 
                                     // TODO
@@ -809,7 +835,8 @@ class Regular_plan extends MY_Controller {
                                 }
                             }
                             $u_select_date = strtotime(date("Ymd", mktime(0, 0, 0, $select_month, $select_day, $select_year)));
-                            if ($u_deadline_date >= $u_select_date) {
+                            if (($u_startline_date <= $u_select_date) &&
+                                ($u_deadline_date >= $u_select_date)){
                                 if ($to_select_date <= $u_select_date) {
 
                                     // TODO
