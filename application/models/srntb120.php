@@ -176,6 +176,7 @@ class Srntb120 extends CI_Model {
         // SQL実行
         $query = $this->db->query($sql, array($shbn, date("Ymd", $startdatetime)));
         // 取得確認
+        log_message('debug', "\$query->num_rows() = " . $query->num_rows());
         if ($query->num_rows() > 0) {
             $result_data = $query->result_array();
             foreach ($result_data as $rec) {

@@ -25,9 +25,14 @@ log_message('debug',"\$base_url = $base_url");
 <script type="text/javascript">
 <!--
 function body_onload(){
-    <?php if ($error_date != null) {
+    <?php 
+    if ($error_date != null) {
         echo "alert(\"" . date("Y", $error_date) . "年" . date("m", $error_date) . "月" . date("d", $error_date) . "日 " . date("H", $error_date) . "時" . date("i", $error_date) . "分に登録済みのデータがあるため登録できません" . "\");\n";
-    } ?>
+    }
+    if ($error_msg != null) {
+        echo "alert(\"" . $error_msg . "\");\n";
+    }
+    ?>
     new_action_view('<?php echo $base_url; ?>','<?php echo SHOW_REGULAR_PLAN ?>','<?php echo $tmp_flg; ?>');
 }
 // -->

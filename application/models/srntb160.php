@@ -137,19 +137,27 @@ class Srntb160 extends CI_Model {
         // SQL実行
         $query = $this->db->query($sql, array($shbn, date("Ymd", $startdatetime)));
         // 取得確認
+        log_message('debug', "\$query->num_rows() = " . $query->num_rows());
         if ($query->num_rows() > 0) {
             $result_data = $query->result_array();
             foreach ($result_data as $rec) {
                 $rec_start_time = strtotime($rec['ymd'] . 't' . $rec['sthm'] . '00');   // DBに登録されている開始日付時刻
                 $rec_end_time = strtotime($rec['ymd'] . 't' . $rec['edhm'] . '00');     // DBに登録されている終了日付時刻
+                log_message('debug', "\$rec_start_time = " . $rec_start_time);
+                log_message('debug', "\$rec_end_time = " . $rec_end_time);
+                log_message('debug', "\$startdatetime = " . $startdatetime);
+                log_message('debug', "\$enddatetime = " . $enddatetime);
                 // 登録済み開始時刻 < 入力開始時刻 < 登録済み終了時刻 
                 if ($rec_start_time < $startdatetime && $startdatetime < $rec_end_time) {
+                    log_message('debug', "\$startdatetime overlap " );
+                    
                     $this->error_date = $startdatetime;
                     return TRUE;
                 }
                 // 登録済み開始時刻 < 入力終了時刻 < 登録済み終了時刻 
                 if ($rec_start_time < $enddatetime && $enddatetime < $rec_end_time) {
-                    $this->error_date = $startdatetime;
+                    log_message('debug', "\$enddatetime overlap " );
+                    $this->error_date = $enddatetime;
                     return TRUE;
                 }
             }

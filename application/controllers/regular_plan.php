@@ -3,6 +3,7 @@
 class Regular_plan extends MY_Controller {
 
     public $error_date;         // エラーが発生した日付を格納
+    public $error_msg;          // エラー内容の表示
     
 	function index($select_day = NULL){
 		try{
@@ -87,8 +88,15 @@ class Regular_plan extends MY_Controller {
 				$data['kakninshnm'] = "";
 			}
             
+            log_message('debug',"\$this->error_date = " . $this->error_date);
             $data['error_date'] = $this->error_date;
+            log_message('debug',"\$data['error_date'] = " . $data['error_date']);
             $this->error_date = null;       // エラー日付を渡したらすぐに初期化する
+
+            log_message('debug',"\$this->error_msg = " . $this->error_msg);
+            $data['error_msg'] = $this->error_msg;
+            log_message('debug',"\$data['error_msg'] = " . $data['error_msg']);
+            $this->error_msg = null;       // エラーを渡したらすぐに初期化する
 
             // 画面表示
 			log_message('debug',"========== controllers plan index end ==========");
@@ -404,17 +412,26 @@ class Regular_plan extends MY_Controller {
 			$select_month = substr($post['select_day'],4,2);
 			$select_day = substr($post['select_day'],6,2);
 			$to_select_date = strtotime(date("Ymd",mktime(0,0,0,$select_month,$select_day,$select_year)));
+            
             // 定期期限（開始日）
 			if(!empty($post['schedule_start_day_01'])){
 				$schedule_start_year = substr($post['schedule_start_day_01'],0,4);
 				$schedule_start_month = substr($post['schedule_start_day_01'],5,2);
 				$schedule_start_day = substr($post['schedule_start_day_01'],8,2);
+                // 開始日が指定してあるばあいは開始日を現在日に
+                $select_year = substr($post['schedule_start_day_01'],0,4);
+                $select_month = substr($post['schedule_start_day_01'],5,2);
+                $select_day = substr($post['schedule_start_day_01'],8,2);
+                $to_select_date = strtotime(date("Ymd",mktime(0,0,0,$select_month,$select_day,$select_year)));
 			}else{
                 // 開始日が無指定の場合は今日を選んだことにする
 				$schedule_start_year = $select_year;
 				$schedule_start_month = $select_month;
 				$schedule_start_day = $select_day;
 			}
+            log_message('debug',"\$select_year = $select_year");
+            log_message('debug',"\$select_month = $select_month");
+            log_message('debug',"\$select_day = $select_day");
             log_message('debug',"\$schedule_start_year = $schedule_start_year");
             log_message('debug',"\$schedule_start_month = $schedule_start_month");
             log_message('debug',"\$schedule_start_day = $schedule_start_day");
@@ -428,8 +445,21 @@ class Regular_plan extends MY_Controller {
 				log_message('debug',"\$deadline_month = $deadline_month");
 				log_message('debug',"\$deadline_day = $deadline_day");
 			}else{
+                $this->error_msg = "スケジュール期間の終了日が指定されていません";
 				return;
 			}
+            
+            $start_date_check = mktime(0,0,0,$schedule_start_month,$schedule_start_day,$schedule_start_year);
+            $end_date_check = mktime(0,0,0,$deadline_month,$deadline_day,$deadline_year);
+            if ($start_date_check > $end_date_check){
+                $this->error_msg = "スケジュール期間の開始日と終了日の設定に誤りがあります";
+				return;
+            }
+            
+            
+            
+            
+            
             // 定期区分
             // 1 = 選択日,2 = 月末,3 = 曜日
             if ($post['hkubun_01'] == 1) {
@@ -441,9 +471,9 @@ class Regular_plan extends MY_Controller {
                     $u_deadline_date = strtotime(date("Ymd", mktime(0, 0, 0, $deadline_month, $deadline_day, $deadline_year)));
                     $u_select_date = strtotime(date("Ymd", mktime(0, 0, 0, $select_month, $day, $select_year)));
 //					log_message('debug',"\$u_deadline_date = $u_deadline_date");
-//					log_message('debug',"\$u_select_date = $u_select_date");
-                    log_message('debug', "========== u_deadline_date " . $u_deadline_date . " ==========");
-                    log_message('debug', "========== u_select_date " . $u_select_date . " ==========");
+					log_message('debug',"\$u_select_date = " . date("Ymd", $u_select_date));
+                    log_message('debug', "=====1===== u_deadline_date " . $u_deadline_date . " ==========");
+                    log_message('debug', "=====1===== u_select_date " . $u_select_date . " ==========");
                     if (($u_startline_date <= $u_select_date) &&
                         ($u_deadline_date >= $u_select_date)){
                         if ($to_select_date <= $u_select_date) {
@@ -458,9 +488,10 @@ class Regular_plan extends MY_Controller {
 
                                 // TODO
                                 // ここに時刻の重複チェックを入れる
-                                if ($this->plan_manager->st_et_check($shbn, $post['select_day'], $post['sth_01'], $post['stm_01'], $post['edh_01'], $post['edm_01'])) {
+                                if ($this->plan_manager->st_et_check($shbn, date("Ymd", $u_select_date), $post['sth_01'], $post['stm_01'], $post['edh_01'], $post['edm_01'])) {
                                     log_message("debug", " ------- " . __METHOD__  . $shbn . ", " . date("Ymt", mktime(0, 0, 0, $select_month, 1, $select_year)) . ", " . $post['sth_01'] . ", " . $post['stm_01'] . ", " . $post['edh_01'] . ", " . $post['edm_01']);
                                     $this->error_date = $this->plan_manager->error_date;
+                                    log_message('debug', "\$this->plan_manager->error_date = " . $this->plan_manager->error_date . " ==========");
                                     return;
                                 }
 
@@ -470,7 +501,7 @@ class Regular_plan extends MY_Controller {
                     } else {
                         $flg = TRUE;
                     }
-                    log_message('debug', "========== regular_day " . date("Ymd", mktime(0, 0, 0, sprintf('%02d', $select_month), $day, sprintf('%02d', $select_year))) . " ==========");
+                    log_message('debug', "=====1===== regular_day " . date("Ymd", mktime(0, 0, 0, sprintf('%02d', $select_month), $day, sprintf('%02d', $select_year))) . " ==========");
                     // 月を移動
 //					log_message('debug',"\$select_year = $select_year");
 //					log_message('debug',"\$select_month = $select_month");
@@ -492,7 +523,8 @@ class Regular_plan extends MY_Controller {
                     $u_startline_date = strtotime(date("Ymd", mktime(0, 0, 0, $schedule_start_month, $schedule_start_day, $schedule_start_year)));
                     $u_deadline_date = strtotime(date("Ymd", mktime(0, 0, 0, $deadline_month, $deadline_day, $deadline_year)));
                     $u_select_date = strtotime(date("Ymt", mktime(0, 0, 0, $select_month, 1, $select_year)));
-                    log_message('debug', "select month end = " . date("Ymt", mktime(0, 0, 0, $select_month, 1, $select_year)));
+                    log_message('debug', "=====2===== select month end = " . date("Ymt", mktime(0, 0, 0, $select_month, 1, $select_year)));
+					log_message('debug',"\$u_select_date = " . date("Ymd", $u_select_date));
                     if (($u_startline_date <= $u_select_date) &&
                         ($u_deadline_date >= $u_select_date)){
                         if ($to_select_date <= $u_select_date) {
@@ -503,7 +535,7 @@ class Regular_plan extends MY_Controller {
                             if ($this->plan_manager->st_et_check($shbn, date("Ymt", mktime(0, 0, 0, $select_month, 1, $select_year)), $post['sth_01'], $post['stm_01'], $post['edh_01'], $post['edm_01'])) {
                                 log_message("debug", " ------- " . __METHOD__  . $shbn . ", " . date("Ymt", mktime(0, 0, 0, $select_month, 1, $select_year)) . ", " . $post['sth_01'] . ", " . $post['stm_01'] . ", " . $post['edh_01'] . ", " . $post['edm_01']);
                                 $this->error_date = $this->plan_manager->error_date;
-                                log_message("debug", "error_date = " . $this->error_date);
+                                log_message('debug', "\$this->plan_manager->error_date = " . $this->plan_manager->error_date . " ==========");
                                 return;
                             }
 
@@ -528,12 +560,18 @@ class Regular_plan extends MY_Controller {
             } else if ($post['hkubun_01'] == 3) {
                 $u_startline_date = strtotime(date("Ymd", mktime(0, 0, 0, $schedule_start_month, $schedule_start_day, $schedule_start_year)));
                 $u_deadline_date = strtotime(date("Ymd", mktime(0, 0, 0, $deadline_month, $deadline_day, $deadline_year)));
+
+                log_message('debug', "=====3===== ");
+                
                 // 日曜日
                 if (isset($post['designated_sun_01'])) {
                     if ($post['designated_sun_01'] === "on") {
-                        $select_year = substr($post['select_day'], 0, 4);
-                        $select_month = substr($post['select_day'], 4, 2);
-                        $select_day = substr($post['select_day'], 6, 2);
+
+                        log_message('debug', "===== sun ===== ");
+
+                        //$select_year = substr($post['select_day'], 0, 4);
+                        //$select_month = substr($post['select_day'], 4, 2);
+                        //$select_day = substr($post['select_day'], 6, 2);
                         $select_week_day = date("w", mktime(0, 0, 0, $select_month, $select_day, $select_year));
                         $month_last_day = date("t", mktime(0, 0, 0, $select_month, 1, $select_year));
                         $flg = FALSE;
@@ -554,13 +592,17 @@ class Regular_plan extends MY_Controller {
                                 }
                             }
                             $u_select_date = strtotime(date("Ymd", mktime(0, 0, 0, $select_month, $select_day, $select_year)));
+        					log_message('debug'," sun \$u_select_date = " . date("Ymd", $u_select_date));
                             if (($u_startline_date <= $u_select_date) &&
                                 ($u_deadline_date >= $u_select_date)){
                                 if ($to_select_date <= $u_select_date) {
                                     // TODO
                                     // ここに時刻の重複チェックを入れる
-                                    if ($this->plan_manager->st_et_check($shbn, $select_date, $post['sth_01'], $post['stm_01'], $post['edh_01'], $post['edm_01'])) {
+                                    if ($this->plan_manager->st_et_check($shbn, date("Ymd", $u_select_date), $post['sth_01'], $post['stm_01'], $post['edh_01'], $post['edm_01'])) {
                                         log_message("debug", " ------- " . __METHOD__  . $shbn . ", " . date("Ymt", mktime(0, 0, 0, $select_month, 1, $select_year)) . ", " . $post['sth_01'] . ", " . $post['stm_01'] . ", " . $post['edh_01'] . ", " . $post['edm_01']);
+                                        $this->error_date = $this->plan_manager->error_date;
+                                        log_message('debug', "\$this->plan_manager->error_date = " . $this->plan_manager->error_date . " ==========");
+                                        
                                         return;
                                     }
 
@@ -576,9 +618,12 @@ class Regular_plan extends MY_Controller {
                 // 月曜日
                 if (isset($post['designated_mon_01'])) {
                     if ($post['designated_mon_01'] === "on") {
-                        $select_year = substr($post['select_day'], 0, 4);
-                        $select_month = substr($post['select_day'], 4, 2);
-                        $select_day = substr($post['select_day'], 6, 2);
+                        
+                        log_message('debug', "===== mon ===== ");
+
+                        //$select_year = substr($post['select_day'], 0, 4);
+                        //$select_month = substr($post['select_day'], 4, 2);
+                        //$select_day = substr($post['select_day'], 6, 2);
                         $select_week_day = date("w", mktime(0, 0, 0, $select_month, $select_day, $select_year));
                         $month_last_day = date("t", mktime(0, 0, 0, $select_month, 1, $select_year));
                         $flg = FALSE;
@@ -607,8 +652,10 @@ class Regular_plan extends MY_Controller {
 
                                     // TODO
                                     // ここに時刻の重複チェックを入れる
-                                    if ($this->plan_manager->st_et_check($shbn, $select_date, $post['sth_01'], $post['stm_01'], $post['edh_01'], $post['edm_01'])) {
+                                    if ($this->plan_manager->st_et_check($shbn, date("Ymd", $u_select_date), $post['sth_01'], $post['stm_01'], $post['edh_01'], $post['edm_01'])) {
                                         log_message("debug", " ------- " . __METHOD__  . $shbn . ", " . date("Ymt", mktime(0, 0, 0, $select_month, 1, $select_year)) . ", " . $post['sth_01'] . ", " . $post['stm_01'] . ", " . $post['edh_01'] . ", " . $post['edm_01']);
+                                        $this->error_date = $this->plan_manager->error_date;
+                                        log_message('debug', "\$this->plan_manager->error_date = " . $this->plan_manager->error_date . " ==========");
                                         return;
                                     }
                                     $regular_day[] = date("Ymd", mktime(0, 0, 0, sprintf('%02d', $select_month), sprintf('%02d', $select_day), sprintf('%02d', $select_year)));
@@ -622,9 +669,12 @@ class Regular_plan extends MY_Controller {
                 // 火曜日
                 if (isset($post['designated_tues_01'])) {
                     if ($post['designated_tues_01'] === "on") {
-                        $select_year = substr($post['select_day'], 0, 4);
-                        $select_month = substr($post['select_day'], 4, 2);
-                        $select_day = substr($post['select_day'], 6, 2);
+                        
+                        log_message('debug', "===== tue ===== ");
+                        
+                        //$select_year = substr($post['select_day'], 0, 4);
+                        //$select_month = substr($post['select_day'], 4, 2);
+                        //$select_day = substr($post['select_day'], 6, 2);
                         $select_week_day = date("w", mktime(0, 0, 0, $select_month, $select_day, $select_year));
                         $month_last_day = date("t", mktime(0, 0, 0, $select_month, 1, $select_year));
                         $flg = FALSE;
@@ -653,8 +703,10 @@ class Regular_plan extends MY_Controller {
 
                                     // TODO
                                     // ここに時刻の重複チェックを入れる
-                                    if ($this->plan_manager->st_et_check($shbn, $select_date, $post['sth_01'], $post['stm_01'], $post['edh_01'], $post['edm_01'])) {
+                                    if ($this->plan_manager->st_et_check($shbn, date("Ymd", $u_select_date), $post['sth_01'], $post['stm_01'], $post['edh_01'], $post['edm_01'])) {
                                         log_message("debug", " ------- " . __METHOD__  . $shbn . ", " . date("Ymt", mktime(0, 0, 0, $select_month, 1, $select_year)) . ", " . $post['sth_01'] . ", " . $post['stm_01'] . ", " . $post['edh_01'] . ", " . $post['edm_01']);
+                                        $this->error_date = $this->plan_manager->error_date;
+                                        log_message('debug', "\$this->plan_manager->error_date = " . $this->plan_manager->error_date . " ==========");
                                         return;
                                     }
 
@@ -669,9 +721,12 @@ class Regular_plan extends MY_Controller {
                 // 水曜日
                 if (isset($post['designated_wed_01'])) {
                     if ($post['designated_wed_01'] === "on") {
-                        $select_year = substr($post['select_day'], 0, 4);
-                        $select_month = substr($post['select_day'], 4, 2);
-                        $select_day = substr($post['select_day'], 6, 2);
+                        
+                        log_message('debug', "===== wed ===== ");
+                        
+                        //$select_year = substr($post['select_day'], 0, 4);
+                        //$select_month = substr($post['select_day'], 4, 2);
+                        //$select_day = substr($post['select_day'], 6, 2);
                         $select_week_day = date("w", mktime(0, 0, 0, $select_month, $select_day, $select_year));
                         $month_last_day = date("t", mktime(0, 0, 0, $select_month, 1, $select_year));
                         $flg = FALSE;
@@ -700,8 +755,10 @@ class Regular_plan extends MY_Controller {
 
                                     // TODO
                                     // ここに時刻の重複チェックを入れる
-                                    if ($this->plan_manager->st_et_check($shbn, $select_date, $post['sth_01'], $post['stm_01'], $post['edh_01'], $post['edm_01'])) {
+                                    if ($this->plan_manager->st_et_check($shbn, date("Ymd", $u_select_date), $post['sth_01'], $post['stm_01'], $post['edh_01'], $post['edm_01'])) {
                                         log_message("debug", " ------- " . __METHOD__  . $shbn . ", " . date("Ymt", mktime(0, 0, 0, $select_month, 1, $select_year)) . ", " . $post['sth_01'] . ", " . $post['stm_01'] . ", " . $post['edh_01'] . ", " . $post['edm_01']);
+                                        $this->error_date = $this->plan_manager->error_date;
+                                        log_message('debug', "\$this->plan_manager->error_date = " . $this->plan_manager->error_date . " ==========");
                                         return;
                                     }
 
@@ -716,9 +773,12 @@ class Regular_plan extends MY_Controller {
                 // 木曜日
                 if (isset($post['designated_thurs_01'])) {
                     if ($post['designated_thurs_01'] === "on") {
-                        $select_year = substr($post['select_day'], 0, 4);
-                        $select_month = substr($post['select_day'], 4, 2);
-                        $select_day = substr($post['select_day'], 6, 2);
+                        
+                        log_message('debug', "===== thu ===== ");
+                        
+                        //$select_year = substr($post['select_day'], 0, 4);
+                        //$select_month = substr($post['select_day'], 4, 2);
+                        //$select_day = substr($post['select_day'], 6, 2);
                         $select_week_day = date("w", mktime(0, 0, 0, $select_month, $select_day, $select_year));
                         $month_last_day = date("t", mktime(0, 0, 0, $select_month, 1, $select_year));
                         $flg = FALSE;
@@ -747,8 +807,10 @@ class Regular_plan extends MY_Controller {
 
                                     // TODO
                                     // ここに時刻の重複チェックを入れる
-                                    if ($this->plan_manager->st_et_check($shbn, $select_date, $post['sth_01'], $post['stm_01'], $post['edh_01'], $post['edm_01'])) {
+                                    if ($this->plan_manager->st_et_check($shbn, date("Ymd", $u_select_date), $post['sth_01'], $post['stm_01'], $post['edh_01'], $post['edm_01'])) {
                                         log_message("debug", " ------- " . __METHOD__  . $shbn . ", " . date("Ymt", mktime(0, 0, 0, $select_month, 1, $select_year)) . ", " . $post['sth_01'] . ", " . $post['stm_01'] . ", " . $post['edh_01'] . ", " . $post['edm_01']);
+                                        $this->error_date = $this->plan_manager->error_date;
+                                        log_message('debug', "\$this->plan_manager->error_date = " . $this->plan_manager->error_date . " ==========");
                                         return;
                                     }
 
@@ -763,9 +825,13 @@ class Regular_plan extends MY_Controller {
                 // 金曜日
                 if (isset($post['designated_fri_01'])) {
                     if ($post['designated_fri_01'] === "on") {
-                        $select_year = substr($post['select_day'], 0, 4);
-                        $select_month = substr($post['select_day'], 4, 2);
-                        $select_day = substr($post['select_day'], 6, 2);
+                                                
+                        log_message('debug', "===== fri ===== ");
+                        
+
+                        //$select_year = substr($post['select_day'], 0, 4);
+                        //$select_month = substr($post['select_day'], 4, 2);
+                        //$select_day = substr($post['select_day'], 6, 2);
                         $select_week_day = date("w", mktime(0, 0, 0, $select_month, $select_day, $select_year));
                         $month_last_day = date("t", mktime(0, 0, 0, $select_month, 1, $select_year));
                         $flg = FALSE;
@@ -794,8 +860,10 @@ class Regular_plan extends MY_Controller {
 
                                     // TODO
                                     // ここに時刻の重複チェックを入れる
-                                    if ($this->plan_manager->st_et_check($shbn, $select_date, $post['sth_01'], $post['stm_01'], $post['edh_01'], $post['edm_01'])) {
+                                    if ($this->plan_manager->st_et_check($shbn, date("Ymd", $u_select_date), $post['sth_01'], $post['stm_01'], $post['edh_01'], $post['edm_01'])) {
                                         log_message("debug", " ------- " . __METHOD__  . $shbn . ", " . date("Ymt", mktime(0, 0, 0, $select_month, 1, $select_year)) . ", " . $post['sth_01'] . ", " . $post['stm_01'] . ", " . $post['edh_01'] . ", " . $post['edm_01']);
+                                        $this->error_date = $this->plan_manager->error_date;
+                                        log_message('debug', "\$this->plan_manager->error_date = " . $this->plan_manager->error_date . " ==========");
                                         return;
                                     }
 
@@ -810,9 +878,13 @@ class Regular_plan extends MY_Controller {
                 // 土曜日
                 if (isset($post['designated_sat_01'])) {
                     if ($post['designated_sat_01'] === "on") {
-                        $select_year = substr($post['select_day'], 0, 4);
-                        $select_month = substr($post['select_day'], 4, 2);
-                        $select_day = substr($post['select_day'], 6, 2);
+                                                
+                        log_message('debug', "===== sut ===== ");
+                        
+
+                        //$select_year = substr($post['select_day'], 0, 4);
+                        //$select_month = substr($post['select_day'], 4, 2);
+                        //$select_day = substr($post['select_day'], 6, 2);
                         $select_week_day = date("w", mktime(0, 0, 0, $select_month, $select_day, $select_year));
                         $month_last_day = date("t", mktime(0, 0, 0, $select_month, 1, $select_year));
                         $flg = FALSE;
@@ -841,8 +913,10 @@ class Regular_plan extends MY_Controller {
 
                                     // TODO
                                     // ここに時刻の重複チェックを入れる
-                                    if ($this->plan_manager->st_et_check($shbn, $select_date, $post['sth_01'], $post['stm_01'], $post['edh_01'], $post['edm_01'])) {
+                                    if ($this->plan_manager->st_et_check($shbn, date("Ymd", $u_select_date), $post['sth_01'], $post['stm_01'], $post['edh_01'], $post['edm_01'])) {
                                         log_message("debug", " ------- " . __METHOD__ . $shbn . ", " . date("Ymt", mktime(0, 0, 0, $select_month, 1, $select_year)) . ", " . $post['sth_01'] . ", " . $post['stm_01'] . ", " . $post['edh_01'] . ", " . $post['edm_01']);
+                                        $this->error_date = $this->plan_manager->error_date;
+                                        log_message('debug', "\$this->plan_manager->error_date = " . $this->plan_manager->error_date . " ==========");
                                         return;
                                     }
 
