@@ -4,6 +4,8 @@ class Srntb120 extends CI_Model {
 	
     public $error_date;         // エラーが発生した日付を格納
 
+    public $latest_jyohonum;    // レコード挿入時の最終番号
+    
 	function __construct()
 	{
 		// Model クラスのコンストラクタを呼び出す
@@ -98,14 +100,26 @@ class Srntb120 extends CI_Model {
 		
 		log_message('debug',"\$sql = $sql");
 		
+        // トランザクション開始
+        $this->db->trans_begin();
+
 		// SQL実行
 		$query = $this->db->query($sql);
-		
-		if($query){
-			return TRUE;
-		}else{
-			return FALSE;
-		}
+
+        // カウンタ（プライマリキー値）を取得用SQL		
+        $query2 = $this->db->insert_id();
+        $this->latest_jyohonum = (int)$query2;
+        log_message('debug',"\$this->latest_jyohonum = " . $this->latest_jyohonum);
+
+        if ($this->db->trans_status() === FALSE)
+        {
+            $this->db->roll_back();
+    		log_message('debug',"========== " . __METHOD__ . " abnormal end ==========");
+            return FALSE;
+        }         
+        $this->db->trans_complete();
+		log_message('debug',"========== " . __METHOD__ . " normal end ==========");
+        return TRUE;
 	}
 	
 	function delete_srntb120_data($jyohonum,$edbn){

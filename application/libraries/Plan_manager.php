@@ -1361,6 +1361,7 @@ class Plan_manager {
 		// 初期化
 		$CI =& get_instance();
 		$CI->load->model('srntb110');
+		$CI->load->model('srntb170');
 		$jyohonum_name = "jyohonum_".$data_no;
 		$edbn_name = "edbn_".$data_no;
 		$variable_name = "";
@@ -1764,6 +1765,7 @@ class Plan_manager {
 		// 初期化
 		$CI =& get_instance();
 		$CI->load->model('srntb120');
+		$CI->load->model('srntb170');
 		$jyohonum_name = "jyohonum_".$data_no;
 		$edbn_name = "edbn_".$data_no;
 		$variable_name = "";
@@ -2105,6 +2107,7 @@ class Plan_manager {
 		// 初期化
 		$CI =& get_instance();
 		$CI->load->model('srntb130');
+		$CI->load->model('srntb170');
 		$jyohonum_name = "jyohonum_".$data_no;
 		$edbn_name = "edbn_".$data_no;
 		$variable_name = "";
@@ -2313,6 +2316,7 @@ class Plan_manager {
 		// 初期化
 		$CI =& get_instance();
 		$CI->load->model('srntb140');
+		$CI->load->model('srntb170');
 		$jyohonum_name = "jyohonum_".$data_no;
 		$edbn_name = "edbn_".$data_no;
 		$variable_name = "";
@@ -2384,6 +2388,7 @@ class Plan_manager {
 		// 初期化
 		$CI =& get_instance();
 		$CI->load->model('srntb160');
+		$CI->load->model('srntb170');
 		$jyohonum_name = "jyohonum_".$data_no;
 		$edbn_name = "edbn_".$data_no;
 		$variable_name = "";

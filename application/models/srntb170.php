@@ -1,26 +1,30 @@
 <?php
 
-class Srntb160 extends CI_Model {
+class Srntb170 extends CI_Model {
 	
-    public $error_date;         // エラーが発生した日付を格納
-    
-    public $latest_jyohonum;    // レコード挿入時の最終番号
+    public $error_date;
     
 	function __construct()
 	{
 		// Model クラスのコンストラクタを呼び出す
 		parent::__construct();
 	}
-	
-	function get_srntb160_data($condition_data){
-		log_message('debug',"========== srntb160 get_srntb160_data start ==========");
+
+	function get_srntb170_data($condition_data){
+		log_message('debug',"========== " . __METHOD__ . " start ==========");
 		log_message('debug',"\$shbn = " . $condition_data['shbn']);
 		log_message('debug',"\$jyohonum = " . $condition_data['jyohonum']);
 		log_message('debug',"\$edbn = " . $condition_data['edbn']);
+		
 		// 引数より検索条件を取得
 		// 情報ナンバー、枝番、社番
+		if( ! isset($condition_data['jyohonum']) OR ! isset($condition_data['edbn']) OR ! isset($condition_data['shbn']))
+		{
+			throw new Exception("Error Processing Request", ERROR_SYSTEM);
+		}
 		$shbn = $condition_data['shbn'];
 		$jyohonum = $condition_data['jyohonum'];
+//		$edbn = $condition_data['edbn'];
 		$edbn = sprintf('%02d', $condition_data['edbn']);
 		
 		// 初期化
@@ -29,30 +33,43 @@ class Srntb160 extends CI_Model {
 		$result_data = NULL; // 戻り値
 		
 		// SQL文作成
-		$sql .= " SELECT *";
-		$sql .= " FROM srntb160";
-		//$sql .= " WHERE jyohonum = '{$jyohonum}'";
-		//$sql .= "        AND edbn = '{$edbn}'";
-		//$sql .= "        AND shbn = '{$shbn}'";
-		$sql .= " WHERE jyohonum = ?";
-		$sql .= "        AND edbn = ?";
-		$sql .= "        AND shbn = ?";
+		$sql .= " SELECT jyohonum,";          // 情報ナンバー
+		$sql .= "        edbn,";              // 枝番
+		$sql .= "        shbn,";              // 社番
+		$sql .= "        ymd,";               // 日付
+		$sql .= "        sthm,";              // 開始時刻
+		$sql .= "        edhm,";              // 終了時刻
+		$sql .= "        sagyoniyo,";         // 作業内容
+		$sql .= "        sntsagyo,";          // その他の作業内容
+		$sql .= "        znkakninshbn,";      // 前確認者
+		$sql .= "        createdate,";        // 登録日付
+		$sql .= "        updatedate,";        // 更新日付
+		$sql .= "        yobim01,";           // 予備１（文字１）
+		$sql .= "        yobim02,";           // 予備２（文字２）
+		$sql .= "        kekka,";             // 結果情報
+		$sql .= "        recode_flg";         // 登録フラグ
+		$sql .= " FROM srntb170";
+		$sql .= " WHERE jyohonum = '{$jyohonum}'";
+		$sql .= "        AND edbn = '{$edbn}'";
+		$sql .= "        AND shbn = '{$shbn}'";
 		$sql .= " ;";
+		
 		log_message('debug',"\$sql = $sql");
 		// SQL実行
-		$query = $this->db->query($sql,array($jyohonum,$edbn,$shbn));
+		$query = $this->db->query($sql);
 		// 取得確認
 		if($query->num_rows() > 0)
 		{
 			$result_data = $query->result_array();
 		}
 		
-		log_message('debug',"========== srntb160 get_srntb160_data end ==========");
+		log_message('debug',"========== " . __METHOD__ . " end ==========");
 		return $result_data;
 	}
 	
-	function update_srntb160_data($record_data)
+	function update_srntb170_data($record_data)
 	{
+		log_message('debug',"========== " . __METHOD__ . " start ==========");
 		if (!isset($record_data['jyohonum']))
 		{
 			log_message('error', 'cannot update without jyohonum');
@@ -61,10 +78,14 @@ class Srntb160 extends CI_Model {
 		unset($record_data['edbn']);
 		$jyohonum = $record_data['jyohonum'];
 		unset($record_data['jyohonum']);
-		return $this->db->update('srntb160', $record_data, array('jyohonum' => $jyohonum));
+		return $this->db->update('srntb170', $record_data, array('jyohonum' => $jyohonum));
+   		log_message('debug',"========== " . __METHOD__ . " end ==========");
+
 	}
 	
-	function insert_srntb160_data($record_data){
+	function insert_srntb170_data($record_data)
+	{
+    	log_message('debug',"========== " . __METHOD__ . " start ==========");
 		unset($record_data['jyohonum']);
 		unset($record_data['edbn']);
 		
@@ -80,10 +101,12 @@ class Srntb160 extends CI_Model {
 			$value_string .= "'" . $value . "',";
 		}
 		
-		$sql .= " INSERT INTO srntb160(";
+		$sql .= " INSERT INTO srntb170(";
+//		$sql .= substr($name_string,0,-1);
 		$sql .= $name_string;
 		$sql .= "createdate";
 		$sql .= ") VALUES (";
+//		$sql .= substr($value_string,0,-1);
 		$sql .= $value_string;
 		$sql .= "'".date("Ymd")."'";
 		$sql .= ")";
@@ -91,34 +114,26 @@ class Srntb160 extends CI_Model {
 		
 		log_message('debug',"\$sql = $sql");
 		
-        // トランザクション開始
-        $this->db->trans_begin();
-
 		// SQL実行
 		$query = $this->db->query($sql);
+		
+		if($query){
+			return TRUE;
+		}else{
+			return FALSE;
+            
+		}
+   		log_message('debug',"========== " . __METHOD__ . " end ==========");
 
-        // カウンタ（プライマリキー値）を取得用SQL		
-        $query2 = $this->db->insert_id();
-        $this->latest_jyohonum = (int)$query2;
-        log_message('debug',"\$this->latest_jyohonum = " . $this->latest_jyohonum);
-
-        if ($this->db->trans_status() === FALSE)
-        {
-            $this->db->roll_back();
-    		log_message('debug',"========== " . __METHOD__ . " abnormal end ==========");
-            return FALSE;
-        }         
-        $this->db->trans_complete();
-		log_message('debug',"========== " . __METHOD__ . " normal end ==========");
-        return TRUE;
 	}
 	
-	function delete_srntb160_data($jyohonum,$edbn){
+	function delete_srntb170_data($jyohonum,$edbn){
+		log_message('debug',"========== " . __METHOD__ . " start ==========");
 		// 初期化
 		$sql = ""; // sql_regcase文字列
 		$query = NULL; // SQL実行結果
 		
-		$sql .= "DELETE FROM srntb160";
+		$sql .= "DELETE FROM srntb170";
 		$sql .= " WHERE jyohonum = ?";
 		$sql .= " ;";
 		
@@ -131,8 +146,38 @@ class Srntb160 extends CI_Model {
 		}else{
 			return FALSE;
 		}
-	}
+   		log_message('debug',"========== " . __METHOD__ . " end ==========");
 
+	}
+	
+	function get_schedule_data($jyohonum,$edbn){
+		log_message('debug',"========== " . __METHOD__ . " start ==========");
+		// 初期化
+		$sql = ""; // sql_regcase文字列
+		$query = NULL; // SQL実行結果
+		$result_data = NULL; // 戻り値
+		
+		// SQL文作成
+		$sql .= " SELECT";
+		$sql .= "  sthm,";
+		$sql .= "  '内勤' as aitesknm";
+		$sql .= " FROM srntb170";
+		$sql .= " WHERE jyohonum = ?";
+		$sql .= " AND edbn = ?";
+		$sql .= " ;";
+		log_message('debug',"\$sql = $sql");
+		// SQL実行
+		$query = $this->db->query($sql,array($jyohonum,$edbn));
+		// 取得確認
+		if($query->num_rows() > 0)
+		{
+			$result_data = $query->result_array();
+		}
+   		log_message('debug',"========== " . __METHOD__ . " end ==========");
+
+		return $result_data;
+	}
+	
    //
     // 既に登録されている同日同時刻のデータの有無を確認する。
     //
@@ -143,10 +188,11 @@ class Srntb160 extends CI_Model {
         // 初期化
         $sql = ""; // sql_regcase文字列
         $query = NULL; // SQL実行結果
-        $result_data = NULL; // 戻り値
+        $result_data = NULL; // 戻り
         $this->error_date = null;   // エラー日付初期化
+
         // SQL文作成
-        $sql .= " SELECT shbn, ymd, sthm, edhm FROM srntb160 WHERE shbn = ? AND ymd = ? ";
+        $sql .= " SELECT shbn, ymd, sthm, edhm FROM srntb170 WHERE shbn = ? AND ymd = ? ";
         log_message('debug', "\$sql = $sql");
         // SQL実行
         $query = $this->db->query($sql, array($shbn, date("Ymd", $startdatetime)));
@@ -164,7 +210,6 @@ class Srntb160 extends CI_Model {
                 // 登録済み開始時刻 < 入力開始時刻 < 登録済み終了時刻 
                 if ($rec_start_time < $startdatetime && $startdatetime < $rec_end_time) {
                     log_message('debug', "\$startdatetime overlap " );
-                    
                     $this->error_date = $startdatetime;
                     return TRUE;
                 }
@@ -178,7 +223,8 @@ class Srntb160 extends CI_Model {
         }
         return FALSE;
     }
-
+	
 	
 }
+
 ?>
