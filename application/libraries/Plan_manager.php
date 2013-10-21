@@ -3,6 +3,9 @@
 class Plan_manager {
 	
     public $error_date;     // エラーが発生した日付を格納
+
+    public $regular_flag = false;   // 定期予定の判断フラグ(TRUEが定期予定）
+    public $regular_ID = NULL;      // 社員番号＋timestampでグループIDを設定する
     
 	/**
 	 * 
@@ -1752,6 +1755,13 @@ class Plan_manager {
 		// 情報No取得
 		if (empty($honbu_data[$jyohonum_name])) {
 			$CI->srntb110->insert_srntb110_data($record_data);
+            
+            // ここで定期予定か単独予定なのかを判断し srntb170 に登録する
+            if ($this->regular_flag){
+                $CI->srntb170->insert_srntb170_data('srntb110', $CI->srntb110->latest_jyohonum, $this->regular_ID);
+            }
+            
+            
 		}else{
 			$CI->srntb110->update_srntb110_data($record_data);
 		}
@@ -2088,6 +2098,12 @@ class Plan_manager {
 		// 情報No取得
 		if (empty($tenpo_data[$jyohonum_name])) {
 			$CI->srntb120->insert_srntb120_data($record_data);
+            
+            // ここで定期予定か単独予定なのかを判断し srntb170 に登録する
+            if ($this->regular_flag){
+                $CI->srntb170->insert_srntb170_data('srntb120', $CI->srntb120->latest_jyohonum, $this->regular_ID);
+            }
+            
 		}else{
 			$CI->srntb120->update_srntb120_data($record_data);
 		}
@@ -2297,6 +2313,12 @@ class Plan_manager {
 		// 情報No取得
 		if (empty($dairi_data[$jyohonum_name])) {
 			$CI->srntb130->insert_srntb130_data($record_data);
+            
+            // ここで定期予定か単独予定なのかを判断し srntb170 に登録する
+            if ($this->regular_flag){
+                $CI->srntb170->insert_srntb170_data('srntb130', $CI->srntb130->latest_jyohonum, $this->regular_ID);
+            }
+            
 		}else{
 			$CI->srntb130->update_srntb130_data($record_data);
 		}
@@ -2367,6 +2389,12 @@ class Plan_manager {
 		// 情報No取得
 		if (empty($office_data[$jyohonum_name])) {
 			$CI->srntb140->insert_srntb140_data($record_data);
+            
+            // ここで定期予定か単独予定なのかを判断し srntb170 に登録する
+            if ($this->regular_flag){
+                $CI->srntb170->insert_srntb170_data('srntb140', $CI->srntb140->latest_jyohonum, $this->regular_ID);
+            }
+            
 		}else{
 			$CI->srntb140->update_srntb140_data($record_data);
 		}
@@ -2427,6 +2455,12 @@ class Plan_manager {
 		// 情報No取得
 		if (empty($gyousya_data[$jyohonum_name])) {
 			$CI->srntb160->insert_srntb160_data($record_data);
+            
+            // ここで定期予定か単独予定なのかを判断し srntb170 に登録する
+            if ($this->regular_flag){
+                $CI->srntb170->insert_srntb170_data('srntb160', $CI->srntb160->latest_jyohonum, $this->regular_ID);
+            }
+            
 		}else{
 			$CI->srntb160->update_srntb160_data($record_data);
 		}

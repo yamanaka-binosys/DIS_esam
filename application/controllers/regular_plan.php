@@ -956,7 +956,13 @@ class Regular_plan extends MY_Controller {
 				}
 				$data_no = substr($key, -2);*/
 			}
-			// 登録処理
+            
+            // 登録時に定期予定であることを示す
+            $this->plan_manager->regular_flag = TRUE;
+            // 登録時のグループIDを設定する（重複しないよう社員番号と日付時刻で合成）
+            $this->plan_manager->regular_ID = $this->session->userdata('shbn') . date("YmdHis");
+
+            // 登録処理
 			foreach ($data as $key => $value) {
 				if(!empty($value['data_no'])){
 					foreach ($regular_day as $regular_key => $regular_value){
@@ -974,6 +980,7 @@ class Regular_plan extends MY_Controller {
 						// 活動区分
 						$action_name = 'action_type_'.$value['data_no'];
 						log_message('debug',"\$action_name = $action_name");
+                        
 						if($value[$action_name] === 'srntb110'){
 							$this->plan_manager->record_honbu_data($shbn,$data[$key],$value['data_no']);
 						}else if($value[$action_name] === 'srntb120'){
@@ -985,11 +992,16 @@ class Regular_plan extends MY_Controller {
 						}else if($value[$action_name] === 'srntb160'){
 							$this->plan_manager->record_gyousya_data($shbn,$data[$key],$value['data_no']);
 						}
+                        
 					}
 				}
 			}
 
-			$this->session->unset_userdata('checker_ednm');
+            // 登録時定期予定フラグをリセットする
+            $this->plan_manager->regular_flag = FALSE;
+            $this->plan_manager->regular_ID = NULL;
+
+            $this->session->unset_userdata('checker_ednm');
 	
 			log_message('debug',"========== controllers regular_plan action_submit end ==========");
 			return;

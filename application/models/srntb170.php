@@ -83,11 +83,9 @@ class Srntb170 extends CI_Model {
 
 	}
 	
-	function insert_srntb170_data($record_data)
+	function insert_srntb170_data($tablenm, $recid, $groupid)
 	{
     	log_message('debug',"========== " . __METHOD__ . " start ==========");
-		unset($record_data['jyohonum']);
-		unset($record_data['edbn']);
 		
 		// 初期化
 		$sql = ""; // sql_regcase文字列
@@ -96,21 +94,14 @@ class Srntb170 extends CI_Model {
 		$name_string = "";
 		$value_string = "";
 		
-		foreach ($record_data as $key => $value) {
-			$name_string .= $key . ",";
-			$value_string .= "'" . $value . "',";
-		}
 		
 		$sql .= " INSERT INTO srntb170(";
-//		$sql .= substr($name_string,0,-1);
-		$sql .= $name_string;
-		$sql .= "createdate";
+		$sql .= "tablenm, recid, groupid ";
 		$sql .= ") VALUES (";
-//		$sql .= substr($value_string,0,-1);
-		$sql .= $value_string;
-		$sql .= "'".date("Ymd")."'";
-		$sql .= ")";
-		$sql .= " ;";
+		$sql .= "'" . $tablenm . "', ";
+		$sql .= (int)$recid . ", ";
+		$sql .= "'" . $groupid . "'";
+		$sql .= ");";
 		
 		log_message('debug',"\$sql = $sql");
 		
@@ -121,7 +112,6 @@ class Srntb170 extends CI_Model {
 			return TRUE;
 		}else{
 			return FALSE;
-            
 		}
    		log_message('debug',"========== " . __METHOD__ . " end ==========");
 
