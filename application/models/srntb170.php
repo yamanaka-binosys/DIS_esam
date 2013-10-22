@@ -140,7 +140,34 @@ class Srntb170 extends CI_Model {
 
 	}
 	
-	function get_schedule_data($jyohonum,$edbn){
+    // 対象レコードの有無を調べる
+	function check_delete_srntb170_data($dbname, $jyohonum){
+		log_message('debug',"========== " . __METHOD__ . " start ==========");
+		// 初期化
+		$sql = ""; // sql_regcase文字列
+		$query = NULL; // SQL実行結果
+		
+		$sql .= "SELECT groupid FROM srntb170";
+		$sql .= " WHERE tablenm = ? and recid = ?";
+		$sql .= " ;";
+		
+		log_message('debug',"\$sql = $sql" . ", dbname=" . $dbname . ", jyohonum=" . $jyohonum);
+		// SQL実行
+		$query = $this->db->query($sql, array($dbname, $jyohonum));
+		
+		if($query->num_rows() > 0)
+		{
+            $ret = $query->result_array();
+    		log_message('debug', "\$ret = " . serialize($ret));
+			return $ret[0]['groupid'];
+		}else{
+			return '0';
+		}
+   		log_message('debug',"========== " . __METHOD__ . " end ==========");
+
+	}
+
+    function get_schedule_data($groupid, $edbn){
 		log_message('debug',"========== " . __METHOD__ . " start ==========");
 		// 初期化
 		$sql = ""; // sql_regcase文字列
@@ -149,26 +176,26 @@ class Srntb170 extends CI_Model {
 		
 		// SQL文作成
 		$sql .= " SELECT";
-		$sql .= "  sthm,";
-		$sql .= "  '内勤' as aitesknm";
+		$sql .= "  tablenm, recid";
 		$sql .= " FROM srntb170";
-		$sql .= " WHERE jyohonum = ?";
-		$sql .= " AND edbn = ?";
+		$sql .= " WHERE groupid = ?";
 		$sql .= " ;";
-		log_message('debug',"\$sql = $sql");
+		
+        log_message('debug',"\$sql = $sql");
+        
 		// SQL実行
-		$query = $this->db->query($sql,array($jyohonum,$edbn));
+		$query = $this->db->query($sql,array($groupid));
 		// 取得確認
 		if($query->num_rows() > 0)
 		{
+       		log_message('debug',"\$query->result_array() = " . serialize($query->result_array()));
 			$result_data = $query->result_array();
 		}
    		log_message('debug',"========== " . __METHOD__ . " end ==========");
-
 		return $result_data;
 	}
 	
-   //
+    //
     // 既に登録されている同日同時刻のデータの有無を確認する。
     //
     function st_et_check($shbn, $startdatetime, $enddatetime) {

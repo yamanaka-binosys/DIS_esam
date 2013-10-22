@@ -600,7 +600,61 @@ class Plan extends MY_Controller {
 //		return;
 	}
 
-	function action_submit($post){
+    /*
+     * 削除対象が定期予定かそうでないかを判定する
+     */
+    function check_delete(){
+		log_message('debug',"========== " . __METHOD__ . " start ==========");
+		// 初期化
+		log_message('debug',$_POST['dbname']);
+		log_message('debug',$_POST['jyohonum']);
+//		log_message('debug',$_POST['edbn']);
+		
+        $dbname = $_POST['dbname'];
+		$jyohonum = $_POST['jyohonum'];
+		$this->load->library('plan_manager');
+		
+        $ret = $this->plan_manager->check_delete_action($dbname, $jyohonum);
+        if ( $ret != '0'){
+            log_message('debug',"========== " . __METHOD__ . " return " . $ret . " ==========");
+            echo $ret;
+        }else{
+            log_message('debug',"========== " . __METHOD__ . " return 0 ==========");
+            echo '0';
+        }
+
+        log_message('debug',"========== " . __METHOD__ . " end ==========");
+
+        /*
+         * ajaxサンプル
+         * 
+        http://www.ibm.com/developerworks/jp/web/library/wa-aj-codeigniter/
+        public function username_taken()
+        {
+          $this->load->model('MUser', '', TRUE);
+          $username = trim($_POST['username']);
+          // if the username exists return a 1 indicating true
+          if ($this->MUser->username_exists($username)) {
+            echo '1';
+          }
+        }
+        */
+        
+	}
+
+	function action_regular_delete(){
+		log_message('debug',"========== " . __METHOD__ . " start ==========");
+		// 初期化
+		log_message('debug',$_POST['groupid']);
+		$groupid = $_POST['groupid'];
+        $edbn = $_POST['edbn'];
+		$this->load->library('plan_manager');
+		$this->plan_manager->regular_delete_action($groupid, $edbn);
+		log_message('debug',"========== " . __METHOD__ . " end ==========");
+//		return;
+	}
+
+    function action_submit($post){
 		try{
 			log_message('debug',"========== controllers plan action_submit start ==========");
 			// 引数チェック

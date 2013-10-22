@@ -2535,7 +2535,62 @@ class Plan_manager {
 		return;
 	}
 	
-	function delete_action($action_type,$jyohonum,$edbn){
+    /*
+     * 削除対象が定期予定なのか、そうでないかを判定する
+     */
+	function check_delete_action($dbname, $jyohonum){
+		log_message('debug',"========== " . __METHOD__ . " start ==========");
+		// 初期化
+		$CI =& get_instance();
+		$CI->load->model('srntb170');
+
+		// 登録済の予定削除
+		if($dbname != "" && $jyohonum > 0){
+            $ret = $CI->srntb170->check_delete_srntb170_data($dbname, $jyohonum);
+			if ( $ret != '0'){
+                log_message('debug',"========== " . __METHOD__ . " return " . $ret . " ==========");
+                return $ret;
+            }else{
+                log_message('debug',"========== " . __METHOD__ . " return 0 ==========");
+                return '0';
+            }
+		}
+		log_message('debug',"========== " . __METHOD__ . " no parameter ==========");
+        return false;
+	}
+
+    // 定期予定を一括削除
+    function regular_delete_action($groupid, $edbn){
+		log_message('debug',"========== " . __METHOD__ . " start ==========");
+		// 初期化
+		$CI =& get_instance();
+		$CI->load->model('srntb170');
+
+        $ret_array = $CI->srntb170->get_schedule_data($groupid, $edbn);
+        foreach ($ret_array as $ret){
+            $action_type = $ret['tablenm'];
+            $jyohonum = $ret['recid'];
+            if($action_type === 'srntb110'){
+                // 本部データ削除
+                $this->delete_honbu_data($jyohonum,$edbn);
+            }else if($action_type === 'srntb120'){
+                // 店舗データ削除
+                $this->delete_tenpo_data($jyohonum,$edbn);
+            }else if($action_type === 'srntb130'){
+                // 代理店データ削除
+                $this->delete_dairi_data($jyohonum,$edbn);
+            }else if($action_type === 'srntb140'){
+                // 内勤データ削除
+                $this->delete_office_data($jyohonum,$edbn);
+            }else if($action_type === 'srntb160'){
+                // 業者データ削除
+                $this->delete_gyousya_data($jyohonum,$edbn);
+            }
+        }
+		log_message('debug',"========== " . __METHOD__ . " end ==========");
+	}
+
+    function delete_action($action_type,$jyohonum,$edbn){
 		if($action_type === 'srntb110'){
 			// 本部データ削除
 			$this->delete_honbu_data($jyohonum,$edbn);
