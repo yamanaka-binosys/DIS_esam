@@ -1,4 +1,4 @@
-﻿function select_action(id,base_url){
+function select_action(id,base_url){
 	removeError();
 //	alert(id.selectedIndex);
 	if (id.selectedIndex==1) {
