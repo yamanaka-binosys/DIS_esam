@@ -94,6 +94,8 @@ class Top_manager {
 	 * 受取日報データの取得
 	 */
 	function get_received_report_data($shbn, $isUnitLeader) {
+        
+		log_message('debug',"----- " . __METHOD__ . " Start -----");
 		$CI =& get_instance();
 		$CI->load->model('srwtb010');
 		$reading = $CI->config->item(MY_READING_KUBUN);
@@ -116,6 +118,8 @@ class Top_manager {
 				$db_data[$key]['etujukyo'] = $reading[$value['etujukyo']];
 			}
 		}
+        log_message('debug',"\$db_data = " . serialize($db_data));
+		log_message('debug',"----- " . __METHOD__ . " End -----");
 		return $db_data;
 	}
 

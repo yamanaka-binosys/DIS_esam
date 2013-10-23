@@ -62,6 +62,7 @@ class Result_view extends MY_Controller {
 
 			// コメント入力有無を取得
 			$data['judg_flg'] = $judg_flg;
+            /*
 			if($judg_flg === "admin"){
 				$data['write_flg'] = 1;
 			}else if($judg_flg === "general"){
@@ -69,6 +70,11 @@ class Result_view extends MY_Controller {
 			}else{
 				$data['write_flg'] = 0;
 			}
+             */
+            
+            // 誰でもコメント入力を可能にする
+			$data['write_flg'] = 1;
+            
 			// データ取得
 			$data['action_result'] = $this->result_view_manager->set_result_data($data['target_shbn'],$select_day);
 			// 確認者情報取得

@@ -10,8 +10,9 @@
 			<table class="preview-head">
 				<tr>
 					<th width="34px">日付</th>
-					<th width="169px">担当者</th>
-					<th width="65px">状態</th>
+					<th width="128px">担当者</th>
+					<th width="40px">状態</th>
+					<th width="65px">コメント</th>
 				</tr>
 			</table>
 			<div class="preview-content-overflow">
@@ -20,11 +21,13 @@
 					<tr>
 						<td class="center cell" width="30px"><?php echo $d['ymd_date']->format('m/d') ?>
 						</td>
-						<td class="left cell" width="165px"><a
+						<td class="left cell" width="124px"><a
 							href="<?php echo base_url("index.php/result/general_check_view/{$d['ymd']}/{$d['irshbn']}") ?>">
 								<span class="cell-text"><?php echo mb_strimwidth($d['ir_shinnm'], 0, 22, '…','UTF-8') ?></span>
 						</a></td>
-						<td class="center" style="padding-left: 20px;"><?php echo $d['etujukyo'] ?>
+						<td class="center" width="36px" style="padding-left: 0px;"><?php echo $d['etujukyo'] ?>
+						</td>
+						<td class="center" style="padding-left: 21px;"><?php //echo $d['comment'] ?>
 						</td>
 					</tr>
 					<?php } ?>
