@@ -109,13 +109,15 @@ class Top_manager {
 				$date = DateTime::createFromFormat('Ymd', $value['ymd']);
 				$db_data[$key]['ymd_date'] = $date;
 				$db_data[$key]['etujukyo'] = $reading[$value['etujukyo']];
-			}
+                $db_data[$key]['comment'] = $comment[$value['comment']];
+            }
 		} else {
 			$db_data = $CI->srwtb010->get_received_general_top_data($shbn);
 			foreach ($db_data as $key => $value) {
 				$date = DateTime::createFromFormat('Ymd', $value['ymd']);
 				$db_data[$key]['ymd_date'] = $date;
 				$db_data[$key]['etujukyo'] = $reading[$value['etujukyo']];
+    			$db_data[$key]['comment'] = $comment[$value['comment']];
 			}
 		}
         log_message('debug',"\$db_data = " . serialize($db_data));

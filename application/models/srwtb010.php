@@ -69,6 +69,7 @@ class Srwtb010 extends CI_Model {
 				srwtb010.irshbn, -- 依頼者の社員番号
 				sender.shinnm as ir_shinnm, -- 依頼者の名前
 				srwtb010.etujukyo, -- 閲覧状況
+				srwtb010.comment, -- コメント
 				srwtb010.ymd -- 日報の日付
 			FROM
 				srwtb010,
@@ -152,6 +153,7 @@ class Srwtb010 extends CI_Model {
 			srwtb010.irshbn, -- 依頼者の社番
 			sender.shinnm as ir_shinnm, -- 依頼者の名前
 			srwtb010.etujukyo, -- 閲覧状況
+			srwtb010.comment, -- コメント
 			srwtb010.ymd -- 日報の日付
 		FROM
 			srwtb010,

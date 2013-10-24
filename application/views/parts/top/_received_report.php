@@ -27,7 +27,7 @@
 						</a></td>
 						<td class="center" width="36px" style="padding-left: 0px;"><?php echo $d['etujukyo'] ?>
 						</td>
-						<td class="center" style="padding-left: 21px;"><?php //echo $d['comment'] ?>
+						<td class="center" style="padding-left: 21px;"><?php echo $d['comment'] ?>
 						</td>
 					</tr>
 					<?php } ?>
