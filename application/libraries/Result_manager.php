@@ -1321,6 +1321,9 @@ class Result_manager {
 		// 終了時刻（分）
 		$variable_name = "edm_".$data_no;
 		$record_data['edhm'] .= sprintf('%02d', $gyousya_data[$variable_name]);
+		// 企業名
+		$variable_name = "gyoshanm_".$data_no;
+		$record_data['gyoshanm'] = $gyousya_data[$variable_name];
 		// メモ
 		$variable_name = "memo_".$data_no;
 		$record_data['memo'] = $gyousya_data[$variable_name];
