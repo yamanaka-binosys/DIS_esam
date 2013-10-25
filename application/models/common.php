@@ -69,7 +69,12 @@ class Common extends CI_Model {
 		$sql .= " and CAST(BASE.edbn as int) = EDA.edbn";
 		$sql .= " WHERE shbn = '{$shbn}' AND ymd BETWEEN '{$start_date}' AND '{$end_date}'";
 		$sql .= " UNION ALL";
-		$sql .= " SELECT BASE.shbn,BASE.ymd,BASE.sthm,'業者' AS viewnm,'業者' AS action_type, '' AS opt";
+		$sql .= " SELECT BASE.shbn,BASE.ymd,BASE.sthm,";
+        $sql .= "  CASE ";  
+        $sql .= "   WHEN gyoshanm != '' THEN gyoshanm ";
+        $sql .= "   WHEN gyoshanm is not null THEN gyoshanm ";
+        $sql .= "   ELSE '業者' END AS viewnm, ";
+        $sql .= "  '業者' AS action_type, '' AS opt";
 		$sql .= " FROM srntb060 BASE";
 		$sql .= " INNER JOIN";
 		$sql .= " (SELECT jyohonum, MAX(CAST(edbn as int))  AS edbn FROM srntb060";
@@ -156,7 +161,12 @@ class Common extends CI_Model {
 		$sql .= " and CAST(BASE.edbn as int) = EDA.edbn";
 		$sql .= " WHERE shbn = '{$shbn}' AND ymd BETWEEN '{$start_date}' AND '{$end_date}'";
 		$sql .= " UNION ALL";
-		$sql .= " SELECT BASE.shbn,BASE.ymd,BASE.sthm,'業者' AS viewnm,'業者' AS action_type, '' AS opt";
+		$sql .= " SELECT BASE.shbn,BASE.ymd,BASE.sthm, ";
+        $sql .= "  CASE ";  
+        $sql .= "   WHEN gyoshanm != '' THEN gyoshanm ";
+        $sql .= "   WHEN gyoshanm is not null THEN gyoshanm ";
+        $sql .= "   ELSE '業者' END AS viewnm, ";
+        $sql .= "   '業者' AS action_type, '' AS opt";
 		$sql .= " FROM srntb160 BASE";
 		$sql .= " INNER JOIN";
 		$sql .= " (SELECT jyohonum, MAX(CAST(edbn as int))  AS edbn FROM srntb160";
@@ -1106,7 +1116,13 @@ class Common extends CI_Model {
 				AND ymd::int = to_char(now(), 'yyyyMMdd')::integer
 				UNION
 				-- 業者
-				SELECT ymd, sthm, shbn, '業者' as doing FROM 
+				SELECT ymd, sthm, shbn,  
+                  CASE
+                    WHEN gyoshanm != '' THEN gyoshanm 
+                    WHEN gyoshanm is not null THEN gyoshanm 
+                    ELSE '業者' 
+                  END AS doing
+                FROM 
 				srntb160 base INNER JOIN 
 				(SELECT jyohonum, max(edbn) as edbn  FROM srntb160 GROUP BY jyohonum) ed
 				ON base.jyohonum = ed.jyohonum AND base.edbn = ed.edbn
@@ -1117,7 +1133,9 @@ class Common extends CI_Model {
 			WHERE schedule.shbn = follower.shbn
 			ORDER BY follower.shbn, schedule.sthm ASC
 		";
-		
+// 				SELECT ymd, sthm, shbn, '業者' as doing を変更
+
+        
 		$query = $this->db->query($sql, array($shbn, $shbn, '008'));
 		return $query->result_array();
 	}
