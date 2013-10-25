@@ -1290,7 +1290,10 @@ class Data_output_csv extends MY_Controller {
 					" 		srn060.Ymd,\n".
 					" 		StHm,\n".
 					" 		EdHm,\n".
-					" 		'業者' as AiteskNm,\n".
+                    "       CASE \n" .  
+                    "         WHEN gyoshanm != '' THEN gyoshanm \n" .
+                    "         WHEN gyoshanm is not null THEN gyoshanm \n" .
+                    "       ELSE '業者' END AS AiteskNm,\n" .
 					" 		NULL AS NAIYO\n".
 					" FROM SRNTB060 srn060 \n".
 					" INNER JOIN 
@@ -1558,7 +1561,10 @@ class Data_output_csv extends MY_Controller {
 					" 		Ymd,\n".
 					" 		StHm,\n".
 					" 		EdHm,\n".
-					" 		'業者' as AiteskNm,\n".
+                    "       CASE \n" .  
+                    "         WHEN gyoshanm != '' THEN gyoshanm \n" .
+                    "         WHEN gyoshanm is not null THEN gyoshanm \n" .
+                    "       ELSE '業者' END AS AiteskNm,\n" .
 					" 		NULL AS NAIYO \n".
 					" 	FROM SRNTB160 srn160\n".
 					" INNER JOIN 
@@ -1966,7 +1972,10 @@ class Data_output_csv extends MY_Controller {
 					" Ymd,\n".
 					" StHm,\n".
 					" EdHm,\n".
-					" '業者' as AiteskNm,\n".
+                    " CASE \n" .  
+                    "   WHEN gyoshanm != '' THEN gyoshanm \n" .
+                    "   WHEN gyoshanm is not null THEN gyoshanm \n" .
+                    " ELSE '業者' END AS AiteskNm,\n" .
 					" NULL AS NAIYO\n".
 					" FROM SRNTB060 srn060 \n".
 					" INNER JOIN 
@@ -2226,7 +2235,10 @@ class Data_output_csv extends MY_Controller {
 					" Ymd,\n".
 					" StHm,\n".
 					" EdHm,\n".
-					" '業者' as AiteskNm,\n".
+                    " CASE \n" .  
+                    "   WHEN gyoshanm != '' THEN gyoshanm \n" .
+                    "   WHEN gyoshanm is not null THEN gyoshanm \n" .
+                    " ELSE '業者' END AS AiteskNm,\n" .
 					" NULL AS NAIYO\n".
 					" FROM SRNTB160 srn160 \n".
 					" INNER JOIN 
