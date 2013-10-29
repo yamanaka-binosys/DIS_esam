@@ -92,10 +92,12 @@ class Top_manager {
 			$db_data[$key]['etujukyo'] = $reading[$value['etujukyo']];
 			$db_data[$key]['comment'] = $comment[$value['comment']];
             if (!$isUnitLeader) {
-                if(is_null($value['commentetujokyo']) || $value['commentetujokyo'] == ''){
-                    $db_data[$key]['comment'] .= '(' . $boss_comment_reading['0'] . ')';
-                }else{
-                    $db_data[$key]['comment'] .= '(' . $boss_comment_reading[$value['commentetujokyo']] . ')';
+                if($value['comment']=='1'){
+                    if(is_null($value['commentetujokyo']) || $value['commentetujokyo'] == ''){
+                        $db_data[$key]['comment'] .= '(' . $boss_comment_reading['0'] . ')';
+                    }else{
+                        $db_data[$key]['comment'] .= '(' . $boss_comment_reading[$value['commentetujokyo']] . ')';
+                    }
                 }
             }
         }
@@ -124,10 +126,12 @@ class Top_manager {
 				$db_data[$key]['ymd_date'] = $date;
 				$db_data[$key]['etujukyo'] = $reading[$value['etujukyo']];
                 $db_data[$key]['comment'] = $comment[$value['comment']];
-                if(is_null($value['commentetujokyo']) || $value['commentetujokyo'] == ''){
-                    $db_data[$key]['comment'] .= '(' . $boss_comment_reading['0'] . ')';
-                }else{
-                    $db_data[$key]['comment'] .= '(' . $boss_comment_reading[$value['commentetujokyo']] . ')';
+                if($value['comment']=='1'){
+                    if(is_null($value['commentetujokyo']) || $value['commentetujokyo'] == ''){
+                        $db_data[$key]['comment'] .= '(' . $boss_comment_reading['0'] . ')';
+                    }else{
+                        $db_data[$key]['comment'] .= '(' . $boss_comment_reading[$value['commentetujokyo']] . ')';
+                    }
                 }
             }
 		} else {
