@@ -27,6 +27,7 @@ class Srwtb010 extends CI_Model {
 				leader.shinnm as view_shinnm, -- ユニット長の名前
 				srwtb010.etujukyo, -- 閲覧状況
 				srwtb010.comment, -- コメント
+                srwtb010.commentetujokyo, -- コメント閲覧状況
 				srwtb010.ymd -- 日報の日付
 			FROM
 				srwtb010,
@@ -70,6 +71,7 @@ class Srwtb010 extends CI_Model {
 				sender.shinnm as ir_shinnm, -- 依頼者の名前
 				srwtb010.etujukyo, -- 閲覧状況
 				srwtb010.comment, -- コメント
+                srwtb010.commentetujokyo, -- コメント閲覧状況
 				srwtb010.ymd -- 日報の日付
 			FROM
 				srwtb010,
@@ -108,6 +110,7 @@ class Srwtb010 extends CI_Model {
 				follower.shinnm as view_shinnm, -- 部下の名前
 				srwtb010.etujukyo, -- 閲覧状況
 				srwtb010.comment, -- コメントの有無
+                srwtb010.commentetujokyo, -- コメント閲覧状況
 				srwtb010.ymd -- 日報の日付
 			FROM
 				srwtb010,
@@ -154,6 +157,7 @@ class Srwtb010 extends CI_Model {
 			sender.shinnm as ir_shinnm, -- 依頼者の名前
 			srwtb010.etujukyo, -- 閲覧状況
 			srwtb010.comment, -- コメント
+            srwtb010.commentetujokyo, -- コメント閲覧状況
 			srwtb010.ymd -- 日報の日付
 		FROM
 			srwtb010,
@@ -282,14 +286,42 @@ class Srwtb010 extends CI_Model {
 		log_message('debug',"========== srwtb010 update_etujukyo end ==========");
 	}
 	
-	function update_comment($kashbn,$irshbn,$ymd){
+	function update_comment($kashbn,$irshbn,$ymd,$boss_read){
 		log_message('debug',"========== srwtb010 update_comment start ==========");
 		// 初期化
 		$sql = ""; // sql_regcase文字列
 		$query = NULL; // SQL実行結果
 		
 		$sql .= "UPDATE srwtb010";
-		$sql .= " SET comment = '1'";
+		$sql .= " SET comment = '1', commentetujokyo = ?";
+		//$sql .= " WHERE kashbn = '{$kashbn}'";
+		//$sql .= " AND irshbn = '{$irshbn}'";
+		//$sql .= " AND ymd = '{$ymd}'";
+		$sql .= " WHERE kashbn = ?";
+		$sql .= " AND irshbn = ?";
+		$sql .= " AND ymd = ?";
+		$sql .= " ;";
+		log_message('debug',"\$sql = $sql");
+		// SQL実行
+		$query = $this->db->query($sql,array($boss_read,$kashbn,$irshbn,$ymd));
+		
+		if($query){
+			return TRUE;
+		}else{
+			return FALSE;
+		}
+		log_message('debug',"========== srwtb010 update_comment end ==========");
+	}
+	
+    // ユニット長が読んだときに呼ばれる
+	function update_boss_read($kashbn,$irshbn,$ymd){
+		log_message('debug',"========== srwtb010 update_comment start ==========");
+		// 初期化
+		$sql = ""; // sql_regcase文字列
+		$query = NULL; // SQL実行結果
+		
+		$sql .= "UPDATE srwtb010";
+		$sql .= " SET commentetujokyo = '1'";
 		//$sql .= " WHERE kashbn = '{$kashbn}'";
 		//$sql .= " AND irshbn = '{$irshbn}'";
 		//$sql .= " AND ymd = '{$ymd}'";
@@ -308,8 +340,8 @@ class Srwtb010 extends CI_Model {
 		}
 		log_message('debug',"========== srwtb010 update_comment end ==========");
 	}
-	
-	function update_kakninflg($kashbn,$irshbn,$ymd){
+
+    function update_kakninflg($kashbn,$irshbn,$ymd){
 		log_message('debug',"========== srwtb010 update_kakninflg start ==========");
 		// 初期化
 		$sql = ""; // sql_regcase文字列

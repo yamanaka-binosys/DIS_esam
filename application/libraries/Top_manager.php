@@ -69,10 +69,13 @@ class Top_manager {
 	 * ユニット長閲覧状況データを取得する
 	 */
 	function get_read_report_data($shbn, $isUnitLeader) {
-		$CI =& get_instance();
+		log_message('debug',"----- " . __METHOD__ . " Start -----");
+
+        $CI =& get_instance();
 		$CI->load->model('srwtb010');
 		$reading = $CI->config->item(MY_READING_KUBUN);
 		$comment = $CI->config->item(MY_COMMENT_KUBUN);
+        $boss_comment_reading = $CI->config->item(MY_READING_KUBUN);
 		
 		$db_data = array();
 		
@@ -82,12 +85,22 @@ class Top_manager {
 			$db_data = $CI->srwtb010->get_unit_leader_read_general_top_data($shbn);
 		}
 		foreach ($db_data as $key => $value) {
+       		log_message('debug',"----- " . serialize($value) . " -----");
+
 			$date = DateTime::createFromFormat('Ymd', $value['ymd']);
 			$db_data[$key]['ymd_date'] = $date;
 			$db_data[$key]['etujukyo'] = $reading[$value['etujukyo']];
 			$db_data[$key]['comment'] = $comment[$value['comment']];
-		}
-		return $db_data;
+            if (!$isUnitLeader) {
+                if(is_null($value['commentetujokyo']) || $value['commentetujokyo'] == ''){
+                    $db_data[$key]['comment'] .= '(' . $boss_comment_reading['0'] . ')';
+                }else{
+                    $db_data[$key]['comment'] .= '(' . $boss_comment_reading[$value['commentetujokyo']] . ')';
+                }
+            }
+        }
+		log_message('debug',"----- " . __METHOD__ . " End -----");
+        return $db_data;
 	}
 
 	/**
@@ -100,7 +113,8 @@ class Top_manager {
 		$CI->load->model('srwtb010');
 		$reading = $CI->config->item(MY_READING_KUBUN);
 		$comment = $CI->config->item(MY_COMMENT_KUBUN);
-
+        $boss_comment_reading = $CI->config->item(MY_READING_KUBUN);
+        
 		$db_data = array();
 		
 		if ($isUnitLeader) {
@@ -110,6 +124,11 @@ class Top_manager {
 				$db_data[$key]['ymd_date'] = $date;
 				$db_data[$key]['etujukyo'] = $reading[$value['etujukyo']];
                 $db_data[$key]['comment'] = $comment[$value['comment']];
+                if(is_null($value['commentetujokyo']) || $value['commentetujokyo'] == ''){
+                    $db_data[$key]['comment'] .= '(' . $boss_comment_reading['0'] . ')';
+                }else{
+                    $db_data[$key]['comment'] .= '(' . $boss_comment_reading[$value['commentetujokyo']] . ')';
+                }
             }
 		} else {
 			$db_data = $CI->srwtb010->get_received_general_top_data($shbn);

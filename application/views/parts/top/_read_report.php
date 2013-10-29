@@ -32,7 +32,7 @@
 						</td>
 						<td class="center cell" width="36xp"><?php echo $d['etujukyo'] ?>
 						</td>
-						<td class="center" style="padding-left: 21px;"><?php echo $d['comment'] ?>
+						<td class="center" ><?php echo $d['comment'] ?>
 						</td>
 					</tr>
 					<?php } ?>

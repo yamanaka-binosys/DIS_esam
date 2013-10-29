@@ -17,6 +17,7 @@ class Result_view extends MY_Controller {
 			$this->load->library('common_manager');
 			$this->load->library('result_view_manager');
 			$this->load->model('sgmtb010');
+			$this->load->model('srwtb010');
 			$data = NULL;
 			$count = FALSE;
 			
@@ -86,6 +87,8 @@ class Result_view extends MY_Controller {
 					$confirmer_no = $this->sgmtb010->get_unit_cho_shbn($data['target_shbn']);
 					if($data['kakninshbn'] === $confirmer_no){
 						$data['kakninshnm'] = "";
+                        // ユニット長確認済みにする
+                        $this->srwtb010->update_boss_read($data['kakninshbn'],$data['target_shbn'],$select_day);
 					}else{
 						$data['kakninshnm'] = $this->common_manager->create_name($data['kakninshbn']);
 					}
@@ -102,7 +105,7 @@ class Result_view extends MY_Controller {
 			//見積もりファイル情報取得
 			$this->load->model('srntb070');
 			$data['mitumori_file']=$this->srntb070->search_file($select_day,$data['target_shbn']);
-			
+
 			// 画面表示
 			log_message('debug',"========== controllers result index end ==========");
 			$this->display($data);
@@ -394,7 +397,8 @@ class Result_view extends MY_Controller {
 			$this->load->library('result_view_manager');
 			$this->load->model('common');
 			$this->load->model('srwtb010');
-			$shbn = $this->session->userdata('shbn');
+			$this->load->model('sgmtb010');
+            $shbn = $this->session->userdata('shbn');
 			$data_no = "";
 			$group_count = 0;
 			$confirmer_data = array();
@@ -439,7 +443,13 @@ class Result_view extends MY_Controller {
 				}
 			}
 			// srwtb010　コメント入力有無更新
-			$this->srwtb010->update_comment($shbn,$post['target_shbn'],$select_day);
+            $boss = $this->sgmtb010->get_unit_cho_shbn($post['target_shbn']);   // コメント入力者がボスか？
+			if($boss === $shbn){
+                $boss_read = '1';       // ボスだったら既読
+            }else{
+                $boss_read = '0';        //ボスじゃなかったら未読にする
+            }
+            $this->srwtb010->update_comment($shbn,$post['target_shbn'],$select_day,$boss_read);
 			log_message('debug',"========== controllers result_view action_submit end ==========");
 			return;
 		}catch(Exception $e){

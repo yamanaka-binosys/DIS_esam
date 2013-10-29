@@ -1,5 +1,5 @@
 <?php
-log_message('debug',"===== Start result.php =====");
+log_message('debug',"===== Start result_view.php =====");
 $this->load->helper('html');
 $base_url = $this->config->item('base_url');
 $meta = $this->config->item('c_meta');
