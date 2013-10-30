@@ -102,7 +102,7 @@ class Table_manager {
 	 * @param   array $calendar_data カレンダー情報
 	 * @return  string
 	 */
-	public function set_select_calendar($year,$month,$calendar_data)
+	public function set_select_calendar($year,$month,$calendar_data,$calendar_mode = MY_CALENDAR_MIX)
 	{
 		log_message('debug',"========== Table_manager set_select_calendar start ==========");
 		log_message('debug',"\$year = $year");
@@ -168,6 +168,8 @@ class Table_manager {
 			$day_count = $next_start_day + $count;
 			$next_start_day = $day_count;
 			$count = MY_ZERO; // データ数カウンター
+            $i = 0; // 曜日のカウンタ
+            $week_day = array(1, 0, 0, 0, 0, 0, 1);
 			// 日曜～土曜までの日付を設定
 			foreach($day_week_en as $key => $value)
 			{
@@ -189,9 +191,10 @@ class Table_manager {
                         if($CI->sgmtb150->check_holiday(date("Y-n-j", $timestamp_temp))){
                             // この日が祝日だった場合
                             $str_calendar_c = " style=\"color:" . $calendar_color['sunday'] . ";";
+                            $week_day[$i] = 1;
                         }else{
-                            // この日が平日だった場合
-                            // 平日の標準色をセット
+                            // この日が祝日でなかった場合
+                            // 各曜日の標準色をセット
                             $str_calendar_c = " style=\"color:" . $calendar_color[$value] . ";";
                             
                             //   前日が日曜日で祝日だった場合（振替の処理）
@@ -201,6 +204,7 @@ class Table_manager {
                                 // 前日が祝日かどうか
                                 if($CI->sgmtb150->check_holiday(date("Y-n-j", $timestamp_temp - 86400))){  // 前日が祝日だった場合、この日は振替休日
                                     $str_calendar_c = " style=\"color:" . $calendar_color['sunday'] . ";";
+                                    $week_day[$i] = 1;
                                 }
                             }
                             
@@ -210,6 +214,8 @@ class Table_manager {
                                     // 前日が祝日かチェック
                                     if($CI->sgmtb150->check_holiday(date("Y-n-j", $timestamp_temp - 86400 ))){  // 前日が祝日だった場合、この日は振替休日
                                         $str_calendar_c = " style=\"color:" . $calendar_color['sunday'] . ";";
+                                        $week_day[$i] = 1;
+
                                     }
                                 }                            
                             }
@@ -221,6 +227,7 @@ class Table_manager {
                                         // 前日が祝日かチェック
                                         if($CI->sgmtb150->check_holiday(date("Y-n-j", $timestamp_temp - 86400))){  // 前日が祝日だった場合、この日は振替休日
                                             $str_calendar_c = " style=\"color:" . $calendar_color['sunday'] . ";";
+                                            $week_day[$i] = 1;
                                         }
                                     }                            
                                 }                            
@@ -241,11 +248,14 @@ class Table_manager {
 				}else{
 					$str_calendar .= "<th></th>\n";
 				}
-			}
+                $i++;
+			} // end foreach （日付部分終了）
 			$str_calendar .= "</tr>\n";
-			// カレンダーデータ設定
+
+            // カレンダーデータ設定
 			$day_count = $next_start_day; // 開始日初期化
 			$str_calendar .= "<tr>\n";
+            $i = 0;     // 曜日カウンタ
 			foreach($day_week_en as $key => $value)
 			{
 				$data_max = 0;
@@ -264,8 +274,29 @@ class Table_manager {
 						{
 							$str_calendar .= " background-color:" . $table_set['data_td_today_back_color'] . ";";
 						}else{
-							$str_calendar .= " background-color:" . $table_set['data_td_back_color'] . ";";
-						}
+                            
+                            $background_color_setting = " background-color:" . $table_set['data_td_back_color'] . ";";
+                            if($appointed_day > $select_day){
+                                // 当日よりも過去の日付だった場合
+                                
+                                log_message('debug', "\$calendar_data[$day_count]['date_time'] = " . serialize($calendar_data[$day_count]['date_time'] ));
+                                
+                                if(is_null($calendar_data[$day_count]['date_time'][0])){
+                                    // その日のデータが無かった場合
+                                    
+                                    log_message('debug', "\$calendar_mode = " . $calendar_mode);
+                                    
+                                    if($calendar_mode != MY_CALENDAR_ALLPLAN){
+                                        // 実績のカレンダーだけが背景色を変える対象(MY_CALENDAR_ALLPLANは予定）
+                                        if ($week_day[$i]===0){
+                                            // 土日でなく祝日でもなかった場合
+                                            $background_color_setting  .= " background-color:" . $table_set['no_result_day'] . ";";
+                                        }
+                                    }
+                                }
+                            }
+                            $str_calendar .= $background_color_setting;
+                        }
 						//$str_calendar .= " width:" . $table_set['day_th_width'] . ";";
 						//$str_calendar .= " width:116px;";
 						$str_calendar .= " height:" . $table_set['data_td_height'] . ";";
@@ -296,6 +327,7 @@ class Table_manager {
 				}
 				$str_calendar .= "</div>\n";
 				$str_calendar .= "</td>\n";
+                $i++;
 			}
 			$str_calendar .= "</tr>\n";
 		}

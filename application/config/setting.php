@@ -403,6 +403,7 @@
 		'data_td_valign'           => 'top',
 		'data_td_today_back_color' => '#CCFFCC',
 		'data_td_height'           => '54px',
+        'no_result_day'            => '#FFFF00'
 	);
 
 	// カレンダー画面表示月設定値

@@ -73,7 +73,7 @@ class Calendar_manager {
 			$select_month = date("Ym");
 		}
 		$select_calendar_date = $this->_get_select_calendar($shbn,$select_month,$calendar_mode); // 月の情報（日付・曜日・最終日等）取得
-		$select_calendar_table = $CI->table_manager->set_select_calendar($year,$month,$select_calendar_date); // カレンダー作成
+		$select_calendar_table = $CI->table_manager->set_select_calendar($year,$month,$select_calendar_date,$calendar_mode); // カレンダー作成
 		log_message('debug',"========== Calendar_manager set_month_calendar end ==========");
 		return $select_calendar_table;
 	}
