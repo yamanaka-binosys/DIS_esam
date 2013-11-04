@@ -620,7 +620,7 @@ class Srwtb020 extends CI_Model {
 			// sql文作成
 			$sql = "
 				UPDATE srwtb020 SET 
-				checker_flg = '0' 
+				checker_flg = '0', set_flg = '0' 
 				WHERE shbn = ?
 				";
 
@@ -659,7 +659,7 @@ class Srwtb020 extends CI_Model {
 		}
 	}
 	
-		/**
+	/**
 	 * 確認者フラグ更新
 	 * 
 	 * @access	public
@@ -718,6 +718,68 @@ class Srwtb020 extends CI_Model {
 			$this->db->trans_rollback();
 			log_message('debug',"========== update_busyo_data catch trans_rollback end ==========");
 			return $res;
+		}
+	}
+	/**
+	 * 確認者フラグ更新
+	 * 
+	 * @access	public
+	 * @param	string $shbn = 更新実行したユーザの社番
+	 * @param	string $s_shbn = チェックしたユーザの社番
+	 * @return	boolean $res = TRUE = 成功:FALSE = 失敗
+	 */
+	function update_set_flg_data($shbn, $s_shbn)
+	{
+		try
+		{
+			log_message('debug',"========== " . __METHOD__ . " start ==========");
+			// トランザクション開始
+			$this->db->trans_start();
+			log_message('debug',"========== " . __METHOD__ . " trans_start end ==========");
+			// 初期化
+			$res = FALSE;
+			// sql文作成
+			$sql = "
+				UPDATE srwtb020 SET 
+				set_flg = '1'
+				WHERE  kshbnnn = '" . $s_shbn . "' AND shbn = '" . $shbn . "';";
+
+            log_message('debug'," - shbn = " . $shbn . ", kshbnnn = ".$s_shbn . " ");
+            log_message('debug',"sql=".$sql);
+
+            // クエリ実行
+			$query = $this->db->query($sql,array($shbn, $s_shbn));
+			log_message('debug',"query=".$query);
+			
+            // 結果判定
+			if($query)
+			{
+				log_message('debug',"========== " . __METHOD__ . " trans_complete start ==========");
+				// トランザクション終了(コミット)
+				$this->db->trans_complete();
+				// 成功
+				$res = TRUE;
+				log_message('debug',"========== " . __METHOD__ . " trans_complete end ==========");
+			}else{
+				log_message('debug',"========== " . __METHOD__ . " trans_rollback start ==========");
+				// ロールバック
+				$this->db->trans_rollback();
+				// 失敗
+				$res = FALSE;
+				log_message('debug',"========== " . __METHOD__ . " trans_rollback end ==========");
+			}
+			log_message('debug',"========== " . __METHOD__ . " end ==========");
+			
+            return $res;
+            
+		}catch(Exception $e){
+			log_message('debug',"========== " . __METHOD__ . " catch trans_rollback start ==========");
+			
+            // ロールバック
+			$this->db->trans_rollback();
+			log_message('debug',"========== " . __METHOD__ . " catch trans_rollback end ==========");
+			
+            return $res;
 		}
 	}
 	/**

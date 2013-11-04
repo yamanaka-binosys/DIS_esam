@@ -285,7 +285,10 @@ class Select_checker extends MY_Controller {
 	 */
 	function select_type(){
 				
-		$this->load->model('sgmtb010');
+		log_message('debug',"============= " . __METHOD__ . " start ================");
+        log_message('debug', "********** \$_POST['kshbn'] = " . serialize($_POST['kshbn']));
+
+        $this->load->model('sgmtb010');
 		$s_shbn = "";
 		$s_edbn = "";
 		$r_shbn = "";
@@ -296,10 +299,11 @@ class Select_checker extends MY_Controller {
 			$s_shbn = NULL;
 			foreach($s_select as $key => $value){
 
-			$select_check = explode('/',$value);
-			$s_edbn[] = $select_check[1];
-			
-			$s_shbn[] = $select_check[0];
+                $select_check = explode('/',$value);
+                $s_edbn[] = $select_check[1];
+
+                $s_shbn[] = $select_check[0];
+                log_message('debug', "********** \$s_shbn[] = " . serialize($s_shbn));
 			}
 		}
 		
@@ -356,10 +360,10 @@ class Select_checker extends MY_Controller {
 			
 			foreach($unit_code as $key => $value){
 		
-			$select_check = explode('/',$value);
-			$s_edbn[] = $select_check[1];
-			//$s_shbn[] = $select_check[0];
-			$unit_code[$key] = $select_check[0];
+                $select_check = explode('/',$value);
+                $s_edbn[] = $select_check[1];
+                //$s_shbn[] = $select_check[0];
+                $unit_code[$key] = $select_check[0];
 			}
 			
 			foreach($unit_code as $key => $kacd){
@@ -389,9 +393,9 @@ class Select_checker extends MY_Controller {
 		if(isset($_POST['grpcd'])){
 			$grp_code = $_POST['grpcd'];
 			foreach($grp_code as $key => $value){
-			$select_check = explode('/',$value);
-			$s_edbn[] = $select_check[1];
-			$grp_code[] = $select_check[0];
+                $select_check = explode('/',$value);
+                $s_edbn[] = $select_check[1];
+                $grp_code[] = $select_check[0];
 			}
 		
 			foreach($grp_code as $key => $grp){
@@ -414,18 +418,26 @@ class Select_checker extends MY_Controller {
 		$this->load->model('srwtb020');
 		$this->srwtb020->update_clear_checkar_data($login_shbn);
 		
+        log_message('debug', "********** \$s_edbn = " . serialize($s_edbn));
+        
 		if($s_edbn){
 			foreach($s_edbn as $key => $value){
 				$save_edbn = sprintf("%02d",$value);
 				
 				$this->srwtb020->update_checkar_data($save_edbn,$login_shbn);
+                log_message('debug', "********** \$save_edbn = " . $save_edbn . " \$login_shbn = " . $login_shbn);
 			
 			}
 		}
-		
+       
 		if($s_shbn){
 			// 重複チェック
 			$r_shbn = array_unique($s_shbn);
+			foreach($r_shbn as $key => $value){
+				$this->srwtb020->update_set_flg_data($login_shbn, $value);
+                log_message('debug', "********** \$value = " . $value . " \$login_shbn = " . $login_shbn);
+			
+			}
 		}
 		
 		
@@ -439,7 +451,7 @@ class Select_checker extends MY_Controller {
 		
 		log_message('debug',"\$from_url = $from_url");
 		log_message('debug',"--------------------------------------------------");
-		log_message('debug',"\$r_shbn = $r_shbn");
+		log_message('debug',"\$r_shbn = " . serialize($r_shbn));
 		log_message('debug',"--------------------------------------------------");
 		// 確認者選択画面へ遷移
 		
