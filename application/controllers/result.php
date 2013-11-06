@@ -213,6 +213,28 @@ class Result extends MY_Controller {
 			
 			// セッション情報より社番を取得
 			$kakninshbn = $this->session->userdata('kakninshbn');
+
+            // ここでset_flgを確認し情報があれば$kakuninshbnを上書きする
+            $this->load->model('srwtb020');
+    		$shbn = $this->session->userdata('shbn');
+            
+            $kakunin = "";
+            $cnt = 0;
+            $r_shbn = $this->srwtb020->get_r_shbn($shbn);
+            if(!is_null($r_shbn)){
+				foreach ($r_shbn as $key => $value) {
+					if(!isset($value)){
+						break;
+					}
+					if($cnt != 0){
+						$kakunin .= " ";
+					}
+					$kakunin .= $value;
+					$cnt++;
+				}
+				$kakninshbn = $kakunin;
+            }
+            
 			$this->session->unset_userdata('kakninshbn');
 			$other_view = $this->session->userdata('other_view');
 			$this->session->unset_userdata('other_view');

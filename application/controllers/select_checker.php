@@ -12,18 +12,26 @@ class Select_checker extends MY_Controller {
 	{
 		try
 		{
-			// 初期化
+           	log_message('debug'," =========== " . __METHOD__ . " start ========== ");
+
+            // 初期化
 			$data = $this->init();
 			$data['kakunin'] = "";
 			$data['kakunin_name']="";
 			
+            // 初期化
+            $CI =& get_instance();
+            $CI->load->model('srwtb020');
+    		$shbn = $this->session->userdata('shbn');
+            
+            $r_shbn = $CI->srwtb020->get_r_shbn($shbn);
+            
 			if($r_shbn){
-				$this->load->model(array('sgmtb010', 'srwtb010'));
+				$CI->load->model(array('sgmtb010', 'srwtb010'));
 				$kakunin = "";
 				$cnt = 0;
-				$shbn = $this->session->userdata('shbn');
-				$confirmer_no = $this->sgmtb010->get_unit_cho_shbn($shbn);
-				$this->load->library('common_manager');
+				$confirmer_no = $CI->sgmtb010->get_unit_cho_shbn($shbn);
+				$CI->load->library('common_manager');
 				foreach ($r_shbn as $key => $value) {
 					if(!isset($value)){
 						break;
@@ -54,7 +62,8 @@ class Select_checker extends MY_Controller {
 				$data['check']=$check;
 			}
 			
-			
+			log_message('debug'," =========== " . __METHOD__ . " end ========== ");
+
 			// 画面表示
 			$this->display($data);
 		}catch(Exception $e){
@@ -76,6 +85,7 @@ class Select_checker extends MY_Controller {
 	{
 		try
 		{
+           	log_message('debug'," =========== " . __METHOD__ . " start ========== ");
 			$this->load->library('table_manager_another');
 			$common_data = $this->config->item('s_select_checker');
 			$this->load->model('srwtb020');
@@ -242,6 +252,7 @@ class Select_checker extends MY_Controller {
 			$data['form']      = $common_data['form'];     // formタグのあり・なし
 			// ユーザー管理画面独自項目
 			
+           	log_message('debug'," =========== " . __METHOD__ . " end ========== ");
 			return $data;
 		}catch(Exception $e){
 			// エラー表示
@@ -292,6 +303,7 @@ class Select_checker extends MY_Controller {
 		$s_shbn = "";
 		$s_edbn = "";
 		$r_shbn = "";
+        $set_shbn = NULL;
 		if(isset($_POST['kshbn'])){
 			$s_shbn = $_POST['kshbn'];
 			
@@ -303,10 +315,12 @@ class Select_checker extends MY_Controller {
                 $s_edbn[] = $select_check[1];
 
                 $s_shbn[] = $select_check[0];
+                $set_shbn['kshbn'][] = $select_check[0];
                 log_message('debug', "********** \$s_shbn[] = " . serialize($s_shbn));
 			}
 		}
 		
+        //log_message('debug', "********** " . __LINE__ . ":\$s_shbn = " . serialize($s_shbn));
 		
 		
 		// 部署コードから社番検索
@@ -314,14 +328,18 @@ class Select_checker extends MY_Controller {
 		
 		
 			$busyo_code = $_POST['bucd'];
+            log_message('debug', "********** \$_POST['bucd'] = " . serialize($_POST['bucd']));
 			
 			foreach($busyo_code as $key => $value){
 		
-			$select_check = explode('/',$value);
-			$s_edbn[] = $select_check[1];
-			//$s_shbn[] = $select_check[0];
-			$busyo_code[$key] = $select_check[0];
+                $select_check = explode('/',$value);
+                $s_edbn[] = $select_check[1];
+                //$s_shbn[] = $select_check[0];
+                $busyo_code[$key] = $select_check[0];
+                $set_shbn['bucd'][] = $select_check[0];
+
 			}
+            //log_message('debug', "********** " . __LINE__ . ":\$s_shbn = " . serialize($s_shbn));
 			
 			foreach($busyo_code as $key => $bucd){
 				if(strlen($bucd) > (MY_CODE_LENGTH * 2)){
@@ -337,6 +355,7 @@ class Select_checker extends MY_Controller {
 					$bunkatu[$key]['honbu']['bucd'] = MY_DB_BU_ESC;
 					$bunkatu[$key]['honbu']['kacd'] = MY_DB_BU_ESC;
 				}
+                log_message('debug', "********** \$bunkatu[" . $key ."] = " . serialize($bunkatu[$key]));
 			}	
 			
 			
@@ -351,19 +370,23 @@ class Select_checker extends MY_Controller {
 				}
 			}
 		}
+        //log_message('debug', "********** " . __LINE__ . ":\$s_shbn = " . serialize($s_shbn));
 		
 		// 課コードから社番検索
 		if(isset($_POST['kacd'])){
 		
 		
 			$unit_code = $_POST['kacd'];
-			
+			log_message('debug', "********** \$_POST['kacd'] = " . serialize($_POST['kacd']));
+
 			foreach($unit_code as $key => $value){
 		
                 $select_check = explode('/',$value);
                 $s_edbn[] = $select_check[1];
                 //$s_shbn[] = $select_check[0];
                 $unit_code[$key] = $select_check[0];
+                $set_shbn['kacd'][] = $select_check[0];
+
 			}
 			
 			foreach($unit_code as $key => $kacd){
@@ -373,6 +396,7 @@ class Select_checker extends MY_Controller {
 					$bunkatu[$key]['ka']['kacd'] = substr($kacd,(MY_CODE_LENGTH * 2),MY_CODE_LENGTH);
 				}
 			}	
+            //log_message('debug', "********** " . __LINE__ . ":\$s_shbn = " . serialize($s_shbn));
 			
 			
 			for($i = 0; $i < count($bunkatu); $i++){
@@ -388,14 +412,19 @@ class Select_checker extends MY_Controller {
 
 		}
 		
+        //log_message('debug', "********** " . __LINE__ . ":\$s_shbn = " . serialize($s_shbn));
 		
 		// グループコードから社番検索
 		if(isset($_POST['grpcd'])){
 			$grp_code = $_POST['grpcd'];
+            log_message('debug', "********** \$_POST['grpcd'] = " . serialize($_POST['grpcd']));
+
 			foreach($grp_code as $key => $value){
                 $select_check = explode('/',$value);
                 $s_edbn[] = $select_check[1];
                 $grp_code[] = $select_check[0];
+                $set_shbn['grpcd'][] = $select_check[0];
+
 			}
 		
 			foreach($grp_code as $key => $grp){
@@ -411,6 +440,7 @@ class Select_checker extends MY_Controller {
 				}
 			}
 		}
+        //log_message('debug', "********** " . __LINE__ . ":\$s_shbn = " . serialize($s_shbn));
 		
 		
 		$login_shbn = $this->session->userdata('shbn'); // セッション情報から社番を取得
@@ -433,13 +463,13 @@ class Select_checker extends MY_Controller {
 		if($s_shbn){
 			// 重複チェック
 			$r_shbn = array_unique($s_shbn);
-			foreach($r_shbn as $key => $value){
-				$this->srwtb020->update_set_flg_data($login_shbn, $value);
-                log_message('debug', "********** \$value = " . $value . " \$login_shbn = " . $login_shbn);
-			
-			}
 		}
-		
+
+        log_message('debug', "********** " . __LINE__ . ":\$set_shbn = " . serialize($set_shbn));
+        
+        if($set_shbn){
+            $this->srwtb020->update_set_flg_data($login_shbn, $set_shbn);
+        }
 		
 		// 確認者社番をセッションに保存
 		$session_data = array('checker_ednm' => $s_edbn);

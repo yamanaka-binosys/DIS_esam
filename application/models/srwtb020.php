@@ -33,6 +33,35 @@ class Srwtb020 extends CI_Model {
 	}
 	
 	/**
+	 * ユーザー別事前検索情報(確認者)登録取得
+	 * 
+	 * @access	public
+	 * @param	string $shbn = 社番
+	 * @return	array or NULL
+	 */
+	function get_r_shbn($shbn=NULL)
+	{
+       	log_message('debug'," =========== " . __METHOD__ . " start ========== ");
+
+        // 戻り値初期化
+        $ret = NULL;
+
+		// sql文作成
+		// 登録件数
+		$sql = "SELECT kshbnnn FROM srwtb020 WHERE shbn = ? and set_flg = '1'";
+		$query = $this->db->query($sql, array($shbn));
+		if ($query->num_rows() > 0)
+		{
+			$ret = $query->result_array();
+		}
+		
+       	log_message('debug'," ===== \$ret = " . serialize($ret) . " ===== ");
+        log_message('debug'," =========== " . __METHOD__ . "  end ========== ");
+
+		return $ret;
+	}
+
+    /**
 	 * ユーザー別検索情報(確認者)取得
 	 * 
 	 * @access	public
@@ -66,7 +95,7 @@ class Srwtb020 extends CI_Model {
 		// 初期化
 		$res = NULL;
 		// sql文作成
-		$sql = "SELECT kshbnnn,edbn 
+		$sql = "SELECT kshbnnn,edbn,set_flg 
 				FROM srwtb020 
 				WHERE shbn = ? 
 				AND kshbnnn IS NOT NULL
@@ -91,7 +120,7 @@ class Srwtb020 extends CI_Model {
 		// 初期化
 		$res = NULL;
 		// sql文作成
-		$sql = "SELECT honbucd,bucd,kacd,edbn 
+		$sql = "SELECT honbucd,bucd,kacd,edbn,set_flg 
 				FROM srwtb020 
 				WHERE shbn = ? and kacd = 'XXXXX'
 				AND honbucd IS NOT NULL
@@ -116,7 +145,7 @@ class Srwtb020 extends CI_Model {
 		// 初期化
 		$res = NULL;
 		// sql文作成
-		$sql = "SELECT honbucd,bucd,kacd,edbn 
+		$sql = "SELECT honbucd,bucd,kacd,edbn,set_flg 
 				FROM srwtb020 
 				WHERE shbn = ? and kacd <> 'XXXXX'
 				AND honbucd IS NOT NULL
@@ -141,7 +170,7 @@ class Srwtb020 extends CI_Model {
 		// 初期化
 		$res = NULL;
 		// sql文作成
-		$sql = "SELECT DISTINCT kgrpnn,edbn 
+		$sql = "SELECT DISTINCT kgrpnn,edbn,set_flg 
 				FROM srwtb020 
 				WHERE shbn = ? 
 				AND kgrpnn IS NOT NULL
@@ -470,11 +499,11 @@ class Srwtb020 extends CI_Model {
 	{
 		try
 		{
-			log_message('debug',"========== update_busyo_data start ==========");
-			log_message('debug',"========== update_busyo_data trans_start start ==========");
+			log_message('debug',"========== " . __METHOD__ . " start ==========");
+			log_message('debug',"========== " . __METHOD__ . " trans_start start ==========");
 			// トランザクション開始
 			$this->db->trans_start();
-			log_message('debug',"========== update_busyo_data trans_start end ==========");
+			log_message('debug',"========== " . __METHOD__ . " trans_start end ==========");
 			// 初期化
 			$res = FALSE;
 			// sql文作成
@@ -503,27 +532,27 @@ class Srwtb020 extends CI_Model {
 			// 結果判定
 			if($query)
 			{
-				log_message('debug',"========== update_busyo_data trans_complete start ==========");
+				log_message('debug',"========== " . __METHOD__ . " trans_complete start ==========");
 				// トランザクション終了(コミット)
 				$this->db->trans_complete();
 				// 成功
 				$res = TRUE;
-				log_message('debug',"========== update_busyo_data trans_complete end ==========");
+				log_message('debug',"========== " . __METHOD__ . " trans_complete end ==========");
 			}else{
-				log_message('debug',"========== update_busyo_data trans_rollback start ==========");
+				log_message('debug',"========== " . __METHOD__ . " trans_rollback start ==========");
 				// ロールバック
 				$this->db->trans_rollback();
 				// 失敗
 				$res = FALSE;
-				log_message('debug',"========== update_busyo_data trans_rollback end ==========");
+				log_message('debug',"========== " . __METHOD__ . " trans_rollback end ==========");
 			}
-			log_message('debug',"========== update_busyo_data end ==========");
+			log_message('debug',"========== " . __METHOD__ . " end ==========");
 			return $res;
 		}catch(Exception $e){
-			log_message('debug',"========== update_busyo_data catch trans_rollback start ==========");
+			log_message('debug',"========== " . __METHOD__ . " catch trans_rollback start ==========");
 			// ロールバック
 			$this->db->trans_rollback();
-			log_message('debug',"========== update_busyo_data catch trans_rollback end ==========");
+			log_message('debug',"========== " . __METHOD__ . " catch trans_rollback end ==========");
 			return $res;
 		}
 	}
@@ -540,11 +569,11 @@ class Srwtb020 extends CI_Model {
 	{
 		try
 		{
-			log_message('debug',"========== update_busyo_data start ==========");
-			log_message('debug',"========== update_busyo_data trans_start start ==========");
+			log_message('debug',"========== " . __METHOD__ . " start ==========");
+			log_message('debug',"========== " . __METHOD__ . " trans_start start ==========");
 			// トランザクション開始
 			$this->db->trans_start();
-			log_message('debug',"========== update_busyo_data trans_start end ==========");
+			log_message('debug',"========== " . __METHOD__ . " trans_start end ==========");
 			// 初期化
 			$res = FALSE;
 			// sql文作成
@@ -573,27 +602,27 @@ class Srwtb020 extends CI_Model {
 			// 結果判定
 			if($query)
 			{
-				log_message('debug',"========== update_busyo_data trans_complete start ==========");
+				log_message('debug',"========== " . __METHOD__ . " trans_complete start ==========");
 				// トランザクション終了(コミット)
 				$this->db->trans_complete();
 				// 成功
 				$res = TRUE;
-				log_message('debug',"========== update_busyo_data trans_complete end ==========");
+				log_message('debug',"========== " . __METHOD__ . " trans_complete end ==========");
 			}else{
-				log_message('debug',"========== update_busyo_data trans_rollback start ==========");
+				log_message('debug',"========== " . __METHOD__ . " trans_rollback start ==========");
 				// ロールバック
 				$this->db->trans_rollback();
 				// 失敗
 				$res = FALSE;
-				log_message('debug',"========== update_busyo_data trans_rollback end ==========");
+				log_message('debug',"========== " . __METHOD__ . " trans_rollback end ==========");
 			}
-			log_message('debug',"========== update_busyo_data end ==========");
+			log_message('debug',"========== " . __METHOD__ . " end ==========");
 			return $res;
 		}catch(Exception $e){
-			log_message('debug',"========== update_busyo_data catch trans_rollback start ==========");
+			log_message('debug',"========== " . __METHOD__ . " catch trans_rollback start ==========");
 			// ロールバック
 			$this->db->trans_rollback();
-			log_message('debug',"========== update_busyo_data catch trans_rollback end ==========");
+			log_message('debug',"========== " . __METHOD__ . " catch trans_rollback end ==========");
 			return $res;
 		}
 	}
@@ -610,11 +639,11 @@ class Srwtb020 extends CI_Model {
 	{
 		try
 		{
-			log_message('debug',"========== update_busyo_data start ==========");
-			log_message('debug',"========== update_busyo_data trans_start start ==========");
+			log_message('debug',"========== " . __METHOD__ . " start ==========");
+			log_message('debug',"========== " . __METHOD__ . " trans_start start ==========");
 			// トランザクション開始
 			$this->db->trans_start();
-			log_message('debug',"========== update_busyo_data trans_start end ==========");
+			log_message('debug',"========== " . __METHOD__ . " trans_start end ==========");
 			// 初期化
 			$res = FALSE;
 			// sql文作成
@@ -634,27 +663,27 @@ class Srwtb020 extends CI_Model {
 			// 結果判定
 			if($query)
 			{
-				log_message('debug',"========== update_busyo_data trans_complete start ==========");
+				log_message('debug',"========== " . __METHOD__ . " trans_complete start ==========");
 				// トランザクション終了(コミット)
 				$this->db->trans_complete();
 				// 成功
 				$res = TRUE;
-				log_message('debug',"========== update_busyo_data trans_complete end ==========");
+				log_message('debug',"========== " . __METHOD__ . " trans_complete end ==========");
 			}else{
-				log_message('debug',"========== update_busyo_data trans_rollback start ==========");
+				log_message('debug',"========== " . __METHOD__ . " trans_rollback start ==========");
 				// ロールバック
 				$this->db->trans_rollback();
 				// 失敗
 				$res = FALSE;
-				log_message('debug',"========== update_busyo_data trans_rollback end ==========");
+				log_message('debug',"========== " . __METHOD__ . " trans_rollback end ==========");
 			}
-			log_message('debug',"========== update_busyo_data end ==========");
+			log_message('debug',"========== " . __METHOD__ . " end ==========");
 			return $res;
 		}catch(Exception $e){
-			log_message('debug',"========== update_busyo_data catch trans_rollback start ==========");
+			log_message('debug',"========== " . __METHOD__ . " catch trans_rollback start ==========");
 			// ロールバック
 			$this->db->trans_rollback();
-			log_message('debug',"========== update_busyo_data catch trans_rollback end ==========");
+			log_message('debug',"========== " . __METHOD__ . " catch trans_rollback end ==========");
 			return $res;
 		}
 	}
@@ -672,11 +701,11 @@ class Srwtb020 extends CI_Model {
 	{
 		try
 		{
-			log_message('debug',"========== update_busyo_data start ==========");
-			log_message('debug',"========== update_busyo_data trans_start start ==========");
+			log_message('debug',"========== " . __METHOD__ . " start ==========");
+			log_message('debug',"========== " . __METHOD__ . " trans_start start ==========");
 			// トランザクション開始
 			$this->db->trans_start();
-			log_message('debug',"========== update_busyo_data trans_start end ==========");
+			log_message('debug',"========== " . __METHOD__ . " trans_start end ==========");
 			// 初期化
 			$res = FALSE;
 			// sql文作成
@@ -696,64 +725,6 @@ class Srwtb020 extends CI_Model {
 			// 結果判定
 			if($query)
 			{
-				log_message('debug',"========== update_busyo_data trans_complete start ==========");
-				// トランザクション終了(コミット)
-				$this->db->trans_complete();
-				// 成功
-				$res = TRUE;
-				log_message('debug',"========== update_busyo_data trans_complete end ==========");
-			}else{
-				log_message('debug',"========== update_busyo_data trans_rollback start ==========");
-				// ロールバック
-				$this->db->trans_rollback();
-				// 失敗
-				$res = FALSE;
-				log_message('debug',"========== update_busyo_data trans_rollback end ==========");
-			}
-			log_message('debug',"========== update_busyo_data end ==========");
-			return $res;
-		}catch(Exception $e){
-			log_message('debug',"========== update_busyo_data catch trans_rollback start ==========");
-			// ロールバック
-			$this->db->trans_rollback();
-			log_message('debug',"========== update_busyo_data catch trans_rollback end ==========");
-			return $res;
-		}
-	}
-	/**
-	 * 確認者フラグ更新
-	 * 
-	 * @access	public
-	 * @param	string $shbn = 更新実行したユーザの社番
-	 * @param	string $s_shbn = チェックしたユーザの社番
-	 * @return	boolean $res = TRUE = 成功:FALSE = 失敗
-	 */
-	function update_set_flg_data($shbn, $s_shbn)
-	{
-		try
-		{
-			log_message('debug',"========== " . __METHOD__ . " start ==========");
-			// トランザクション開始
-			$this->db->trans_start();
-			log_message('debug',"========== " . __METHOD__ . " trans_start end ==========");
-			// 初期化
-			$res = FALSE;
-			// sql文作成
-			$sql = "
-				UPDATE srwtb020 SET 
-				set_flg = '1'
-				WHERE  kshbnnn = '" . $s_shbn . "' AND shbn = '" . $shbn . "';";
-
-            log_message('debug'," - shbn = " . $shbn . ", kshbnnn = ".$s_shbn . " ");
-            log_message('debug',"sql=".$sql);
-
-            // クエリ実行
-			$query = $this->db->query($sql,array($shbn, $s_shbn));
-			log_message('debug',"query=".$query);
-			
-            // 結果判定
-			if($query)
-			{
 				log_message('debug',"========== " . __METHOD__ . " trans_complete start ==========");
 				// トランザクション終了(コミット)
 				$this->db->trans_complete();
@@ -769,15 +740,141 @@ class Srwtb020 extends CI_Model {
 				log_message('debug',"========== " . __METHOD__ . " trans_rollback end ==========");
 			}
 			log_message('debug',"========== " . __METHOD__ . " end ==========");
+			return $res;
+		}catch(Exception $e){
+			log_message('debug',"========== " . __METHOD__ . " catch trans_rollback start ==========");
+			// ロールバック
+			$this->db->trans_rollback();
+			log_message('debug',"========== " . __METHOD__ . " catch trans_rollback end ==========");
+			return $res;
+		}
+	}
+	/**
+	 * 確認者フラグ更新
+	 * 
+	 * @access	public
+	 * @param	string $shbn = 更新実行したユーザの社番
+	 * @param	string $set_shbn = チェックしたデータ
+	 * @return	boolean $res = TRUE = 成功:FALSE = 失敗
+	 */
+	function update_set_flg_data($shbn, $set_shbn)
+	{
+		try
+		{
+			log_message('debug',"========== " . __METHOD__ . " start ==========");
+            log_message('debug',"===== " . __LINE__ . ":\$set_shbn = " . $set_shbn . " =====");
+			// トランザクション開始
+			$this->db->trans_start();
+			log_message('debug',"========== " . __METHOD__ . " trans_start end ==========");
+			// 初期化
+			$res = FALSE;
+
+            
+            foreach($set_shbn as $key => $bumon){
+                foreach($bumon as $value){
+                    switch ($key){
+                        case 'kshbn':
+                            // 確認者用 sql文作成
+                            $sql = "
+                                UPDATE srwtb020 SET 
+                                set_flg = '1'
+                                WHERE  kshbnnn = '" . $value . "' AND shbn = '" . $shbn . "';";
+
+                            log_message('debug', __LINE__ . " sql=".$sql);
+
+                            // クエリ実行
+                            $query = $this->db->query($sql);
+                            break;
+                        
+                        case 'bucd':
+                            // 部署（部）用sql文作成
+                            $honbucd = "";
+                            $bucd = "";
+                            $kacd = "";
+                            if(strlen($value) > (MY_CODE_LENGTH * 2)){
+                                $honbucd = substr($value,0,MY_CODE_LENGTH);
+                                $bucd = substr($value,MY_CODE_LENGTH,MY_CODE_LENGTH);
+                                $kacd = substr($value,(MY_CODE_LENGTH * 2),MY_CODE_LENGTH);
+                            }else if(strlen($bucd) > MY_CODE_LENGTH){
+                                $honbucd = substr($value,0,MY_CODE_LENGTH);
+                                $bucd = substr($value,MY_CODE_LENGTH,MY_CODE_LENGTH);
+                                $kacd = MY_DB_BU_ESC;
+                            }else{
+                                $honbucd = substr($value,0,MY_CODE_LENGTH);
+                                $bucd = MY_DB_BU_ESC;
+                                $kacd = MY_DB_BU_ESC;
+                            }
+
+                            $sql = "
+                                UPDATE srwtb020 SET 
+                                set_flg = '1'
+                                WHERE  honbucd = '" . $honbucd . "' AND bucd = '" . $bucd . "' AND kacd = '" . $kacd . "' AND shbn = '" . $shbn . "';";
+
+                            log_message('debug', __LINE__ . " sql=".$sql);
+
+                            // クエリ実行
+                            $query = $this->db->query($sql);
+                            break;
+                            
+                        case 'kacd':
+                            // ユニット（課）用sql文作成
+                            $honbucd = "";
+                            $bucd = "";
+                            $kacd = "";
+                            if(strlen($value) > (MY_CODE_LENGTH * 2)){
+                                $honbucd = substr($value,0,MY_CODE_LENGTH);
+                                $bucd = substr($value,MY_CODE_LENGTH,MY_CODE_LENGTH);
+                                $kacd = substr($value,(MY_CODE_LENGTH * 2),MY_CODE_LENGTH);
+                            }else if(strlen($bucd) > MY_CODE_LENGTH){
+                                $honbucd = substr($value,0,MY_CODE_LENGTH);
+                                $bucd = substr($value,MY_CODE_LENGTH,MY_CODE_LENGTH);
+                                $kacd = MY_DB_BU_ESC;
+                            }else{
+                                $honbucd = substr($value,0,MY_CODE_LENGTH);
+                                $bucd = MY_DB_BU_ESC;
+                                $kacd = MY_DB_BU_ESC;
+                            }
+
+                            $sql = "
+                                UPDATE srwtb020 SET 
+                                set_flg = '1'
+                                WHERE  honbucd = '" . $honbucd . "' AND bucd = '" . $bucd . "' AND kacd = '" . $kacd . "' AND shbn = '" . $shbn . "';";
+
+                            log_message('debug', __LINE__ . " sql=".$sql);
+
+                            // クエリ実行
+                            $query = $this->db->query($sql);
+                            break;
+                            
+                        case 'grpcd':
+                            // グループ用sql文作成
+                            $sql = "
+                                UPDATE srwtb020 SET 
+                                set_flg = '1'
+                                WHERE  kgrpnn = '" . $value . "' AND shbn = '" . $shbn . "';";
+
+                            log_message('debug', __LINE__ . " sql=".$sql);
+
+                            // クエリ実行
+                            $query = $this->db->query($sql);
+                            break;
+                    }
+                }
+            }
+            
+            // 成功
+            // トランザクション終了(コミット)
+            $this->db->trans_complete();
+            $res = TRUE;
+            log_message('debug',"========== " . __METHOD__ . " trans_complete end ==========");
 			
             return $res;
             
 		}catch(Exception $e){
-			log_message('debug',"========== " . __METHOD__ . " catch trans_rollback start ==========");
 			
             // ロールバック
 			$this->db->trans_rollback();
-			log_message('debug',"========== " . __METHOD__ . " catch trans_rollback end ==========");
+			log_message('debug',"========== " . __METHOD__ . ":" . __LINE__ . " catch trans_rollback end ==========");
 			
             return $res;
 		}

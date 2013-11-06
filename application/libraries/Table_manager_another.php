@@ -10,7 +10,9 @@ class Table_manager_another {
 	 */
 	public function checker_set_table($checker_data,$check=NULL)
 	{
-		// 初期化
+       	log_message('debug'," =========== " . __METHOD__ . " start ========== ");
+
+        // 初期化
 		$CI =& get_instance();
 		// 設定値取得
 		$table = $CI->config->item('s_checker_table'); // テーブル設定情報取得
@@ -29,6 +31,10 @@ class Table_manager_another {
 		$data_count = count($data);
 		$all_count = 0;
 		$string_table = $this->_checker_table($table,$title,$link,$other,$data,$data_count,$unit_cho_shbn,0,$check); // 確認者テーブル作成
+
+        //log_message('debug'," ====== \$string_table = " . $string_table . " ===== ");
+        log_message('debug'," =========== " . __METHOD__ . " end ========== ");
+
 		return $string_table;
 	}
 	
@@ -168,8 +174,10 @@ class Table_manager_another {
 					$user_unit['bunm'] = NULL;
 				}
 				
-				$data[$no][0] = $user['kshbnnn'];
-				$data[$no][1] = $user_data['shinnm'];
+                // '---'で結合し、後で_checker_tableの処理の際に分解する
+				$data[$no][0] = $user['kshbnnn'] . '---' . $user['set_flg'];
+				//$data[$no][0] = $user['kshbnnn'];
+                $data[$no][1] = $user_data['shinnm'];
 				$data[$no][2] = $user_bu['bunm'];
 				$data[$no][3] = $user_unit['bunm'];
 				$data[$no][4] = $user['edbn'];
@@ -213,7 +221,7 @@ class Table_manager_another {
 					$user['kacd'] = NULL;
 					$ka_name['kanm'] = NULL;
 				}
-				$data[$no][0] = $user['honbucd'].$user['bucd'];
+				$data[$no][0] = $user['honbucd'].$user['bucd'] . '---' . $user['set_flg'];
 				$data[$no][1] = $honbu_name['bunm'].$bu_name['bunm'];
 				$data[$no][2] = $user['edbn'];
 				$no++;
@@ -256,7 +264,7 @@ class Table_manager_another {
 					$user['kacd'] = NULL;
 					$ka_name['kanm'] = NULL;
 				}
-				$data[$no][0] = $user['honbucd'].$user['bucd'].$user['kacd'];
+				$data[$no][0] = $user['honbucd'].$user['bucd'].$user['kacd'] . '---' . $user['set_flg'];
 				$data[$no][1] = $honbu_name['bunm'].$bu_name['bunm'].$ka_name['bunm'];
 				$data[$no][2] = $user['edbn'];
 				$no++;
@@ -293,7 +301,7 @@ class Table_manager_another {
 					{
 						log_message('debug',$group);
 						// グループコード保存
-						$data[$no][$d_no++] = $group;
+						$data[$no][$d_no++] = $group . '---' . $user['set_flg'];
 						// グループ名保存
 						$data[$no][$d_no++] = $CI->sgmtb110->get_group_name_data($group);
 						$data[$no][$d_no] = $user['edbn'];
@@ -320,8 +328,12 @@ class Table_manager_another {
 	 */
 	function _checker_table($table,$title,$link,$other,$data,$data_cnt = NULL,$unit_cho_shbn = NULL,$all_count=0,$check=NULL)
 	{
-		log_message('debug',"===================== checker_table =======================");
-		// 初期化
+       	log_message('debug'," =========== " . __METHOD__ . " start ========== ");
+       	//log_message('debug'," ----- \$table = " . serialize($table));
+       	//log_message('debug'," ----- \$other = " . serialize($other));
+       	//log_message('debug'," ----- \$data = " . serialize($data));
+        
+        // 初期化
 		
 		$CI =& get_instance();
 		$base_url = $CI->config->item('base_url');
@@ -483,6 +495,7 @@ class Table_manager_another {
 			
 			if(count($data) >= 1)
 			{
+                //log_message('debug'," ----- \$data = " . serialize($data));
 				// １セットのデータに小分け
 				foreach($data as $tr_data)
 				{
@@ -544,13 +557,19 @@ class Table_manager_another {
 								case "checkbox":
 									$string_table .= "checkbox\"";
 									$string_table .= " name=\"".$table['div_td_name'][$vno]."[]\"";
-									$string_table .= " value=\"".$value."/".$all_count."\"";
+									// _get_checker_dataで結合されたデータを分解する
+                                    $value_shbn = explode('---', $value);
+                                    $string_table .= " value=\"".$value_shbn[0]."/".$all_count."\"";
 									//echo $all_count;
 									
 									if(isset($check) && $check!=""){
 										if(in_array($all_count,$check)){ 
 											$string_table .= "  checked ";
 										}
+									}
+                                    // 以前チェックされていた場合、チェックをセットする
+									elseif(isset($value_shbn[1]) && $value_shbn[1] == "1"){
+                                        $string_table .= " checked ";
 									}
 									break;
 							}
@@ -664,6 +683,8 @@ class Table_manager_another {
 			}
 			$string_table .= "</tr>\n";
 			$string_table .= "</table>\n";
+       	
+            log_message('debug'," =========== " . __METHOD__ . " end ========== ");
 
 			return $string_table;
 	}	
