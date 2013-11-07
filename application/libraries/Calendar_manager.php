@@ -114,14 +114,14 @@ class Calendar_manager {
 	 * @param	string $select_mode 
 	 * @return	string
 	 */
-	public function set_select_mode($select_mode = MY_CALENDAR_MIX)
+	public function set_select_mode($shbn = NULL, $select_mode = MY_CALENDAR_MIX)
 	{
 		log_message('debug',"========== Calendar_manager set_select_mode start ==========");
 		// 初期化
 		$CI =& get_instance();
 		$CI->load->library('table_manager');
 		
-		$select_mode_table = $CI->table_manager->set_mode_table($select_mode);
+		$select_mode_table = $CI->table_manager->set_mode_table($shbn, $select_mode);
 		log_message('debug',"========== Calendar_manager set_select_mode end ==========");
 		return $select_mode_table;
 	}

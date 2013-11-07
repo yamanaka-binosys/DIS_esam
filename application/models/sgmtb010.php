@@ -850,7 +850,32 @@ class Sgmtb010 extends CI_Model {
 		return '';
 	}
 	
-		/**
+	/**
+	 * 社番を引数にし、ユニット長であれば部下の社番を取得
+	 *
+	 * @access	public
+	 * @param	string $shbn = 社番(ユニット長かどうか判定用)
+	 */
+	function get_unit_buka_shbn($shbn)
+	{
+		// 初期化
+		$sql = "SELECT shbn, shinnm
+				FROM sgmtb010 
+				WHERE unitshbn = ? 
+                AND shbn != ? 
+                ORDER BY shbn;";
+		$query = $this->db->query($sql, array($shbn, $shbn));
+        if ($query->num_rows() > 0)
+		{
+			$result = $query->result_array();
+		}else{
+       		$result = NULL;
+        }
+
+		return $result;
+	}
+
+    /**
 	 * 部署情報から、所属する担当者名を取得
 	 *
 	 * @access	public

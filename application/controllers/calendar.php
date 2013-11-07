@@ -105,7 +105,7 @@ class Calendar extends MY_Controller {
 			//$data['select_calendar'] = $select_calendar;
 			// カレンダー情報取得
 			//$data['month'] = $this->calendar_manager->set_select_month($select_month); // 月選択ボタンテーブル作成
-			$data['mode'] = $this->calendar_manager->set_select_mode($calendar_mode);                  // モード選択ボタンテーブル作成
+			$data['mode'] = $this->calendar_manager->set_select_mode($data['shbn'],$calendar_mode);                  // モード選択ボタンテーブル作成
 			$data['calendar'] = $this->calendar_manager->set_month_calendar($data['shbn'],$select_month,$calendar_mode); // カレンダーテーブル作成
 			
 			if (!$calendar_mode || $calendar_mode == MY_CALENDAR_MIX) {

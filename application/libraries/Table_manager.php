@@ -383,11 +383,14 @@ class Table_manager {
 	 * @param	array
 	 * @return	string
 	 */
-	public function set_mode_table($calendar_mode = MY_CALENDAR_MIX)
+	public function set_mode_table($shbn = NULL, $calendar_mode = MY_CALENDAR_MIX)
 	{
-		// 初期化
+		log_message('debug',"========== " . __METHOD__ . " start ==========");
+
+        // 初期化
 		$CI =& get_instance();
 		$select_month_status = $CI->config->item('s_select_calendar_month');
+		$CI->load->model('sgmtb010');
 		$mix_disabled = "disabled";
 		$plan_disabled = "";
 		// 選択モードのボタン無効化処理
@@ -404,10 +407,33 @@ class Table_manager {
 		$select_mode_table .= "<td>\n";
 		$select_mode_table .= "<input type=\"submit\" name=\"calendar_allplan\" style=\"height:30px; width:100px; font-weight:bold;\" value=\"予定へ切替\" " .$plan_disabled.">";
 		$select_mode_table .= "</td>\n";
+        //
+        // TODO
+        // ここに部下のセレクトボックスを設置する
+        log_message('debug',"===== " . __LINE__ . ": \shbn = " . $shbn . " =====");
+
+        $buka_data = $CI->sgmtb010->get_unit_buka_shbn($shbn);
+
+        log_message('debug',"===== " . __LINE__ . ": \buka_data = " . serialize($buka_data) . " =====");
+        
+        if($buka_data != NULL){
+            $select_mode_table .= "<td>\n";
+            // セレクトボックスはこれが最重要
+            $select_mode_table .= "<select name=\"buka\" style=\"margin-left:20px\">\n";
+            $select_mode_table .= "<option></option>\n";
+            foreach ($buka_data as $value){
+                $select_mode_table .= "<option value=\"" . $value['shbn'] . "\">" . $value['shinnm'] . "</option>\n";
+            }
+            $select_mode_table .= "</select>\n";
+            $select_mode_table .= "</td>\n";
+        }
+        
 		$select_mode_table .= "</tr>\n";
 		$select_mode_table .= "</table>\n";
 		
-		return $select_mode_table;
+		log_message('debug',"========== " . __METHOD__ . " start ==========");
+
+        return $select_mode_table;
 	}
 	
 	/**
