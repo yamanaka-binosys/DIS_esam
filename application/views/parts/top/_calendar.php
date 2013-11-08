@@ -9,12 +9,16 @@
             <!-- TODO ここに部下のセレクトボックスを置く -->
             <?php if($buka!=NULL): ?>
 			<th class="left" >
-                <select name="buka" style="font-size: 9pt;" >
+                <select name="buka_shbn" style="font-size: 9pt;" onchange="get_buka_calender_top('<?php echo base_url(); ?>');">
                     <option></option>
                     <?php
-                        //log_message('debug', '-----' . __FILE__ . ':' . __LINE__ . ', $buka = ' . serialize($buka));
+                        log_message('debug', '-----' . __FILE__ . ':' . __LINE__ . ', $shbn = ' . $shbn);
                         foreach($buka as $buka_value){
-                            echo '<option value="' . $buka_value['shbn'] . '">' . $buka_value['shinnm'] . '</option>';
+                            echo '<option value="' . $buka_value['shbn'] . '" ';
+                            if ($shbn == $buka_value['shbn']){
+                                echo ' selected ';
+                            }
+                            echo '>' . $buka_value['shinnm'] . '</option>';
                         }
                     ?>
                 </select>

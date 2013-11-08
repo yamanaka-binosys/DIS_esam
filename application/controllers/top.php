@@ -2,12 +2,22 @@
 
 class Top extends MY_Controller {
 
+    private $buka_shbn = NULL;
+    
 	function index() {
-		$this->load->model('sgmtb010');
+        log_message('debug', ' ===== ' . __METHOD__ . ' start ===== ');
+
+        $this->load->model('sgmtb010');
 		$this->load->library(array('top_manager'));
 
 		//社員番号
 		$shbn = $this->session->userdata('shbn');
+        
+        // 部下の社員番号があれば
+        //$buka_shbn = NULL;
+        //if(isset($_POST['buka_shbn'])){
+        //    $buka_shbn = $_POST['buka_shbn']; 
+        //} 
 		//メニュー区分
 		$user_type = $this->sgmtb010->get_user_data($shbn);
 		$isUnitLeader = $user_type == '002' || $user_type == '003';
@@ -19,7 +29,8 @@ class Top extends MY_Controller {
 				'received_report', 'schedule', 'info');
 
 		$data['read_report_head_item'] = $isUnitLeader ? '担当者名' : '指示者名';
-
+        $data['shbn'] = $shbn;
+        
         // 部下情報を取得
         $data['buka'] = $this->sgmtb010->get_unit_buka_shbn($shbn); 
 
@@ -29,9 +40,23 @@ class Top extends MY_Controller {
 				continue;
 			}
 			$get_func_name = 'get_' . $part_name . '_data';
-			$data[$part_name . '_data'] = $this->top_manager->$get_func_name($shbn, $isUnitLeader);
+            // calendarでもし部下社番($buka_shbn)がセットされていた場合は$shbnでなく$buka_shbnを渡す
+            log_message('debug', ' ===== ' . __METHOD__ . ':' . __LINE__ . ': $this->buka_shbn = ' . $this->buka_shbn);
+            if($part_name=='calendar'){
+                if(!is_null($this->buka_shbn)){
+                    log_message('debug', ' ===== ' . __METHOD__ . ':' . __LINE__ );        
+                    $data['shbn'] = $this->buka_shbn;
+        			$data[$part_name . '_data'] = $this->top_manager->$get_func_name($this->buka_shbn, $isUnitLeader);
+                }else{
+                    log_message('debug', ' ===== ' . __METHOD__ . ':' . __LINE__ );
+                    $data[$part_name . '_data'] = $this->top_manager->$get_func_name($shbn, $isUnitLeader);
+                }
+            }else{
+                    log_message('debug', ' ===== ' . __METHOD__ . ':' . __LINE__ );
+                    $data[$part_name . '_data'] = $this->top_manager->$get_func_name($shbn, $isUnitLeader);
+            }
 			$parts[$part_name] = $this->load->view('/parts/top/_'.$part_name.'.php', $data, true);
-            log_message('debug', ' ===== ' . __METHOD__ . ':' . __LINE__ . ': $data = ' . serialize($data));
+            //log_message('debug', ' ===== ' . __METHOD__ . ':' . __LINE__ . ': $data = ' . serialize($data));
 		}
 
 		if ($isUnitLeader) {
@@ -39,7 +64,9 @@ class Top extends MY_Controller {
 		} else {
 			$this->load->view('/parts/top/index.php', $parts);
 		}
-	}
+        log_message('debug', ' ===== ' . __METHOD__ . ' end ===== ');
+
+    }
 
 	function index2()
 	{
@@ -211,6 +238,21 @@ class Top extends MY_Controller {
 		log_message('debug', '**********************');
 	}
 
+	/**
+	 * 部下の社番を取得する
+	 */
+	function set_buka_shbn($uri_buka_shbn){
+		log_message('debug', ' ===== ' . __METHOD__ . ' start =====');
+        log_message('debug', ' --- $buka_shbn = ' . $uri_buka_shbn . ' -----');
+        $this->buka_shbn = $uri_buka_shbn;
+		log_message('debug', ' ===== ' . __METHOD__ . ' end =====');
+        $this->index();
+    }
+	
+
+    
+    
+    
 }
 
 /* End of file top.php */
