@@ -1,5 +1,6 @@
 <?php $this->load->helper('url'); ?>
 <!-- parts/top/_calendar.php start -->
+<?php $buka_flg = FALSE; ?>
 <div class="preview-position">
 	<table class="preview-layout">
 		<tr class="preview-title">
@@ -17,6 +18,7 @@
                             echo '<option value="' . $buka_value['shbn'] . '" ';
                             if ($shbn == $buka_value['shbn']){
                                 echo ' selected ';
+                                $buka_flg = TRUE;
                             }
                             echo '>' . $buka_value['shinnm'] . '</option>';
                         }
@@ -29,7 +31,13 @@
 			<?php foreach($calendar_data as $d) { ?>
             <th class="center"><a style="color: <?php $clr = '#000'; switch($d[1]) {case '土': $clr = '#0000FF'; break; case '日': $clr = '#FF0000'; break; default: $clr = '#000'; } 
             if ($d['holiday']=='祝') $clr = '#FF0000'; echo $clr; ?>;"
-				href="<?php echo base_url('index.php/plan/index/' . $d['link_day']) ?>"><?php echo $d[0] ?>(<?php echo $d[1] ?>)</a>
+				href="<?php 
+                    if($buka_flg) { 
+                        echo base_url('index.php/plan_view/index/' . $d['link_day']) . '/' . $shbn;
+                    }else{
+                        echo base_url('index.php/plan/index/' . $d['link_day']); 
+                    }
+                    ?>"><?php echo $d[0] ?>(<?php echo $d[1] ?>)</a>
 			</th>
 			<?php } ?>
 		</tr>
