@@ -2,6 +2,8 @@
 
 class Calendar extends MY_Controller {
 
+    public $buka_shbn = NULL;
+    
 	function index()
 	{
 		try
@@ -38,6 +40,11 @@ class Calendar extends MY_Controller {
 			}
 */			$this->load->library('common_manager');
 			$data = $this->common_manager->init(SHOW_CALENDAR);
+            $data['unitcho_shbn'] = NULL;
+            if($this->buka_shbn!=NULL){
+                $data['unitcho_shbn'] = $data['shbn'];
+                $data['shbn'] = $this->buka_shbn; 
+            }
 			$data['mode'] = MY_CALENDAR_MIX;
 			$data['mode'] = $this->session->userdata('calendar_mode');
 			// セッション切れの場合
@@ -105,8 +112,8 @@ class Calendar extends MY_Controller {
 			//$data['select_calendar'] = $select_calendar;
 			// カレンダー情報取得
 			//$data['month'] = $this->calendar_manager->set_select_month($select_month); // 月選択ボタンテーブル作成
-			$data['mode'] = $this->calendar_manager->set_select_mode($data['shbn'],$calendar_mode);                  // モード選択ボタンテーブル作成
-			$data['calendar'] = $this->calendar_manager->set_month_calendar($data['shbn'],$select_month,$calendar_mode); // カレンダーテーブル作成
+			$data['mode'] = $this->calendar_manager->set_select_mode($data['shbn'],$calendar_mode,$data['unitcho_shbn']);                  // モード選択ボタンテーブル作成
+			$data['calendar'] = $this->calendar_manager->set_month_calendar($data['shbn'],$select_month,$calendar_mode, $data['unitcho_shbn']); // カレンダーテーブル作成
 			
 			if (!$calendar_mode || $calendar_mode == MY_CALENDAR_MIX) {
 				$data['summary'] = $this->common->get_summary($data['shbn'],$select_month,$calendar_mode);
@@ -167,7 +174,12 @@ class Calendar extends MY_Controller {
 			$this->load->library('calendar_manager');
 			$calendar_mode = MY_CALENDAR_MIX;
 			$post = NULL;
-			
+            
+            // 部下のスケジュール取得かどうかを判定する
+			if(isset($_POST['buka_shbn']) && $_POST['buka_shbn']!="")  {
+                log_message('debug'," ===== " . __METHOD__ . ":" . __LINE__ . " \$_POST['buka_shbn'] = " . $_POST['buka_shbn'] . " ===== ");
+                $this->buka_shbn = $_POST['buka_shbn'];
+			}
 			// 初回読み込み判定を行い、選択年月を設定する
 			if(isset($_POST['year_month']))  {
 				// 初回以外の場合
@@ -198,8 +210,8 @@ class Calendar extends MY_Controller {
 			
 			// 当月・前後月の年月取得
 			$year_month = $this->calendar_manager->_get_year_month($select_month,$post);
-			log_message('debug',"========== calendar select end ==========");
 			$this->get_calendar($year_month,$calendar_mode);
+			log_message('debug',"========== calendar select end ==========");
 		}catch(Exception $e){
 			$this->load->view('/parts/error/error.php',array('errcode' => 'CALENDER-SELECT'));
 		}

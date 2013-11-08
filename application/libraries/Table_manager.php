@@ -383,7 +383,7 @@ class Table_manager {
 	 * @param	array
 	 * @return	string
 	 */
-	public function set_mode_table($shbn = NULL, $calendar_mode = MY_CALENDAR_MIX)
+	public function set_mode_table($shbn = NULL, $calendar_mode = MY_CALENDAR_MIX, $unitcho_shbn = NULL)
 	{
 		log_message('debug',"========== " . __METHOD__ . " start ==========");
 
@@ -410,18 +410,45 @@ class Table_manager {
 
         //log_message('debug',"===== " . __LINE__ . ": \shbn = " . $shbn . " =====");
 
-        $buka_data = $CI->sgmtb010->get_unit_buka_shbn($shbn);
-
+        if($unitcho_shbn!=NULL){
+            $buka_data = $CI->sgmtb010->get_unit_buka_shbn($unitcho_shbn);
+        }else{
+            $buka_data = $CI->sgmtb010->get_unit_buka_shbn($shbn);
+        }
         //log_message('debug',"===== " . __LINE__ . ": \buka_data = " . serialize($buka_data) . " =====");
         
         // ユニット長の場合、ここに部下のセレクトボックスを設置する
         if($buka_data != NULL){
             $select_mode_table .= "<td>\n";
-            // セレクトボックスはこれが最重要
-            $select_mode_table .= "<select name=\"buka\" style=\"margin-left:20px\">\n";
+/*
+                 <select name="buka_shbn" style="font-size: 9pt;" onchange="get_buka_calender_top('<?php echo base_url(); ?>');">
+                    <option></option>
+                    <?php
+                        log_message('debug', '-----' . __FILE__ . ':' . __LINE__ . ', $shbn = ' . $shbn);
+                        foreach($buka as $buka_value){
+                            echo '<option value="' . $buka_value['shbn'] . '" ';
+                            if ($shbn == $buka_value['shbn']){
+                                echo ' selected ';
+                                $buka_flg = TRUE;
+                            }
+                            echo '>' . $buka_value['shinnm'] . '</option>';
+                        }
+                    ?>
+                </select>
+
+ */
+            
+            
+            
+            //$select_mode_table .= "<select name=\"buka_shbn\" style=\"margin-left:20px\" onchange=\"get_buka_calender('" . base_url() . "');\">\n";
+            $select_mode_table .= "<select name=\"buka_shbn\" style=\"margin-left:20px\" onchange=\"document.forms[0].submit()\">\n";
             $select_mode_table .= "<option></option>\n";
             foreach ($buka_data as $value){
-                $select_mode_table .= "<option value=\"" . $value['shbn'] . "\">" . $value['shinnm'] . "</option>\n";
+                $select_mode_table .= "<option value=\"" . $value['shbn'] . "\"";
+                if($shbn == $value['shbn']){
+                    $select_mode_table .= " selected ";
+                }
+                $select_mode_table .= ">" . $value['shinnm'] . "</option>\n";
             }
             $select_mode_table .= "</select>\n";
             $select_mode_table .= "</td>\n";

@@ -40,7 +40,7 @@ class Calendar_manager {
 	 *                                 MY_CALENDAR_ALLPLAN:予定のみ
 	 * @return	string
 	 */
-	public function set_month_calendar($shbn = NULL,$select_month = NULL,$calendar_mode = MY_CALENDAR_MIX)
+	public function set_month_calendar($shbn = NULL,$select_month = NULL,$calendar_mode = MY_CALENDAR_MIX, $unitcho_shbn = NULL)
 	{
 		log_message('debug',"========== Calendar_manager set_month_calendar start ==========");
 		log_message('debug',"\$shbn = $shbn");
@@ -72,7 +72,7 @@ class Calendar_manager {
 			log_message('debug',"\$select_month check is NULL");
 			$select_month = date("Ym");
 		}
-		$select_calendar_date = $this->_get_select_calendar($shbn,$select_month,$calendar_mode); // 月の情報（日付・曜日・最終日等）取得
+		$select_calendar_date = $this->_get_select_calendar($shbn,$select_month,$calendar_mode,$unitcho_shbn); // 月の情報（日付・曜日・最終日等）取得
 		$select_calendar_table = $CI->table_manager->set_select_calendar($year,$month,$select_calendar_date,$calendar_mode); // カレンダー作成
 		log_message('debug',"========== Calendar_manager set_month_calendar end ==========");
 		return $select_calendar_table;
@@ -114,14 +114,14 @@ class Calendar_manager {
 	 * @param	string $select_mode 
 	 * @return	string
 	 */
-	public function set_select_mode($shbn = NULL, $select_mode = MY_CALENDAR_MIX)
+	public function set_select_mode($shbn = NULL, $select_mode = MY_CALENDAR_MIX, $unitcho_shbn = NULL)
 	{
 		log_message('debug',"========== Calendar_manager set_select_mode start ==========");
 		// 初期化
 		$CI =& get_instance();
 		$CI->load->library('table_manager');
 		
-		$select_mode_table = $CI->table_manager->set_mode_table($shbn, $select_mode);
+		$select_mode_table = $CI->table_manager->set_mode_table($shbn, $select_mode, $unitcho_shbn);
 		log_message('debug',"========== Calendar_manager set_select_mode end ==========");
 		return $select_mode_table;
 	}
@@ -239,7 +239,7 @@ class Calendar_manager {
 	 *                                 MY_CALENDAR_ALLPLAN:予定のみ
 	 * @return	array
 	 */
-	function _get_select_calendar($shbn,$select_month,$calendar_mode = MY_CALENDAR_MIX)
+	function _get_select_calendar($shbn,$select_month,$calendar_mode = MY_CALENDAR_MIX,$unitcho_shbn = NULL)
 	{
 		log_message('debug',"========== Calendar_manager _get_select_calendar start ==========");
 		log_message('debug',"\$shbn = $shbn");
@@ -276,19 +276,19 @@ class Calendar_manager {
 			{
 				// 同年同月の場合
 				// 現在日付より過去の日付の日報情報を取得
-				$res_calendar_data = $this->_get_result_data($shbn,$year,$month,MY_START_DAY,$present_day);
+				$res_calendar_data = $this->_get_result_data($shbn,$year,$month,MY_START_DAY,$present_day,$unitcho_shbn);
 				// 現在日付より未来の日付の予定情報を取得（同日を含む）
-				$pre_calendar_data = $this->_get_plan_data($shbn,$year,$month,$present_day,$last_day);
+				$pre_calendar_data = $this->_get_plan_data($shbn,$year,$month,$present_day,$last_day,$unitcho_shbn);
 				// 過去と未来の情報を１つに合わせる
 				$calendar_data = $this->_match_calendar_data($pre_calendar_data,$res_calendar_data,$interval_day,$last_day);
 			}else if((int)$present_year_month > (int)$select_month){
 				// 選択年月が過去年月の場合
 				// 対象月の日報情報を取得
-				$calendar_data = $this->_get_result_data($shbn,$year,$month,MY_START_DAY,$last_day);
+				$calendar_data = $this->_get_result_data($shbn,$year,$month,MY_START_DAY,$last_day,$unitcho_shbn);
 			}else if((int)$present_year_month < (int)$select_month){
 				// 選択年月が未来年月の場合
 				// 対象月の予定を取得
-				$calendar_data = $this->_get_plan_data($shbn,$year,$month,MY_START_DAY,$last_day);
+				$calendar_data = $this->_get_plan_data($shbn,$year,$month,MY_START_DAY,$last_day,$unitcho_shbn);
 			}else{
 				// エラー処理
 				throw new Exception("Error Processing Request", '');
@@ -358,7 +358,7 @@ class Calendar_manager {
 	 * @param	string $end_day 終了日
 	 * @return	array
 	 */
-	function _get_result_data($shbn,$year,$month,$start_day,$end_day)
+	function _get_result_data($shbn,$year,$month,$start_day,$end_day,$unitcho_shbn = NULL)
 	{
 		log_message('debug',"========== Calendar_manager _get_result_data start ==========");
 		log_message('debug',"\$year = $year");
@@ -390,7 +390,11 @@ class Calendar_manager {
 				$calendar_data[$i]['week'] = strtolower(date("l", mktime(0, 0, 0, $month , $i, $year))); // 曜日取得（英語）
 				// 遷移先URL設定
 //				$calendar_data[$i]['link_url'] = $CI->config->item('base_url') . "index.php/result";
-				$calendar_data[$i]['link_url'] = $CI->config->item('base_url') . "index.php/result/index/" . $result_day;
+				if($unitcho_shbn==NULL){
+                    $calendar_data[$i]['link_url'] = $CI->config->item('base_url') . "index.php/result/index/" . $result_day;
+                }else{
+                    $calendar_data[$i]['link_url'] = $CI->config->item('base_url') . "index.php/result/admin_check_view/index/" . $result_day . '/' . $shbn;
+                }
 				// 日報情報取得
 				$calendar_data[$i]['date_time'][] = NULL; // 開始時刻を取得
 				$calendar_data[$i]['result_data'][] = NULL; // 相手先を取得
@@ -419,7 +423,11 @@ class Calendar_manager {
 						$calendar_data[$day]['week'] = strtolower(date("l", mktime(0, 0, 0, $month , $date_day, $year))); // 曜日取得（英語）
 						// 遷移先URL設定
 //						$calendar_data[$day]['link_url'] = $CI->config->item('base_url') . "index.php/result";
-						$calendar_data[$day]['link_url'] = $CI->config->item('base_url') . "index.php/result/index/" . $result_day;
+                        if($unitcho_shbn==NULL){
+                            $calendar_data[$day]['link_url'] = $CI->config->item('base_url') . "index.php/result/index/" . $result_day;
+                        }else{
+                            $calendar_data[$day]['link_url'] = $CI->config->item('base_url') . "index.php/result/admin_check_view/" . $result_day . '/' . $shbn;
+                        }
 						// 日報情報取得
 						$calendar_data[$day]['date_time'][] = $calendar_result_data[$data_count]['sthm']; // 開始時刻を取得
 						if($calendar_result_data[$data_count]['action_type'] === "内勤"){
@@ -450,7 +458,11 @@ class Calendar_manager {
 					$calendar_data[$day]['week'] = strtolower(date("l", mktime(0, 0, 0, $month , $day, $year))); // 曜日取得（英語）
 					// 遷移先URL設定
 //					$calendar_data[$day]['link_url'] = $CI->config->item('base_url') . "index.php/result";
-					$calendar_data[$day]['link_url'] = $CI->config->item('base_url') . "index.php/result/index/" . $result_day;
+                    if($unitcho_shbn==NULL){
+    					$calendar_data[$day]['link_url'] = $CI->config->item('base_url') . "index.php/result/index/" . $result_day;
+                    }else{
+                        $calendar_data[$day]['link_url'] = $CI->config->item('base_url') . "index.php/result/admin_check_view/" . $result_day . '/' . $shbn;
+                    }
 					// 日報情報取得
 					$calendar_data[$day]['date_time'][] = NULL; // 開始時刻を取得
 					$calendar_data[$day]['result_data'][] = NULL; // 相手先を取得
@@ -473,7 +485,7 @@ class Calendar_manager {
 	 * @param	string $end_day 終了日
 	 * @return	array
 	 */
-	function _get_plan_data($shbn,$year,$month,$start_day,$end_day)
+	function _get_plan_data($shbn,$year,$month,$start_day,$end_day,$unitcho_shbn = NULL)
 	{
 		log_message('debug',"========== Calendar_manager _get_plan_data start ==========");
 		log_message('debug',"\$year = $year");
@@ -505,7 +517,11 @@ class Calendar_manager {
 				$calendar_data[$i]['week'] = strtolower(date("l", mktime(0, 0, 0, $month , $i, $year))); // 曜日取得（英語）
 				// 遷移先URL設定
 //				$calendar_data[$i]['link_url'] = $CI->config->item('base_url') . "index.php/plan";
+                if($unitcho_shbn==NULL){
 					$calendar_data[$i]['link_url'] = $CI->config->item('base_url') . "index.php/plan/index/" . $plan_day;
+                }else{
+                    $calendar_data[$i]['link_url'] = $CI->config->item('base_url') . "index.php/plan_view/index/" . $plan_day . '/' . $shbn;
+                }
 				// 日報情報取得
 				$calendar_data[$i]['date_time'][] = NULL; // 開始時刻を取得
 				$calendar_data[$i]['result_data'][] = NULL; // 相手先を取得
@@ -534,7 +550,12 @@ class Calendar_manager {
 						$calendar_data[$date_day]['week'] = strtolower(date("l", mktime(0, 0, 0, $month , $date_day, $year))); // 曜日取得（英語）
 						// 遷移先URL設定
 //						$calendar_data[$date_day]['link_url'] = $CI->config->item('base_url') . "index.php/plan";
-						$calendar_data[$date_day]['link_url'] = $CI->config->item('base_url') . "index.php/plan/index/" . $plan_day;
+                        if($unitcho_shbn==NULL){
+                            $calendar_data[$date_day]['link_url'] = $CI->config->item('base_url') . "index.php/plan/index/" . $plan_day;
+                        }else{
+                            $calendar_data[$date_day]['link_url'] = $CI->config->item('base_url') . "index.php/plan_view/index/" . $plan_day . '/' . $shbn;
+                        }
+						
 						// 日報情報取得
 						$calendar_data[$date_day]['date_time'][] = $calendar_plan_data[$data_count]['sthm']; // 開始時刻を取得
 						if($calendar_plan_data[$data_count]['action_type'] === "内勤"){
@@ -567,7 +588,12 @@ class Calendar_manager {
 					$calendar_data[$day]['week'] = strtolower(date("l", mktime(0, 0, 0, $month , $day, $year))); // 曜日取得（英語）
 					// 遷移先URL設定
 //					$calendar_data[$day]['link_url'] = $CI->config->item('base_url') . "index.php/plan";
-					$calendar_data[$day]['link_url'] = $CI->config->item('base_url') . "index.php/plan/index/" . $plan_day;
+                    if($unitcho_shbn==NULL){
+                        $calendar_data[$day]['link_url'] = $CI->config->item('base_url') . "index.php/plan/index/" . $plan_day;
+                    }else{
+                        $calendar_data[$day]['link_url'] = $CI->config->item('base_url') . "index.php/plan_view/index/" . $plan_day . '/' . $shbn;
+                    }
+
 					// 日報情報取得
 					$calendar_data[$day]['date_time'][] = NULL; // 開始時刻を取得
 					$calendar_data[$day]['result_data'][] = NULL; // 相手先を取得
