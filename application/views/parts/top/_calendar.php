@@ -6,6 +6,20 @@
 			<th class="left"><a class="menu-link"
 				href="javascript:calendar('<?php echo base_url(); ?>','calendar')">スケジュール</a>
 			</th>
+            <!-- TODO ここに部下のセレクトボックスを置く -->
+            <?php if($buka!=NULL): ?>
+			<th class="left" >
+                <select name="buka" style="font-size: 9pt;" >
+                    <option></option>
+                    <?php
+                        //log_message('debug', '-----' . __FILE__ . ':' . __LINE__ . ', $buka = ' . serialize($buka));
+                        foreach($buka as $buka_value){
+                            echo '<option value="' . $buka_value['shbn'] . '">' . $buka_value['shinnm'] . '</option>';
+                        }
+                    ?>
+                </select>
+			</th>
+            <?php endif; // $buka!=NULL ?>
 		</tr>
 		<tr class="calendar-preview-head">
 			<?php foreach($calendar_data as $d) { ?>

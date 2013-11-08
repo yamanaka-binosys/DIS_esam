@@ -407,15 +407,14 @@ class Table_manager {
 		$select_mode_table .= "<td>\n";
 		$select_mode_table .= "<input type=\"submit\" name=\"calendar_allplan\" style=\"height:30px; width:100px; font-weight:bold;\" value=\"予定へ切替\" " .$plan_disabled.">";
 		$select_mode_table .= "</td>\n";
-        //
-        // TODO
-        // ここに部下のセレクトボックスを設置する
-        log_message('debug',"===== " . __LINE__ . ": \shbn = " . $shbn . " =====");
+
+        //log_message('debug',"===== " . __LINE__ . ": \shbn = " . $shbn . " =====");
 
         $buka_data = $CI->sgmtb010->get_unit_buka_shbn($shbn);
 
-        log_message('debug',"===== " . __LINE__ . ": \buka_data = " . serialize($buka_data) . " =====");
+        //log_message('debug',"===== " . __LINE__ . ": \buka_data = " . serialize($buka_data) . " =====");
         
+        // ユニット長の場合、ここに部下のセレクトボックスを設置する
         if($buka_data != NULL){
             $select_mode_table .= "<td>\n";
             // セレクトボックスはこれが最重要

@@ -20,6 +20,9 @@ class Top extends MY_Controller {
 
 		$data['read_report_head_item'] = $isUnitLeader ? '担当者名' : '指示者名';
 
+        // 部下情報を取得
+        $data['buka'] = $this->sgmtb010->get_unit_buka_shbn($shbn); 
+
 		$parts = array();
 		foreach ($part_names as $part_name) {
 			if ($part_name == 'schedule' && !$isUnitLeader) {
@@ -28,6 +31,7 @@ class Top extends MY_Controller {
 			$get_func_name = 'get_' . $part_name . '_data';
 			$data[$part_name . '_data'] = $this->top_manager->$get_func_name($shbn, $isUnitLeader);
 			$parts[$part_name] = $this->load->view('/parts/top/_'.$part_name.'.php', $data, true);
+            log_message('debug', ' ===== ' . __METHOD__ . ':' . __LINE__ . ': $data = ' . serialize($data));
 		}
 
 		if ($isUnitLeader) {
