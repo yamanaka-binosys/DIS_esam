@@ -440,7 +440,7 @@ class Select_checker extends MY_Controller {
 				}
 			}
 		}
-        //log_message('debug', "********** " . __LINE__ . ":\$s_shbn = " . serialize($s_shbn));
+        log_message('debug', "********** " . __LINE__ . ":\$s_shbn = " . serialize($s_shbn));
 		
 		
 		$login_shbn = $this->session->userdata('shbn'); // セッション情報から社番を取得
@@ -479,10 +479,10 @@ class Select_checker extends MY_Controller {
 		
 		$from_url = $this->session->userdata('from_url'); // セッション情報からグループコードを取得
 		
-		log_message('debug',"\$from_url = $from_url");
-		log_message('debug',"--------------------------------------------------");
-		log_message('debug',"\$r_shbn = " . serialize($r_shbn));
-		log_message('debug',"--------------------------------------------------");
+		log_message('debug'," -----" . __METHOD__ . ":" . __LINE__ . " \$from_url = $from_url");
+		log_message('debug'," -----" . __METHOD__ . ":" . __LINE__ . "--------------------------------------------------");
+		log_message('debug'," -----" . __METHOD__ . ":" . __LINE__ . "\$r_shbn = " . serialize($r_shbn));
+		log_message('debug'," -----" . __METHOD__ . ":" . __LINE__ . "--------------------------------------------------");
 		// 確認者選択画面へ遷移
 		
 		$this->index($r_shbn,'1');

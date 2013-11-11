@@ -21,7 +21,7 @@ $meta = $this->config->item('c_meta');
 <!-- MAIN -->
 <div id="Main">
 <div id="container">
-<form action="/index.php/calendar/select" method="POST">
+<form action="<?php echo base_url(); ?>index.php/calendar/select" method="POST">
 <table style="width: 825px">
 <tr>
 <td>

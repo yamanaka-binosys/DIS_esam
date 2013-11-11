@@ -46,7 +46,7 @@ $base_url = $this->config->item('base_url');
 <td><input type="text" style="width: 20px;ime-mode: disabled;" size="2" maxlength="2" name="sth_<?php echo $count; ?>" id="sth_<?php echo $count; ?>" value="<?php echo isset($result['sthm']) ? substr($result['sthm'], 0, 2) : ''?>" class="required numInputOnly" title="開始時刻">時</td>
 <td><input type="text" style="width: 20px;ime-mode: disabled;" size="2" maxlength="2" name="stm_<?php echo $count; ?>" id="stm_<?php echo $count; ?>" value="<?php echo isset($result['sthm']) ? substr($result['sthm'], 2, 2) : ''?>" class="required numInputOnly" title="開始時刻">分</td>
 <td></td>
-<td ><input name="gyoshanm_<?php echo $count; ?>" id="gyoshanm_<?php echo $count; ?>" type="text" style="margin-left:30px; width:200px;" title="企業名称" value="<?php echo isset($plan['gyoshanm']) ? $plan['gyoshanm'] : ""; ?>"></td>
+<td ><input name="gyoshanm_<?php echo $count; ?>" id="gyoshanm_<?php echo $count; ?>" type="text" style="margin-left:30px; width:200px;" title="企業名称" value="<?php echo isset($result['gyoshanm']) ? $result['gyoshanm'] : ""; ?>"></td>
 </tr>
 <tr><td colspan="4">終了時刻</td></tr>
 <tr>

@@ -574,6 +574,7 @@ class Result extends MY_Controller {
 			if(is_null($post) ){
 				throw new Exception("Error Processing Request", ERROR_SYSTEM);
 			}
+            log_message('debug'," ----- " . __METHOD__ . ":" . __LINE__ . ", \$post = " . serialize($post));
 			// 初期化
 			$old_data = $post;
 			$this->load->library('result_manager');
